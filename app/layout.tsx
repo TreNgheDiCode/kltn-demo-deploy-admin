@@ -1,10 +1,12 @@
-import "@/components/style/globals.css";
+import { UIProvider } from "@/components/providers/ui-provider";
+import { Sidebar } from "@/components/sidebar";
+import "@/styles/globals.css";
 import { viVN } from "@clerk/localizations";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, auth } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,6 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId } = auth();
+
   return (
     <ClerkProvider
       localization={viVN}
@@ -26,7 +30,14 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={font.className}>
+          <UIProvider>
+            <main className="w-full h-full flex bg-gray-200 dark:bg-background">
+              {userId && <Sidebar />}
+              {children}
+            </main>
+          </UIProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
