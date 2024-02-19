@@ -21,7 +21,7 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { useState } from "react";
 import { toast } from "sonner";
 import { update } from "@/actions/user";
@@ -114,7 +114,7 @@ export const UserMenu = () => {
       </Modal>
       <Card className="p-0">
         <CardBody className="flex-row items-center justify-start gap-2">
-          <UserButton />
+          <UserButton afterSignOutUrl="/login" />
           <div className="flex flex-col items-start justify-center">
             <span className="font-semibold text-sm">
               {user?.fullName || "[Chưa định danh]"}

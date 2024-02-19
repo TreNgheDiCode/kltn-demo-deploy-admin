@@ -1,5 +1,5 @@
 import { UIProvider } from "@/components/providers/ui-provider";
-import { Sidebar } from "@/components/sidebar";
+import { Sidebar } from "@/components/sidebar/sidebar";
 import "@/styles/globals.css";
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider, auth } from "@clerk/nextjs";
