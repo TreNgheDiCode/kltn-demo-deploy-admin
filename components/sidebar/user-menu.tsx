@@ -1,6 +1,8 @@
 "use client";
 
-import { UserButton, clerkClient, useClerk, useUser } from "@clerk/nextjs";
+import { update } from "@/actions/user";
+import { nameSchema } from "@/types";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
@@ -19,14 +21,11 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
-import { useState } from "react";
-import { toast } from "sonner";
-import { update } from "@/actions/user";
-import { nameSchema } from "@/types";
-import { useRouter } from "next/navigation";
 
 type formType = z.infer<typeof nameSchema>;
 
@@ -43,8 +42,6 @@ export const UserMenu = () => {
       firstName: "",
     },
   });
-
-  const disabled = form.formState.isDirty;
 
   const onSubmit = async (values: formType) => {
     setLoading(true);
@@ -123,7 +120,15 @@ export const UserMenu = () => {
               {user?.primaryEmailAddress?.emailAddress}
             </span>
           </div>
-          <Popover isOpen={open} showArrow={true} shadow="lg" radius="sm">
+          <Popover
+            isOpen={open}
+            showArrow={true}
+            onMouseLeave={() => {
+              setOpen(false);
+            }}
+            shadow="lg"
+            radius="sm"
+          >
             <PopoverTrigger onClick={() => setOpen((value) => !value)}>
               <MoreHorizontal className="h-6 w-6 ml-auto cursor-pointer text-gray-300 hover:text-primary" />
             </PopoverTrigger>

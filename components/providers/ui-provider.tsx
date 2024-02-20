@@ -3,9 +3,11 @@
 import { NextUIProvider, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Toaster } from "../ui/sonner";
+import { useRouter } from "next/navigation";
 
 export const UIProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -20,7 +22,7 @@ export const UIProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <NextUIProvider className="w-full h-full">
+    <NextUIProvider navigate={router.push} className="w-full h-full">
       {children}
       <Toaster />
     </NextUIProvider>

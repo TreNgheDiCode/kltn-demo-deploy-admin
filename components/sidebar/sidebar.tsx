@@ -1,36 +1,68 @@
 "use client";
 
-import { Button, Divider, Link } from "@nextui-org/react";
-import { Settings, Sheet } from "lucide-react";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { ChevronsUpDown } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ButtonsAll } from "./buttons-all";
 import { CompanyLogo } from "./company-logo";
 import { NavigationList } from "./navigation-list";
 import { UserMenu } from "./user-menu";
+import { ButtonsTool } from "./buttons-tool";
 
 export const Sidebar = () => {
+  const pathname = usePathname();
+
   return (
-    <div className="w-72 p-3 h-full flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-primary shadow-2xl">
+    <div className="fixed w-72 p-3 flex h-full flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl">
       <CompanyLogo />
-      <NavigationList />
-      <Divider />
-      <h1 className="text-primary font-semibold text-sm uppercase">Công cụ</h1>
-      <Button
-        startContent={<Sheet className="w-4 h-4" />}
-        as={Link}
-        variant="light"
-        className="items-center flex-row justify-start text-sm"
-        size="sm"
+      {/* @ts-ignore */}
+      <Accordion
+        isCompact
+        className="p-0 flex flex-col gap-3"
+        defaultExpandedKeys={["all"]}
       >
-        Lập báo cáo
-      </Button>
-      <Button
-        startContent={<Settings className="w-4 h-4" />}
-        as={Link}
-        variant="light"
-        className="items-center flex-row justify-start py-0 text-sm"
-        size="sm"
-      >
-        Cài đặt
-      </Button>
+        <AccordionItem
+          key={"all"}
+          aria-label="all"
+          indicator={<ChevronsUpDown />}
+          title="TỔNG QUAN"
+          classNames={{
+            title: "text-primary font-semibold text-sm uppercase",
+            trigger: "p-0",
+            heading: "p-0",
+          }}
+        >
+          <ButtonsAll />
+        </AccordionItem>
+        {pathname === "/statistics" && (
+          <AccordionItem
+            key={"statistics"}
+            aria-label="statistics"
+            indicator={<ChevronsUpDown />}
+            title="QUẢN LÝ"
+            classNames={{
+              title: "text-primary font-semibold text-sm uppercase",
+              trigger: "p-0",
+              heading: "p-0",
+            }}
+          >
+            <NavigationList />
+          </AccordionItem>
+        )}
+        <AccordionItem
+          key={"tools"}
+          aria-label="tools"
+          indicator={<ChevronsUpDown />}
+          title="CÔNG CỤ"
+          classNames={{
+            title: "text-primary font-semibold text-sm uppercase",
+            trigger: "p-0",
+            heading: "p-0",
+          }}
+        >
+          <ButtonsTool />
+        </AccordionItem>
+      </Accordion>
       <div className="mt-auto">
         <UserMenu />
       </div>

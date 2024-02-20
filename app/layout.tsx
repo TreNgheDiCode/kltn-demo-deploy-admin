@@ -1,8 +1,8 @@
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { UIProvider } from "@/components/providers/ui-provider";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import "@/styles/globals.css";
 import { viVN } from "@clerk/localizations";
-import { ClerkProvider, auth } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
@@ -18,8 +18,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId } = auth();
-
   return (
     <ClerkProvider
       localization={viVN}
@@ -30,14 +28,7 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={font.className}>
-          <UIProvider>
-            <main className="w-full h-full flex bg-gray-200 dark:bg-background">
-              {userId && <Sidebar />}
-              {children}
-            </main>
-          </UIProvider>
-        </body>
+        <body className={font.className}>{children}</body>
       </html>
     </ClerkProvider>
   );

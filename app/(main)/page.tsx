@@ -7,5 +7,5 @@ export default async function Home() {
     redirect("/unauthorized");
   }
 
-  return <div className="p-3">Home page</div>;
+  return <div className="p-3 ml-72">Home page</div>;
 }
