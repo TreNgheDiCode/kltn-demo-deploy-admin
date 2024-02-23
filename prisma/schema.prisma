@@ -9,3 +9,480 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum GradeType {
+  GPA
+  CGPA
+}
+
+enum CertificateType {
+  IELTS
+  TOEFL
+}
+
+enum DegreeType {
+  HIGHSCHOOL
+  UNIVERSITY
+}
+
+enum UserRole {
+  ADMIN
+  STUDENT
+}
+
+enum StudentStatus {
+  STUDYING
+  DROPPED
+  AWAITING
+  APPROVED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  studentCode   String    @unique
+  // Account
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  name          String
+  // Profile
+  dob           DateTime
+  gender        Gender
+  phoneNumber   String
+  idCardNumber  String    @unique
+  address       String
+
+  image    String?
+  // Education
+  schoolId String
+  school   School  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  program StudentProgram?
+
+  degreeType DegreeType
+
+  certificateType CertificateType
+  certificateImg  String
+
+  gradeType  GradeType
+  gradeScore Float
+
+  // Student status
+  status StudentStatus @default(AWAITING)
+
+  // Role-based authentication
+  role UserRole @default(STUDENT)
+
+  // Two Factor Authentication
+  isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+
+  // User Profile
+  profile Profile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email, name, studentCode, schoolId])
+}
+
+model School {
+  id            String  @id @default(cuid())
+  logoUrl       String
+  backgroundUrl String
+  name          String  @unique
+  colorValue    String
+  isPublished   Boolean @default(false)
+
+  users User[]
+
+  programs Program[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Program {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  coverImage  String?
+  isPublished Boolean @default(false)
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentPrograms StudentProgram[]
+
+  @@unique([schoolId, name])
+  @@index([name])
+}
+
+model StudentProgram {
+  id String @id @default(cuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  programId String
+  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, programId])
+  @@index([userId, programId])
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId])
+}
+
+enum ProfileStatus {
+  ONLINE
+  OFFLINE
+  IDLE
+  BUSY
+  INVISIBLE
+}
+
+model Profile {
+  id String @id @default(cuid())
+
+  coverImage String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Status
+  status ProfileStatus?
+
+  // Feeds
+  posts Post[]
+
+  // Biography
+  biography Biography?
+
+  // Friends
+  friends Friend[]
+
+  // Groups
+  groups ProfileGroup[]
+
+  // Blogs
+  blogs Blog[]
+
+  // Events
+  eventId String?
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  // Messages
+
+  // Areas
+  profiles ProfileArea[]
+
+  // Socials
+  socials Social[]
+
+  // Comments
+  postComments     PostComment[]
+  postCommentLikes PostCommentLike[]
+
+  // Posts liked
+  postLikes PostLike[]
+
+  // Posts shared
+  postShares PostShare[]
+
+  // Posts saved
+  postSaved PostSave[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PostStatus {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  EXCEPT
+}
+
+model Post {
+  id String @id @default(cuid())
+
+  content    String?
+  postImages PostImage[]
+  comments   PostComment[]
+  likes      PostLike[]
+  shares     PostShare[]
+  saves      PostSave[]
+
+  status PostStatus @default(PUBLIC)
+
+  isArchived Boolean @default(false)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Feed")
+}
+
+model PostImage {
+  id String @id @default(cuid())
+
+  url String
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model PostComment {
+  id String @id @default(cuid())
+
+  content String?
+
+  commentImage PostCommentImage?
+  isArchived   Boolean           @default(false)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  children PostComment[] @relation("children")
+
+  parentCommentId String?
+  parentComment   PostComment? @relation("children", fields: [parentCommentId], references: [id], onDelete: Cascade)
+
+  likes PostCommentLike[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+}
+
+model PostCommentImage {
+  id String @id @default(cuid())
+
+  url String
+
+  postCommentId String      @unique
+  postComment   PostComment @relation(fields: [postCommentId], references: [id], onDelete: Cascade)
+}
+
+model PostCommentLike {
+  id String @id @default(cuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postCommentId String
+  postComment   PostComment @relation(fields: [postCommentId], references: [id], onDelete: Cascade)
+}
+
+model PostLike {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model PostShare {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model PostSave {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  Post      Post?   @relation(fields: [postId], references: [id])
+  postId    String?
+
+  @@index([profileId])
+}
+
+model Biography {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Friend {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id String @id @default(cuid())
+
+  users ProfileGroup[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileGroup {
+  id String @id @default(cuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("UserGroup")
+}
+
+model Blog {
+  id String @id @default(cuid())
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id String @id @default(cuid())
+
+  profiles Profile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Area {
+  id String @id @default(cuid())
+
+  title String @unique
+
+  profiles ProfileArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+}
+
+model ProfileArea {
+  id String @id @default(cuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  areaId String
+  area   Area   @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([profileId, areaId])
+  @@index([profileId, areaId])
+}
+
+enum SocialType {
+  YOUTUBE
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  TWITCH
+  TWITTER
+  PORTFOLLIO
+}
+
+model Social {
+  id String @id @default(cuid())
+
+  type SocialType
+  href String
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

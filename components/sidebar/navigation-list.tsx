@@ -1,9 +1,11 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Divider, ScrollShadow, Tab, Tabs } from "@nextui-org/react";
 import {
   BadgeInfo,
   CircleUser,
+  Grid3X3,
   Pencil,
   School2,
   ScrollText,
@@ -11,7 +13,11 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Key, useCallback } from "react";
 
-export const NavigationList = () => {
+interface NavigationListProps {
+  isCollapsed: boolean;
+}
+
+export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -36,7 +42,7 @@ export const NavigationList = () => {
         classNames={{
           base: "w-full",
           tabList: "flex-col flex-1",
-          tab: "justify-start",
+          tab: cn("justify-start", isCollapsed && "w-fit"),
           tabContent: "group-data-[selected=true]:font-bold",
         }}
         onSelectionChange={(e) => {
@@ -51,7 +57,7 @@ export const NavigationList = () => {
           title={
             <div className="flex items-center gap-2">
               <ScrollText className="h-4 w-4" />
-              Hồ sơ
+              {!isCollapsed && "Hồ sơ"}
             </div>
           }
         ></Tab>
@@ -60,20 +66,22 @@ export const NavigationList = () => {
           title={
             <div className="flex items-center gap-2">
               <School2 className="h-4 w-4" />
-              Trường học
+              {!isCollapsed && "Trường học"}
             </div>
           }
         ></Tab>
       </Tabs>
       <Divider />
-      <h1 className="text-primary font-semibold text-sm uppercase">
-        Tài khoản
-      </h1>
+      {!isCollapsed && (
+        <h1 className="text-primary font-semibold text-sm uppercase">
+          Danh mục quản lý
+        </h1>
+      )}
       <Tabs
         classNames={{
           base: "w-full",
           tabList: "flex-col flex-1",
-          tab: "justify-start",
+          tab: cn("justify-start", isCollapsed && "w-fit"),
           tabContent: "group-data-[selected=true]:font-bold",
         }}
         onSelectionChange={(e) => {
@@ -83,11 +91,20 @@ export const NavigationList = () => {
         selectedKey={category ?? ""}
       >
         <Tab
+          key={"list"}
+          title={
+            <div className="flex items-center gap-2">
+              <Grid3X3 className="h-4 w-4" />
+              {!isCollapsed && "Thành phần"}
+            </div>
+          }
+        ></Tab>
+        <Tab
           key={"accounts"}
           title={
             <div className="flex items-center gap-2">
               <CircleUser className="h-4 w-4" />
-              Tài khoản
+              {!isCollapsed && "Học sinh"}
             </div>
           }
         ></Tab>
@@ -96,7 +113,7 @@ export const NavigationList = () => {
           title={
             <div className="flex items-center gap-2">
               <Pencil className="h-4 w-4" />
-              Bài viết
+              {!isCollapsed && "Bài viết"}
             </div>
           }
         ></Tab>
@@ -105,7 +122,7 @@ export const NavigationList = () => {
           title={
             <div className="flex items-center gap-2">
               <BadgeInfo className="h-4 w-4" />
-              Phản hồi
+              {!isCollapsed && "Phản hồi"}
             </div>
           }
         ></Tab>

@@ -1,10 +1,15 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Button, Link } from "@nextui-org/react";
 import { LayoutDashboard, LayoutList } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export const ButtonsAll = () => {
+interface ButtonsAllProps {
+  isCollapsed: boolean;
+}
+
+export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -19,27 +24,33 @@ export const ButtonsAll = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={cn("flex flex-col gap-3", isCollapsed && "items-center")}>
       <Button
         startContent={<LayoutDashboard className="w-4 h-4" />}
         as={Link}
         color={pathname === "/" ? "primary" : undefined}
         variant={pathname === "/" ? "shadow" : "light"}
-        className="items-center flex-row justify-start text-sm"
+        className={cn(
+          "items-center flex-row justify-start text-sm",
+          isCollapsed && "w-fit min-w-0"
+        )}
         size="sm"
         href="/"
       >
-        Bảng điều khiển
+        {!isCollapsed && "Bảng điều khiển"}
       </Button>
       <Button
         onClick={onClick}
         startContent={<LayoutList className="w-4 h-4" />}
         color={pathname === "/statistics" ? "primary" : undefined}
         variant={pathname === "/statistics" ? "shadow" : "light"}
-        className="items-center flex-row justify-start text-sm"
+        className={cn(
+          "items-center flex-row justify-start text-sm",
+          isCollapsed && "w-fit min-w-0"
+        )}
         size="sm"
       >
-        Thống kê
+        {!isCollapsed && "Thống kê"}
       </Button>
     </div>
   );

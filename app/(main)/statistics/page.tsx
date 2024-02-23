@@ -11,7 +11,7 @@ const StatisticsPage = async ({ searchParams }: StatisticsPageProps) => {
   }
 
   return (
-    <div className="p-3 ml-72">
+    <div className="p-3">
       Statistics Page: {searchParams?.subject}, {searchParams?.category}
     </div>
   );
