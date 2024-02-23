@@ -1,10 +1,15 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Button, Link, Switch } from "@nextui-org/react";
 import { MoonIcon, Palette, Settings, Sheet, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 
-export const ButtonsTool = () => {
+interface ButtonsToolProps {
+  isCollapsed: boolean;
+}
+
+export const ButtonsTool = ({ isCollapsed }: ButtonsToolProps) => {
   const { theme, setTheme } = useTheme();
 
   const onChange = () => {
@@ -16,34 +21,43 @@ export const ButtonsTool = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={cn("flex flex-col gap-3", isCollapsed && "items-center")}>
       <Button
         startContent={<Sheet className="w-4 h-4" />}
         as={Link}
         variant="light"
-        className="items-center flex-row justify-start text-sm"
+        className={cn(
+          "items-center flex-row justify-start py-0 text-sm",
+          isCollapsed && "w-fit min-w-0"
+        )}
         size="sm"
       >
-        Lập báo cáo
+        {!isCollapsed && "Lập báo cáo"}
       </Button>
       <Button
         startContent={<Settings className="w-4 h-4" />}
         as={Link}
         variant="light"
-        className="items-center flex-row justify-start py-0 text-sm"
+        className={cn(
+          "items-center flex-row justify-start py-0 text-sm",
+          isCollapsed && "w-fit min-w-0"
+        )}
         size="sm"
       >
-        Cài đặt
+        {!isCollapsed && "Cài đặt"}
       </Button>
       <Button
         onClick={onChange}
-        startContent={<Palette className="w-4 h-4" />}
+        startContent={!isCollapsed && <Palette className="w-4 h-4" />}
         as={Link}
         variant="light"
-        className="items-center flex-row justify-start py-0 text-sm pr-0"
+        className={cn(
+          "items-center flex-row justify-start py-0 text-sm",
+          isCollapsed && "w-fit min-w-0"
+        )}
         size="sm"
       >
-        Giao diện
+        {!isCollapsed && "Giao diện"}
         <Switch
           className="ml-auto"
           classNames={{

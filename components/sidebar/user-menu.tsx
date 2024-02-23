@@ -29,7 +29,11 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 
 type formType = z.infer<typeof nameSchema>;
 
-export const UserMenu = () => {
+interface UserMenuProps {
+  isCollapsed: boolean;
+}
+
+export const UserMenu = ({ isCollapsed }: UserMenuProps) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -112,14 +116,16 @@ export const UserMenu = () => {
       <Card className="p-0">
         <CardBody className="flex-row items-center justify-start gap-2">
           <UserButton afterSignOutUrl="/login" />
-          <div className="flex flex-col items-start justify-center">
-            <span className="font-semibold text-sm">
-              {user?.fullName || "[Chưa định danh]"}
-            </span>
-            <span className="text-xs">
-              {user?.primaryEmailAddress?.emailAddress}
-            </span>
-          </div>
+          {!isCollapsed && (
+            <div className="flex flex-col items-start justify-center">
+              <span className="font-semibold text-sm">
+                {user?.fullName || "[Chưa định danh]"}
+              </span>
+              <span className="text-xs">
+                {user?.primaryEmailAddress?.emailAddress}
+              </span>
+            </div>
+          )}
           <Popover
             isOpen={open}
             showArrow={true}
