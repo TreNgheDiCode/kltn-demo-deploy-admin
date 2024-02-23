@@ -63,7 +63,9 @@ export const Sidebar = () => {
       <Accordion
         isCompact
         className="p-0 flex flex-col gap-3"
-        defaultExpandedKeys={["all"]}
+        defaultExpandedKeys={
+          pathname.startsWith("/statistics") ? ["statistics"] : ["all"]
+        }
       >
         <AccordionItem
           key={"all"}
@@ -79,7 +81,7 @@ export const Sidebar = () => {
         >
           <ButtonsAll isCollapsed={isCollapsed} />
         </AccordionItem>
-        {pathname === "/statistics" && (
+        {pathname.startsWith("/statistics") && (
           <AccordionItem
             key={"statistics"}
             aria-label="statistics"

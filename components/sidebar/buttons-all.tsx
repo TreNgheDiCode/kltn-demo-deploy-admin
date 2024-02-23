@@ -18,9 +18,9 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
     const params = new URLSearchParams(searchParams.toString());
 
     params.set("subject", "profiles");
-    params.set("category", "accounts");
+    params.set("category", "list");
 
-    router.push("/statistics" + "?" + params.toString());
+    router.push("/statistics/profiles" + "?" + params.toString());
   };
 
   return (
@@ -42,8 +42,8 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
       <Button
         onClick={onClick}
         startContent={<LayoutList className="w-4 h-4" />}
-        color={pathname === "/statistics" ? "primary" : undefined}
-        variant={pathname === "/statistics" ? "shadow" : "light"}
+        color={pathname.startsWith("/statistics") ? "primary" : undefined}
+        variant={pathname.startsWith("/statistics") ? "shadow" : "light"}
         className={cn(
           "items-center flex-row justify-start text-sm",
           isCollapsed && "w-fit min-w-0"
