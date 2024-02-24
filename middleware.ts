@@ -4,11 +4,12 @@ import { NextResponse } from "next/server";
 export default authMiddleware({
   // Routes that can always be accessed, and have
   // no authentication information
-  ignoredRoutes: ["/unauthorized", "/login"],
+  ignoredRoutes: ["/unauthorized", "/login", "/api/auth/login"],
   afterAuth: (auth, req) => {
     const isAdmin = auth.sessionClaims?.metadata.role === "ADMIN";
 
     const isLoggedIn = auth.sessionId;
+    console.log(req.url);
 
     if (isLoggedIn) {
       if (!isAdmin) {

@@ -1,10 +1,10 @@
 "use client";
 
+import { SchoolLib } from "@/types/type";
 import { Card, CardHeader } from "@nextui-org/react";
+import { Bell, MessageCircleMore, Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { SchoolsSelect } from "./schools-select";
-import { SchoolLib } from "@/types/type";
-import { Bell, MessageCircleMore, Search } from "lucide-react";
 
 const categoryDescription = {
   list: "Quản lý thông tin các bộ phận của trường học",
