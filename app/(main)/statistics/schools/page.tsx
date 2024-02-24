@@ -1,5 +1,7 @@
 import { HeadingSchool } from "@/components/school/heading";
+import { HeadingNavigation } from "@/components/school/heading-navigation";
 import { GetSchoolsById, GetSchoolsLib } from "@/lib/schools";
+import { Card, CardBody } from "@nextui-org/react";
 
 const SchoolPage = async ({
   searchParams,
@@ -13,7 +15,15 @@ const SchoolPage = async ({
     <div className="space-y-3">
       <HeadingSchool schools={schools} />
       {selectSchool ? (
-        <div></div>
+        <>
+          <Card>
+            <CardBody>
+              {searchParams.category === "list" && (
+                <HeadingNavigation school={selectSchool} />
+              )}
+            </CardBody>
+          </Card>
+        </>
       ) : (
         <div className="font-semibold text-center text-lg">
           Vui lòng chọn một trường để hiển thị
