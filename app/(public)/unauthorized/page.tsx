@@ -1,11 +1,11 @@
 "use client";
 
-import { SignOutButton, useClerk } from "@clerk/nextjs";
+import { SignOutButton, useAuth, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 export default function UnauthenticatedPage() {
-  const { signOut } = useClerk();
+  const { signOut } = useAuth();
   const router = useRouter();
   const onClick = useCallback(() => {
     signOut(() => router.push("/login"));
