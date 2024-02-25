@@ -3,20 +3,24 @@
 import { SchoolExtend } from "@/types/type";
 import {
   Avatar,
+  Button,
   Chip,
-  Divider,
   Listbox,
   ListboxItem,
   ScrollShadow,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { HeadingTitle } from "./heading-title";
+import { Pencil } from "lucide-react";
+import { useUpdateSchoolProfile } from "@/hooks/use-update-school-profile";
 
 interface SchoolProfileProps {
   school: SchoolExtend;
 }
 
 export const SchoolProfile = ({ school }: SchoolProfileProps) => {
+  const { onOpen } = useUpdateSchoolProfile();
+
   return (
     <div className="space-y-3">
       <div
@@ -26,6 +30,21 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
         <h1 className="font-bold text-white dark:text-primary text-4xl z-10 text-center">
           {school.name}
         </h1>
+        <Button
+          onClick={() =>
+            onOpen({
+              isPublished: school.isPublished,
+              name: school.name,
+              id: school.id,
+            })
+          }
+          startContent={<Pencil className="size-4" />}
+          color="primary"
+          variant="shadow"
+          className="z-10 absolute right-3 bottom-3 bg-white dark:bg-background text-primary"
+        >
+          Chỉnh sửa thông tin
+        </Button>
         <Image
           alt="school cover"
           src={school.backgroundUrl}
@@ -62,7 +81,9 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                 color="primary"
                 className="hover:cursor-default"
                 endContent={
-                  <span className="font-semibold">{school.name}</span>
+                  <span className="truncate font-semibold max-w-[300px]">
+                    {school.name}
+                  </span>
                 }
               >
                 Tên
