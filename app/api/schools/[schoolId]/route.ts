@@ -2,7 +2,10 @@ import { db } from "@/lib/db";
 import { GetSchoolsById } from "@/lib/schools";
 import { NextResponse } from "next/server";
 
-export async function GET({ params }: { params: { schoolId: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { schoolId: string } }
+) {
   try {
     if (!params.schoolId) {
       return NextResponse.json(
