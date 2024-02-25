@@ -1,6 +1,6 @@
 "use client";
 
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem, ScrollShadow } from "@nextui-org/react";
 import { ChevronsLeft, ChevronsRight, ChevronsUpDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ButtonsAll } from "./buttons-all";
@@ -45,7 +45,7 @@ export const Sidebar = () => {
   return (
     <aside
       ref={sidebarRef}
-      className="group/sidebar relative w-72 p-3 flex h-full flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl"
+      className="group/sidebar h-screen relative z-10 w-72 p-3 flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl overflow-y-auto scrollbar-hide"
     >
       <div
         role="button"

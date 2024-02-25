@@ -21,6 +21,30 @@ export const GetSchoolsById = async (id: string) => {
       id,
       isPublished: true,
     },
+    include: {
+      locations: {
+        select: {
+          name: true,
+          address: true,
+        },
+      },
+      programs: {
+        select: {
+          name: true,
+        },
+      },
+      galleries: {
+        select: {
+          name: true,
+        },
+      },
+      history: true,
+      users: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   return school;
