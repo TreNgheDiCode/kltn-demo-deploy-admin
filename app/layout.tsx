@@ -1,3 +1,4 @@
+import { ModalProvider } from "@/components/providers/modal-provider";
 import "@/styles/globals.css";
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -29,6 +30,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={font.className}>
           {children}
+          <ModalProvider />
           <Analytics />
         </body>
       </html>

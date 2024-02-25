@@ -11,7 +11,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       enableSystem
     >
       <UIProvider>
-        <main className="w-full h-full flex bg-gray-200 dark:bg-background">
+        <main className="w-full flex bg-gray-200 dark:bg-background">
           <Sidebar />
           {children}
         </main>

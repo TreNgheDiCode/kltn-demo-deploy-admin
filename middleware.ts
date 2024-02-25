@@ -6,10 +6,13 @@ export default authMiddleware({
   // no authentication information
   ignoredRoutes: ["/unauthorized", "/login", "/api/auth/login"],
   afterAuth: (auth, req) => {
+    const isApiRoutes = req.nextUrl.pathname.startsWith("/api");
     const isAdmin = auth.sessionClaims?.metadata.role === "ADMIN";
-
     const isLoggedIn = auth.sessionId;
-    console.log(req.url);
+
+    if (isApiRoutes) {
+      return NextResponse.next();
+    }
 
     if (isLoggedIn) {
       if (!isAdmin) {

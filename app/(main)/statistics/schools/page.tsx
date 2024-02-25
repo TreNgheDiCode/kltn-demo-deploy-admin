@@ -12,12 +12,13 @@ const SchoolPage = async ({
   const selectSchool = await GetSchoolsById((searchParams.id as string) ?? "");
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 max-h-screen">
       <HeadingSchool schools={schools} />
+
       {selectSchool ? (
         <>
-          <Card>
-            <CardBody>
+          <Card className="overflow-y-auto max-h-[calc(100vh-116px)]">
+            <CardBody className="scrollbar-hide relative">
               {searchParams.category === "list" && (
                 <HeadingNavigation school={selectSchool} />
               )}

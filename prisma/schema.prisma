@@ -207,11 +207,15 @@ model GalleryImage {
 model SchoolBlog {
   id String @id @default(cuid())
 
-  content String
+  content String?
   images  SchoolBlogImages[]
+  title   String
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SchoolBlogImages {

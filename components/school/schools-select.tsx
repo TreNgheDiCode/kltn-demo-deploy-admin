@@ -13,6 +13,8 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const schoolId = searchParams.get("id") as string;
+
   const onSelect = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -22,6 +24,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
   };
   return (
     <Select
+      defaultSelectedKeys={schoolId ? [schoolId] : undefined}
       className="max-w-[250px] lg:max-w-[400px]"
       onChange={(e) => {
         onSelect(e.target.value);
