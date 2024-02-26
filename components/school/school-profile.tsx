@@ -37,6 +37,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
               name: school.name,
               id: school.id,
               logo: school.logoUrl,
+              background: school.backgroundUrl,
             })
           }
           startContent={<Pencil className="size-4" />}
@@ -69,7 +70,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                     color={school.isPublished ? "success" : "default"}
                     variant="bordered"
                   >
-                    {school.isPublished ? "Kích hoạt" : "Đang ẩn"}
+                    {school.isPublished ? "Kích hoạt" : "Tạm ẩn"}
                   </Chip>
                 }
                 className="hover:cursor-default"

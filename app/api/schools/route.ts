@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const schools = await db.school.findMany();
+    const schools = await db.school.findMany({
+      where: {
+        isPublished: true,
+      },
+    });
 
     return NextResponse.json(schools, { status: 200 });
   } catch (error) {

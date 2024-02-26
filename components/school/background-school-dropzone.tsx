@@ -1,7 +1,6 @@
 "use client";
 
-import { Avatar, CircularProgress, Image, Spinner } from "@nextui-org/react";
-import { progress } from "framer-motion";
+import { CircularProgress, Image } from "@nextui-org/react";
 import { UploadCloudIcon, X } from "lucide-react";
 import * as React from "react";
 import { useDropzone, type DropzoneOptions } from "react-dropzone";
@@ -17,7 +16,7 @@ const variants = {
   reject: "border border-red-700 bg-red-700 bg-opacity-10",
 };
 
-export type LogoFile = {
+export type BackgroundFile = {
   file: File | string | undefined;
   progress?: "PENDING" | "COMPLETE" | number;
 };
@@ -26,8 +25,8 @@ type InputProps = {
   width?: number;
   height?: number;
   className?: string;
-  value?: LogoFile;
-  onSelectedFile?: (file?: LogoFile) => void | Promise<void>;
+  value?: BackgroundFile;
+  onSelectedFile?: (file?: BackgroundFile) => void | Promise<void>;
   disabled?: boolean;
   dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
 };
@@ -47,7 +46,7 @@ const ERROR_MESSAGES = {
   },
 };
 
-const LogoSchoolDropzone = React.forwardRef<HTMLInputElement, InputProps>(
+const BackgroundSchoolDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       dropzoneOptions,
@@ -150,12 +149,7 @@ const LogoSchoolDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {imageUrl ? (
             // Image Preview
             <div className="w-full h-full relative">
-              <Avatar
-                isBordered
-                className="absolute top-[calc(50%-56px)] left-[calc(50%-56px)] w-28 h-28"
-                src={imageUrl}
-                alt={acceptedFiles[0]?.name}
-              />
+              <Image src={imageUrl} alt={acceptedFiles[0]?.name} />
             </div>
           ) : (
             // Upload Icon
@@ -207,7 +201,7 @@ const LogoSchoolDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-LogoSchoolDropzone.displayName = "SingleImageDropzone";
+BackgroundSchoolDropzone.displayName = "BackgroundSchool";
 
 const Button = React.forwardRef<
   HTMLButtonElement,
@@ -246,4 +240,4 @@ function formatFileSize(bytes?: number) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export { LogoSchoolDropzone };
+export { BackgroundSchoolDropzone };

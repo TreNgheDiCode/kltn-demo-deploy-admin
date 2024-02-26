@@ -37,3 +37,39 @@ export const updateLogo = async (id: string, url: string) => {
     return { error: "Cập nhật ảnh thất bại" };
   }
 };
+
+export const updateBackground = async (id: string, url: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        backgroundUrl: url,
+      },
+    });
+
+    return { success: "Cập nhật hình nền thành công" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Cập nhật hình nền thất bại" };
+  }
+};
+
+export const updateStatus = async (id: string, value: boolean) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        isPublished: value,
+      },
+    });
+
+    return { success: "Cập nhật trạng thái trường thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL STATUS", error);
+    return { error: "Lỗi cập nhật trạng thái của trường" };
+  }
+};

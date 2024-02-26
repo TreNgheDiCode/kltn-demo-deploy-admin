@@ -1,34 +1,56 @@
 "use client";
 
+import {
+  UpdateName,
+  updateBackground,
+  updateLogo,
+  updateStatus,
+} from "@/actions/school";
+import { useEdgeStore } from "@/hooks/edgestore";
 import { useUpdateSchoolProfile } from "@/hooks/use-update-school-profile";
+import {
+  Button,
+  Chip,
+  Divider,
+  Input,
+  Radio,
+  RadioGroup,
+  Spinner,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { Key, useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  BackgroundFile,
+  BackgroundSchoolDropzone,
+} from "../school/background-school-dropzone";
+import { LogoFile, LogoSchoolDropzone } from "../school/logo-school-dropzone";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Button, Input } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { UpdateName, updateLogo } from "@/actions/school";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { LogoFile, LogoSchoolDropzone } from "../school/logo-school-dropzone";
-import { useEdgeStore } from "@/hooks/edgestore";
-import { progress } from "framer-motion";
 
 export const UpdateSchoolProfileModal = () => {
   const router = useRouter();
   const { isOpen, onClose, data } = useUpdateSchoolProfile();
 
   const [name, setName] = useState(data.name);
-  const [file, setFile] = useState<LogoFile | undefined>({ file: data.logo });
+  const [logo, setLogo] = useState<LogoFile | undefined>({ file: data.logo });
+  const [background, setBackground] = useState<LogoFile | undefined>({
+    file: data.logo,
+  });
   const [isUploading, setIsUploading] = useState(false);
+  const [status, setStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { edgestore } = useEdgeStore();
 
-  const onSelectedFile = async (value?: LogoFile) => {
-    setFile(value);
+  const onSelectedLogo = async (value?: LogoFile) => {
+    setLogo(value);
 
     if (value) {
       setIsUploading(true);
@@ -39,11 +61,11 @@ export const UpdateSchoolProfileModal = () => {
             replaceTargetUrl: data.logo ?? undefined,
           },
           onProgressChange: async (progress) => {
-            uploadImageProgress(progress);
+            uploadLogoProgress(progress);
 
             if (progress === 100) {
               await new Promise((resolve) => setTimeout(resolve, 1000));
-              uploadImageProgress("COMPLETE");
+              uploadLogoProgress("COMPLETE");
             }
           },
         });
@@ -71,12 +93,87 @@ export const UpdateSchoolProfileModal = () => {
     }
   };
 
-  const uploadImageProgress = (progress: LogoFile["progress"]) => {
-    setFile((file) => {
+  const onStatusChange = async (e: boolean) => {
+    setStatus(e);
+    setIsLoading(true);
+
+    await updateStatus(data.id, e)
+      .then((res) => {
+        if (res.success) {
+          toast.success(res.success);
+        }
+
+        if (res.error) {
+          toast.error(res.error);
+        }
+      })
+      .finally(() => setIsLoading(false));
+
+    router.refresh();
+    onClose();
+  };
+
+  const onSelectedBackground = async (value?: BackgroundFile) => {
+    setBackground(value);
+
+    if (value) {
+      setIsUploading(true);
+      try {
+        const res = await edgestore.publicFiles.upload({
+          file: value?.file as File,
+          options: {
+            replaceTargetUrl: data.background ?? undefined,
+          },
+          onProgressChange: async (progress) => {
+            uploadBackgroundProgress(progress);
+
+            if (progress === 100) {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              uploadBackgroundProgress("COMPLETE");
+            }
+          },
+        });
+
+        if (res.url) {
+          await updateBackground(data.id, res.url).then((res) => {
+            if (res.success) {
+              toast.success(res.success);
+            }
+
+            if (res.error) {
+              toast.error(res.error);
+            }
+          });
+        }
+
+        router.refresh();
+        onClose();
+      } catch (error) {
+        console.log(error);
+        toast.error("Thay đổi hình nền thất bại");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  const uploadLogoProgress = (progress: LogoFile["progress"]) => {
+    setLogo((file) => {
       const newFile = structuredClone(file);
 
       if (newFile) {
-        console.log("meo");
+        newFile.progress = progress;
+      }
+
+      return newFile;
+    });
+  };
+
+  const uploadBackgroundProgress = (progress: BackgroundFile["progress"]) => {
+    setBackground((file) => {
+      const newFile = structuredClone(file);
+
+      if (newFile) {
         newFile.progress = progress;
       }
 
@@ -86,7 +183,9 @@ export const UpdateSchoolProfileModal = () => {
 
   useEffect(() => {
     setName(data.name);
-    setFile({ file: data.logo });
+    setLogo({ file: data.logo });
+    setBackground({ file: data.background });
+    setStatus(data.isPublished);
   }, [data]);
 
   const updateName = async () => {
@@ -111,14 +210,28 @@ export const UpdateSchoolProfileModal = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Cập nhật thông tin</DialogTitle>
+          <DialogDescription>
+            Chỉnh sửa các thông tin hiển thị của trường
+          </DialogDescription>
         </DialogHeader>
-        <div className="divide-black flex flex-col gap-3">
-          <LogoSchoolDropzone
-            disabled={isUploading}
-            onSelectedFile={onSelectedFile}
-            value={file}
-          />
-          <div>Background</div>
+        <Divider />
+        <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-scroll scrollbar-hide">
+          <div>
+            <h1 className="text-primary font-semibold text-lg">Ảnh đại diện</h1>
+            <LogoSchoolDropzone
+              disabled={isUploading}
+              onSelectedFile={onSelectedLogo}
+              value={logo}
+            />
+          </div>
+          <div>
+            <h1 className="text-primary font-semibold text-lg">Hình nền</h1>
+            <BackgroundSchoolDropzone
+              disabled={isUploading}
+              onSelectedFile={onSelectedBackground}
+              value={background}
+            />
+          </div>
           <Input
             label="Tên trường"
             labelPlacement="outside"
@@ -135,9 +248,48 @@ export const UpdateSchoolProfileModal = () => {
             }
             classNames={{
               inputWrapper: "pr-0",
+              label: "text-primary font-semibold text-lg",
             }}
           />
-          <div>Status</div>
+          <div className="space-y-2">
+            <h1 className="text-primary font-semibold text-lg">Trạng thái</h1>
+            <RadioGroup
+              isDisabled={isLoading}
+              defaultValue={status.toString()}
+              onValueChange={(e) => onStatusChange(e === "true")}
+            >
+              <Radio
+                value={"true"}
+                description="Hiển thị trường công khai với người dùng (Phạm vi: API/UI)"
+              >
+                <Chip
+                  variant="bordered"
+                  color="success"
+                  className="max-w-full w-full"
+                  classNames={{
+                    content: "text-center",
+                  }}
+                >
+                  Kích hoạt
+                </Chip>
+              </Radio>
+              <Radio
+                value={"false"}
+                description="Ẩn trường khỏi các hoạt động tìm kiếm và thể hiện nội dung"
+              >
+                <Chip
+                  variant="bordered"
+                  color="default"
+                  className="max-w-full w-full"
+                  classNames={{
+                    content: "text-center",
+                  }}
+                >
+                  Tạm ẩn
+                </Chip>
+              </Radio>
+            </RadioGroup>
+          </div>
         </div>
         <DialogFooter>
           <Button

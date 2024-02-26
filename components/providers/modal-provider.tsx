@@ -12,11 +12,7 @@ export const ModalProvider = () => {
   }, []);
 
   if (!isMounted) {
-    return (
-      <div className="justify-center items-center flex">
-        <Spinner title="Loading" color="primary" />
-      </div>
-    );
+    return null;
   }
 
   return (
