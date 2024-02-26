@@ -36,6 +36,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
               isPublished: school.isPublished,
               name: school.name,
               id: school.id,
+              logo: school.logoUrl,
             })
           }
           startContent={<Pencil className="size-4" />}

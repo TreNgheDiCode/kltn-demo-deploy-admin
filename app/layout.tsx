@@ -1,4 +1,5 @@
 import { ModalProvider } from "@/components/providers/modal-provider";
+import { EdgeStoreProvider } from "@/hooks/edgestore";
 import "@/styles/globals.css";
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -29,9 +30,11 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className={font.className}>
-          {children}
-          <ModalProvider />
-          <Analytics />
+          <EdgeStoreProvider>
+            {children}
+            <ModalProvider />
+            <Analytics />
+          </EdgeStoreProvider>
         </body>
       </html>
     </ClerkProvider>
