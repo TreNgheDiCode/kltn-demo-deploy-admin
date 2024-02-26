@@ -12,6 +12,8 @@
   "dependencies": {
     "@clerk/localizations": "^1.26.15",
     "@clerk/nextjs": "^4.29.7",
+    "@edgestore/react": "^0.1.6",
+    "@edgestore/server": "^0.1.6",
     "@hookform/resolvers": "^3.3.4",
     "@nextui-org/react": "^2.2.9",
     "@prisma/client": "^5.10.2",
@@ -43,6 +45,7 @@
     "nodemailer": "^6.9.10",
     "react": "^18",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.50.1",
     "sonner": "^1.4.1",
     "tailwind-merge": "^2.2.1",

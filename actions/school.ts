@@ -19,3 +19,21 @@ export const UpdateName = async (id: string, name: string) => {
     return { error: "Lỗi cập nhật tên trường" };
   }
 };
+
+export const updateLogo = async (id: string, url: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        logoUrl: url,
+      },
+    });
+
+    return { success: "Cập nhật ảnh thành công" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Cập nhật ảnh thất bại" };
+  }
+};
