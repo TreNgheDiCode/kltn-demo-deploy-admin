@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     if (!isPasswordMatch) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { error: "Thông tin tài khoản không chính xác" },
         { status: 403 }
       );
     }
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "Email is not verified, please check your email for confirmation of account",
+            "Email chưa xác thực, vui lòng kiểm tra hộp thư để được xác thực",
         },
         { status: 403 }
       );
