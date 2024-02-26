@@ -136,7 +136,14 @@ export async function POST(req: Request) {
       verificationToken.token
     );
 
-    return NextResponse.json(profile, { status: 200 });
+    return NextResponse.json(
+      {
+        profile,
+        message:
+          "Đăng ký thành công, vui lòng check hòm thư email để xác thực người dùng",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log("REGISTER ERROR", error);
 
