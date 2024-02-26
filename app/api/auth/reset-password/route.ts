@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { error: "Lỗi khôi phục mật khẩu" },
+      { error: "Lỗi gửi email khôi phục mật khẩu" },
       { status: 500 }
     );
   }

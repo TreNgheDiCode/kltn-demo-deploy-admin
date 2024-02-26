@@ -50,7 +50,7 @@ export const sendPasswordResetEmail = async (
     },
   });
 
-  const resetLink = `https://study-abroad-canada.vercel.app/auth/new-password?token=${token}`;
+  const resetLink = `http://localhost:3000/api/auth/new-password/${token}`;
 
   const emailHtml = render(
     <ResetPasswordEmail name={name} resetLink={resetLink} />

@@ -64,6 +64,18 @@ export const getPasswordResetTokenByEmail = async (email: string) => {
   }
 };
 
+export const getPasswordResetTokenByToken = async (token: string) => {
+  try {
+    const passwordResetToken = await db.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    return passwordResetToken;
+  } catch {
+    return null;
+  }
+};
+
 export const generatePasswordResetToken = async (email: string) => {
   const token = v4();
   const expires = new Date(new Date().getTime() + 3600 * 1000);
