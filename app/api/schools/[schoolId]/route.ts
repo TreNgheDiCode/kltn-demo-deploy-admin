@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { GetSchoolsById } from "@/lib/schools";
+import { GetSchoolsByIdApi } from "@/lib/schools";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -14,7 +14,7 @@ export async function GET(
       );
     }
 
-    const existingSchool = await GetSchoolsById(params.schoolId);
+    const existingSchool = await GetSchoolsByIdApi(params.schoolId);
 
     if (!existingSchool) {
       return NextResponse.json(

@@ -24,6 +24,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
   };
   return (
     <Select
+      disallowEmptySelection
       defaultSelectedKeys={schoolId ? [schoolId] : undefined}
       className="max-w-[250px] lg:max-w-[400px]"
       onChange={(e) => {
