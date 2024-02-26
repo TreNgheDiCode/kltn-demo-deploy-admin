@@ -1,3 +1,4 @@
+import ResetPasswordEmail from "@/template/reset-password-email";
 import { VerificationEmail } from "@/template/verification-email";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
@@ -30,6 +31,35 @@ export const sendVerificationEmail = async (
     from: "gabayan170@gmail.com",
     to: email,
     subject: "Confirm your email",
+    html: emailHtml,
+  };
+
+  await transporter.sendMail(options);
+};
+
+export const sendPasswordResetEmail = async (
+  name: string,
+  email: string,
+  token: string
+) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "gabayan170@gmail.com",
+      pass: process.env.EMAIL_APP_PASSWORD,
+    },
+  });
+
+  const resetLink = `http://localhost:3000/api/auth/new-password/${token}`;
+
+  const emailHtml = render(
+    <ResetPasswordEmail name={name} resetLink={resetLink} />
+  );
+
+  const options = {
+    from: "gabayan170@gmail.com",
+    to: email,
+    subject: "Reset your password",
     html: emailHtml,
   };
 

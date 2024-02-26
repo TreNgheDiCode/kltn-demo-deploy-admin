@@ -155,3 +155,28 @@ export const RegisterSchema = z
       path: ["gradeScore"],
     }
   );
+
+export const NewPasswordSchema = z
+  .object({
+    password: z.string().min(1, {
+      message: "Password is required",
+    }),
+    confirmPassword: z.string().min(1, {
+      message: "Confirm password is required",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords mismatch",
+    path: ["confirmPassword"],
+  });
+
+export const ResetSchema = z.object({
+  email: z
+    .string()
+    .min(1, {
+      message: "Email is required",
+    })
+    .email({
+      message: "Invalid type of email",
+    }),
+});
