@@ -34,16 +34,28 @@ export async function POST(req: Request) {
       ...value
     } = validatedFields.data;
 
-    const exisitingUser = await db.user.findUnique({
+    const exisitingUserEmail = await db.user.findUnique({
       where: {
         email,
+      },
+    });
+
+    const exisitingUserIdCard = await db.user.findUnique({
+      where: {
         idCardNumber,
       },
     });
 
-    if (exisitingUser) {
+    if (exisitingUserEmail) {
       return NextResponse.json(
         { error: "Email đã được sử dụng" },
+        { status: 403 }
+      );
+    }
+
+    if (exisitingUserIdCard) {
+      return NextResponse.json(
+        { error: "Căn cước công dân đã được sử dụng" },
         { status: 403 }
       );
     }
