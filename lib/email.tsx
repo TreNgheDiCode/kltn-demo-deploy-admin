@@ -17,7 +17,7 @@ export const sendVerificationEmail = async (
     },
   });
 
-  const confirmLink = `https://study-abroad-canada.vercel.app/auth/new-verification?token=${token}`;
+  const confirmLink = `${process.env.NEXT_PUBLIC_URL}/auth/new-verification?token=${token}`;
 
   const emailHtml = render(
     <VerificationEmail
@@ -50,7 +50,7 @@ export const sendPasswordResetEmail = async (
     },
   });
 
-  const resetLink = `http://localhost:3000/api/auth/new-password/${token}`;
+  const resetLink = `${process.env.NEXT_PUBLIC_URL}/auth/new-password?token=${token}`;
 
   const emailHtml = render(
     <ResetPasswordEmail name={name} resetLink={resetLink} />
