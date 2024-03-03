@@ -13,6 +13,8 @@ import Image from "next/image";
 import { HeadingTitle } from "./heading-title";
 import { Pencil } from "lucide-react";
 import { useUpdateSchoolProfile } from "@/hooks/use-update-school-profile";
+import { useMemo } from "react";
+import dynamic from "next/dynamic";
 
 interface SchoolProfileProps {
   school: SchoolExtend;
@@ -20,6 +22,14 @@ interface SchoolProfileProps {
 
 export const SchoolProfile = ({ school }: SchoolProfileProps) => {
   const { onOpen } = useUpdateSchoolProfile();
+
+  const Editor = useMemo(
+    () =>
+      dynamic(() => import("@/components/school/description-editor"), {
+        ssr: false,
+      }),
+    []
+  );
 
   return (
     <div className="space-y-3">
@@ -183,6 +193,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
         </div>
       </div>
       <HeadingTitle text="Giới thiệu" />
+      <Editor editable={false} initialContent={school.description || ""} />
       <HeadingTitle text="Lịch sử hình thành" />
     </div>
   );
