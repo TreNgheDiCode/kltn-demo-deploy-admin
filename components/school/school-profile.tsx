@@ -195,6 +195,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
       <HeadingTitle text="Giới thiệu" />
       <Editor editable={false} initialContent={school.description || ""} />
       <HeadingTitle text="Lịch sử hình thành" />
+      <Editor editable={false} initialContent={school.history || ""} />
     </div>
   );
 };

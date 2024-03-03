@@ -1,6 +1,6 @@
 "use client";
 
-import { updateDescription } from "@/actions/school";
+import { updateHistory } from "@/actions/school";
 import { useModalAction } from "@/hooks/use-modal-action";
 import { Button } from "@nextui-org/react";
 import { LogOut, Pencil, Save } from "lucide-react";
@@ -9,15 +9,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-interface SchoolDescriptionProps {
+interface SchoolHistoryProps {
   id: string;
-  description: string | null;
+  history: string | null;
 }
 
-export const SchoolDescription = ({
-  id,
-  description,
-}: SchoolDescriptionProps) => {
+export const SchoolHistory = ({ id, history }: SchoolHistoryProps) => {
   const router = useRouter();
   const modal = useModalAction();
 
@@ -25,7 +22,7 @@ export const SchoolDescription = ({
   const [isLoading, setLoading] = useState(false);
 
   const onChange = (value: string) => {
-    description = value;
+    history = value;
   };
 
   const toggleEdit = (mode: boolean) => {
@@ -35,8 +32,8 @@ export const SchoolDescription = ({
   const onSave = async () => {
     setLoading(true);
 
-    if (description) {
-      await updateDescription(id, description)
+    if (history) {
+      await updateHistory(id, history)
         .then((res) => {
           if (res.success) {
             toast.success(res.success);
@@ -60,7 +57,6 @@ export const SchoolDescription = ({
   };
 
   const Editor = dynamic(() => import("./description-editor"), { ssr: false });
-
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-x-3">
@@ -102,16 +98,17 @@ export const SchoolDescription = ({
           </>
         )}
       </div>
-      {!description && !editable && (
+      {!history && !editable ? (
         <span className="flex items-center justify-center text-muted-foreground italic">
-          Không có giới thiệu
+          Không có thông tin
         </span>
+      ) : (
+        <Editor
+          onChange={(value) => onChange(value)}
+          editable={editable}
+          initialContent={history ?? ""}
+        />
       )}
-      <Editor
-        onChange={(value) => onChange(value)}
-        editable={editable}
-        initialContent={description ?? ""}
-      />
     </div>
   );
 };

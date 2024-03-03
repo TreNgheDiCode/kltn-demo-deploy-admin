@@ -91,3 +91,21 @@ export const updateDescription = async (id: string, description: string) => {
     return { error: "Lỗi cập nhật giới thiệu trường" };
   }
 };
+
+export const updateHistory = async (id: string, history: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        history,
+      },
+    });
+
+    return { success: "Cập nhật lịch sử trường thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL DESCRIPTION", error);
+    return { error: "Lỗi cập nhật lịch sử trường" };
+  }
+};

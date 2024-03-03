@@ -94,19 +94,20 @@ model School {
   backgroundUrl String
   name          String  @unique
   description   String?
+  history       String?
   colorValue    String
   isPublished   Boolean @default(false)
 
   users User[]
 
   locations Location[]
-  history   History?
   programs  Program[]
   galleries Gallery[]
   blogs     SchoolBlog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  History   History?
 
   @@index([name])
   @@index([id])

@@ -34,7 +34,6 @@ export const GetSchoolsById = async (id: string) => {
           name: true,
         },
       },
-      history: true,
       users: {
         select: {
           name: true,
@@ -69,7 +68,6 @@ export const GetSchoolsByIdApi = async (id: string) => {
           name: true,
         },
       },
-      history: true,
       users: {
         select: {
           name: true,
