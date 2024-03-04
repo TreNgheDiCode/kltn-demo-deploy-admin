@@ -11,5 +11,4 @@ export type SchoolExtend = School & {
   programs: { name: string }[];
   galleries: { name: string }[];
   users: { name: string }[];
-  history: History | null;
 };

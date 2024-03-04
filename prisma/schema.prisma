@@ -85,7 +85,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([email, name, studentCode, schoolId])
+  @@index([email])
+  @@index([studentCode])
+  @@index([name])
+  @@index([id])
 }
 
 model School {
@@ -304,7 +307,7 @@ model Profile {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Status
-  status ProfileStatus?
+  status ProfileStatus @default(ONLINE)
 
   // Feeds
   posts Post[]
@@ -360,12 +363,12 @@ enum PostStatus {
 model Post {
   id String @id @default(cuid())
 
-  content    String?
-  postImages PostImage[]
-  comments   PostComment[]
-  likes      PostLike[]
-  shares     PostShare[]
-  saves      PostSave[]
+  content  String?
+  images   PostImage[]
+  comments PostComment[]
+  likes    PostLike[]
+  shares   PostShare[]
+  saves    PostSave[]
 
   status PostStatus @default(PUBLIC)
 
@@ -377,7 +380,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("Feed")
+  @@index([status])
 }
 
 model PostImage {
@@ -394,8 +397,8 @@ model PostComment {
 
   content String?
 
-  commentImage PostCommentImage?
-  isArchived   Boolean           @default(false)
+  image      PostCommentImage?
+  isArchived Boolean           @default(false)
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)

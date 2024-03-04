@@ -20,13 +20,6 @@ export async function GET() {
   } catch (error) {
     console.log("GET SCHOOL ERROR", error);
 
-    if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: "Định dạng JSON không hợp lệ" },
-        { status: 406 }
-      );
-    }
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin trường" },
       { status: 500 }
