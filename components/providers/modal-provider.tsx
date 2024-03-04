@@ -1,7 +1,7 @@
 "use client";
 
-import { Spinner } from "@nextui-org/react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ActionModal } from "../modals/action-modal";
 import { UpdateSchoolProfileModal } from "../modals/update-school-profile-modal";
 
 export const ModalProvider = () => {
@@ -18,6 +18,7 @@ export const ModalProvider = () => {
   return (
     <>
       <UpdateSchoolProfileModal />
+      <ActionModal />
     </>
   );
 };

@@ -19,7 +19,6 @@ export async function GET() {
             images: true,
           },
         },
-        history: true,
         locations: {
           include: {
             contact: true,

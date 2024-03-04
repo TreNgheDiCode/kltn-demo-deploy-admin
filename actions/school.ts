@@ -73,3 +73,39 @@ export const updateStatus = async (id: string, value: boolean) => {
     return { error: "Lỗi cập nhật trạng thái của trường" };
   }
 };
+
+export const updateDescription = async (id: string, description: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        description,
+      },
+    });
+
+    return { success: "Cập nhật giới thiệu trường thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL DESCRIPTION", error);
+    return { error: "Lỗi cập nhật giới thiệu trường" };
+  }
+};
+
+export const updateHistory = async (id: string, history: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        history,
+      },
+    });
+
+    return { success: "Cập nhật lịch sử trường thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL DESCRIPTION", error);
+    return { error: "Lỗi cập nhật lịch sử trường" };
+  }
+};

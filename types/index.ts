@@ -1,4 +1,10 @@
-import { CertificateType, DegreeType, Gender, GradeType } from "@prisma/client";
+import {
+  CertificateType,
+  DegreeType,
+  Gender,
+  GradeType,
+  PostStatus,
+} from "@prisma/client";
 import { z } from "zod";
 
 export const nameSchema = z.object({
@@ -198,4 +204,17 @@ export const ResetSchema = z.object({
     .email({
       message: "Invalid type of email",
     }),
+});
+
+export const PostSchema = z.object({
+  status: z.optional(
+    z.enum([
+      PostStatus.PUBLIC,
+      PostStatus.PRIVATE,
+      PostStatus.FRIENDS,
+      PostStatus.EXCEPT,
+    ])
+  ),
+  content: z.optional(z.string()),
+  postImages: z.optional(z.array(z.string())),
 });
