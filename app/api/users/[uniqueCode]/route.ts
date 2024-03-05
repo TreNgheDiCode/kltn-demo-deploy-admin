@@ -23,6 +23,8 @@ export async function GET(
         image: true,
         studentCode: true,
         email: true,
+        status: true,
+        isTwoFactorEnabled: true,
       },
     });
 
@@ -37,6 +39,8 @@ export async function GET(
           image: true,
           studentCode: true,
           email: true,
+          status: true,
+          isTwoFactorEnabled: true,
         },
       });
 

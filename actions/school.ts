@@ -38,6 +38,24 @@ export const UpdateShort = async (id: string, short: string) => {
   }
 };
 
+export const UpdateColor = async (id: string, color: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        colorValue: color,
+      },
+    });
+
+    return { success: "Cập nhật mã màu thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL SHORT", error);
+    return { error: "Lỗi cập nhật mã màu trường" };
+  }
+};
+
 export const updateLogo = async (id: string, url: string) => {
   try {
     await db.school.update({

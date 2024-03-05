@@ -35,11 +35,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { PickerExample } from "../color-picker";
 
 export const UpdateSchoolProfileModal = () => {
   const router = useRouter();
   const { isOpen, onClose, data } = useUpdateSchoolProfile();
 
+  const [color, setColor] = useState(data.color);
   const [name, setName] = useState(data.name);
   const [short, setShort] = useState(data.short);
   const [logo, setLogo] = useState<LogoFile | undefined>({ file: data.logo });
@@ -185,6 +187,7 @@ export const UpdateSchoolProfileModal = () => {
   };
 
   useEffect(() => {
+    setColor(data.color);
     setName(data.name);
     setShort(data.short);
     setLogo({ file: data.logo });
@@ -251,6 +254,14 @@ export const UpdateSchoolProfileModal = () => {
               disabled={isUploading}
               onSelectedFile={onSelectedBackground}
               value={background}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-primary font-semibold text-lg">Mã màu</h1>
+            <PickerExample
+              color={data.color || "#FFFFFF"}
+              id={data.id}
+              onClose={onClose}
             />
           </div>
           <Input

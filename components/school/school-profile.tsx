@@ -49,6 +49,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
               logo: school.logoUrl,
               background: school.backgroundUrl,
               short: school.short || "",
+              color: school.colorValue,
             })
           }
           startContent={<Pencil className="size-4" />}
@@ -87,6 +88,26 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                 className="hover:cursor-default"
               >
                 Trạng thái
+              </ListboxItem>
+              <ListboxItem
+                key="color"
+                variant="faded"
+                color="primary"
+                className="hover:cursor-default"
+                endContent={
+                  <div className="flex items-center gap-2 truncate font-semibold max-w-[300px]">
+                    <span className="truncate">{school.colorValue}</span>
+                    <div
+                      className="border p-4 rounded-full"
+                      style={{
+                        background: school.colorValue,
+                        backgroundImage: school.colorValue,
+                      }}
+                    />
+                  </div>
+                }
+              >
+                Mã màu
               </ListboxItem>
               <ListboxItem
                 key="name"
