@@ -20,6 +20,24 @@ export const UpdateName = async (id: string, name: string) => {
   }
 };
 
+export const UpdateShort = async (id: string, short: string) => {
+  try {
+    await db.school.update({
+      where: {
+        id,
+      },
+      data: {
+        short,
+      },
+    });
+
+    return { success: "Cập nhật giới thiệu ngắn thành công" };
+  } catch (error) {
+    console.log("UPDATE SCHOOL SHORT", error);
+    return { error: "Lỗi cập nhật giới thiệu ngắn trường" };
+  }
+};
+
 export const updateLogo = async (id: string, url: string) => {
   try {
     await db.school.update({

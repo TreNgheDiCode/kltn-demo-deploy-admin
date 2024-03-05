@@ -96,6 +96,7 @@ model School {
   logoUrl       String
   backgroundUrl String
   name          String  @unique
+  short         String?
   description   String?
   history       String?
   colorValue    String

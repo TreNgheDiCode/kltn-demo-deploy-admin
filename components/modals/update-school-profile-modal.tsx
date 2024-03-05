@@ -2,6 +2,7 @@
 
 import {
   UpdateName,
+  UpdateShort,
   updateBackground,
   updateLogo,
   updateStatus,
@@ -16,6 +17,7 @@ import {
   Radio,
   RadioGroup,
   Spinner,
+  Textarea,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Key, useEffect, useState } from "react";
@@ -39,6 +41,7 @@ export const UpdateSchoolProfileModal = () => {
   const { isOpen, onClose, data } = useUpdateSchoolProfile();
 
   const [name, setName] = useState(data.name);
+  const [short, setShort] = useState(data.short);
   const [logo, setLogo] = useState<LogoFile | undefined>({ file: data.logo });
   const [background, setBackground] = useState<LogoFile | undefined>({
     file: data.logo,
@@ -183,6 +186,7 @@ export const UpdateSchoolProfileModal = () => {
 
   useEffect(() => {
     setName(data.name);
+    setShort(data.short);
     setLogo({ file: data.logo });
     setBackground({ file: data.background });
     setStatus(data.isPublished);
@@ -191,6 +195,23 @@ export const UpdateSchoolProfileModal = () => {
   const updateName = async () => {
     if (name) {
       await UpdateName(data.id, name).then((res) => {
+        if (res.success) {
+          toast.success(res.success);
+        }
+
+        if (res.error) {
+          toast.error(res.error);
+        }
+      });
+    }
+
+    onClose();
+    router.refresh();
+  };
+
+  const updateShort = async () => {
+    if (short) {
+      await UpdateShort(data.id, short).then((res) => {
         if (res.success) {
           toast.success(res.success);
         }
@@ -247,8 +268,30 @@ export const UpdateSchoolProfileModal = () => {
               )
             }
             classNames={{
-              inputWrapper: "pr-0",
+              inputWrapper:
+                "pr-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0",
               label: "text-primary font-semibold text-lg",
+            }}
+          />
+          <Textarea
+            label="Giới thiệu ngắn"
+            labelPlacement="outside"
+            size="md"
+            onValueChange={setShort}
+            value={short}
+            placeholder="Nhập giới thiệu ngắn cho trường của bạn"
+            endContent={
+              short !== data.short && (
+                <Button variant="ghost" onClick={updateShort}>
+                  Lưu
+                </Button>
+              )
+            }
+            classNames={{
+              inputWrapper:
+                "pr-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0",
+              label: "text-primary font-semibold text-lg",
+              input: "scrollbar-hide",
             }}
           />
           <div className="space-y-2">

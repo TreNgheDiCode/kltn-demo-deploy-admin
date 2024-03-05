@@ -48,6 +48,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
               id: school.id,
               logo: school.logoUrl,
               background: school.backgroundUrl,
+              short: school.short || "",
             })
           }
           startContent={<Pencil className="size-4" />}
@@ -114,6 +115,19 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                 }
               >
                 Cơ sở chính:
+              </ListboxItem>
+              <ListboxItem
+                key="short"
+                variant="faded"
+                color="primary"
+                className="hover:cursor-default flex-col items-start"
+                endContent={
+                  <span className="font-semibold">
+                    {school.short ? school.short : "[Không có thông tin]"}
+                  </span>
+                }
+              >
+                Giới thiệu ngắn:
               </ListboxItem>
             </Listbox>
           </div>
