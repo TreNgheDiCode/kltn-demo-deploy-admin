@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
     const { email } = validatedFields.data;
 
-    const existingUser = await db.user.findUnique({
+    const existingUser = await db.account.findUnique({
       where: {
         email,
       },

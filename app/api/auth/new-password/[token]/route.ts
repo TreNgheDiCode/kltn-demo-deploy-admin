@@ -51,7 +51,7 @@ export async function POST(
       );
     }
 
-    const existingUser = await db.user.findUnique({
+    const existingUser = await db.account.findUnique({
       where: {
         email: existingToken.email,
       },
@@ -66,7 +66,7 @@ export async function POST(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.user.update({
+    await db.account.update({
       where: {
         id: existingUser.id,
       },
