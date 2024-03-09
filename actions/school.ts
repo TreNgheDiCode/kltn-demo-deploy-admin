@@ -45,7 +45,7 @@ export const UpdateColor = async (id: string, color: string) => {
         id,
       },
       data: {
-        colorValue: color,
+        color,
       },
     });
 
@@ -56,14 +56,14 @@ export const UpdateColor = async (id: string, color: string) => {
   }
 };
 
-export const updateLogo = async (id: string, url: string) => {
+export const updateLogo = async (id: string, logo: string) => {
   try {
     await db.school.update({
       where: {
         id,
       },
       data: {
-        logoUrl: url,
+        logo,
       },
     });
 
@@ -74,14 +74,14 @@ export const updateLogo = async (id: string, url: string) => {
   }
 };
 
-export const updateBackground = async (id: string, url: string) => {
+export const updateBackground = async (id: string, background: string) => {
   try {
     await db.school.update({
       where: {
         id,
       },
       data: {
-        backgroundUrl: url,
+        background,
       },
     });
 
