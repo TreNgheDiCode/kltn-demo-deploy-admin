@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -21,7 +20,7 @@ export async function GET() {
         },
         locations: {
           include: {
-            contact: true,
+            contacts: true,
             images: true,
           },
         },
@@ -29,13 +28,21 @@ export async function GET() {
           include: {
             studentPrograms: {
               select: {
-                user: {
+                student: {
                   select: {
-                    name: true,
-                    dob: true,
-                    email: true,
+                    id: true,
                     studentCode: true,
-                    gender: true,
+                    account: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                    cover: true,
+                    degreeType: true,
+                    certificateType: true,
+                    gradeType: true,
+                    gradeScore: true,
+                    status: true,
                   },
                 },
               },
