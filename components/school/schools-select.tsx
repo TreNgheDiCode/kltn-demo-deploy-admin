@@ -40,7 +40,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
           <div key={item.key} className="flex items-center gap-2">
             <Image
               alt="school logo"
-              src={item.data?.logoUrl}
+              src={item.data?.logo}
               className="size-6 flex-1"
             />
             <span className="truncate">{item.data?.name}</span>
@@ -51,7 +51,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
       {(school) => (
         <SelectItem
           startContent={
-            <Image alt="school logo" src={school.logoUrl} className="size-6" />
+            <Image alt="school logo" src={school.logo} className="size-6" />
           }
           key={school.id}
         >

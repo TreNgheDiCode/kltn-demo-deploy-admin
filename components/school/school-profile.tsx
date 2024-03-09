@@ -36,7 +36,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
       <div
         className={`relative flex flex-col items-center justify-center w-full h-[35vh] border-5 border-primary gap-2`}
       >
-        <Avatar src={school.logoUrl} className="z-10" size="lg" />
+        <Avatar src={school.logo} className="z-10" size="lg" />
         <h1 className="font-bold text-white dark:text-primary text-4xl z-10 text-center">
           {school.name}
         </h1>
@@ -46,10 +46,10 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
               isPublished: school.isPublished,
               name: school.name,
               id: school.id,
-              logo: school.logoUrl,
-              background: school.backgroundUrl,
+              logo: school.logo,
+              background: school.background,
               short: school.short || "",
-              color: school.colorValue,
+              color: school.color,
             })
           }
           startContent={<Pencil className="size-4" />}
@@ -61,7 +61,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
         </Button>
         <Image
           alt="school cover"
-          src={school.backgroundUrl}
+          src={school.background}
           fill
           className="absolute object-cover blur-sm"
           quality={100}
@@ -96,12 +96,12 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                 className="hover:cursor-default"
                 endContent={
                   <div className="flex items-center gap-2 truncate font-semibold max-w-[300px]">
-                    <span className="truncate">{school.colorValue}</span>
+                    <span className="truncate">{school.color}</span>
                     <div
                       className="border p-4 rounded-full"
                       style={{
-                        background: school.colorValue,
-                        backgroundImage: school.colorValue,
+                        background: school.color,
+                        backgroundImage: school.color,
                       }}
                     />
                   </div>
@@ -209,7 +209,7 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
             </Listbox>
           </div>
           <div className="space-y-2">
-            <HeadingTitle text={`Học sinh (${school.users.length})`} />
+            <HeadingTitle text={`Học sinh (${school.students.length})`} />
             <ScrollShadow hideScrollBar className="max-h-[300px]">
               <Listbox
                 variant="faded"
@@ -217,9 +217,12 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
                 emptyContent="Không có học sinh."
                 aria-label="School's Students"
               >
-                {school.users.map((user) => (
-                  <ListboxItem key={user.name} className="hover:cursor-default">
-                    {user.name}
+                {school.students.map((student) => (
+                  <ListboxItem
+                    key={student.account.name}
+                    className="hover:cursor-default"
+                  >
+                    {student.account.name}
                   </ListboxItem>
                 ))}
               </Listbox>
