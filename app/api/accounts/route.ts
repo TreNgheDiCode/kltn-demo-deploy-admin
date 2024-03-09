@@ -3,13 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const users = await db.user.findMany({
+    const users = await db.account.findMany({
       select: {
         id: true,
         name: true,
         image: true,
-        studentCode: true,
         email: true,
+        emailVerified: true,
+        isTwoFactorEnabled: true,
       },
     });
 

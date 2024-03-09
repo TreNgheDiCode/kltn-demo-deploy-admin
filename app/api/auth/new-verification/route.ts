@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const exitingUser = await db.user.findUnique({
+    const exitingUser = await db.account.findUnique({
       where: {
         email: existingToken.email,
       },
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.user.update({
+    await db.account.update({
       where: {
         id: exitingUser.id,
       },

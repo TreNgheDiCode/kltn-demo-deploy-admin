@@ -141,6 +141,8 @@ export async function POST(req: Request) {
         },
       },
       select: {
+        id: true,
+        image: true,
         name: true,
         email: true,
         emailVerified: true,
