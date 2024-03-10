@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { NewSchoolSchema } from "@/types";
+import { z } from "zod";
 
 export const UpdateName = async (id: string, name: string) => {
   try {
@@ -143,5 +145,39 @@ export const updateHistory = async (id: string, history: string) => {
   } catch (error) {
     console.log("UPDATE SCHOOL DESCRIPTION", error);
     return { error: "Lỗi cập nhật lịch sử trường" };
+  }
+};
+
+export const createSchool = async (values: z.infer<typeof NewSchoolSchema>) => {
+  try {
+    const validatedFields = NewSchoolSchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      return { error: "Thông tin truyền vào không hợp lệ" };
+    }
+
+    const data = validatedFields.data;
+
+    const existingSchool = await db.school.findFirst({
+      where: {
+        name: values.name,
+      },
+    });
+
+    if (existingSchool) {
+      return { error: "Đã tồn tại trường với tên này" };
+    }
+
+    await db.school.create({
+      data: {
+        ...data,
+      },
+    });
+
+    return { success: "Thêm trường học thành công" };
+  } catch (error) {
+    console.log("CREATE SCHOOL ERROR", error);
+
+    return { error: "Lỗi thêm trường học mới" };
   }
 };

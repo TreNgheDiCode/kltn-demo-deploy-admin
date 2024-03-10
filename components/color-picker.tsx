@@ -1,24 +1,31 @@
 "use client";
 
+import { UpdateColor } from "@/actions/school";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Paintbrush } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import { UpdateColor } from "@/actions/school";
+import { Paintbrush } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface PickerExampleProps {
-  id: string;
+  id?: string;
   color: string;
   onClose: () => void;
+  isCreate?: boolean;
+  onSelect?: (value: string) => void;
 }
 
-export function PickerExample({ id, color, onClose }: PickerExampleProps) {
+export function PickerExample({
+  id,
+  color,
+  onClose,
+  isCreate,
+  onSelect,
+}: PickerExampleProps) {
   const [background, setBackground] = useState(color);
 
   useEffect(() => {
@@ -32,6 +39,8 @@ export function PickerExample({ id, color, onClose }: PickerExampleProps) {
     >
       <GradientPicker
         id={id}
+        isCreate={isCreate}
+        onSelect={onSelect}
         onClose={onClose}
         background={background}
         setBackground={setBackground}
@@ -46,17 +55,21 @@ export function GradientPicker({
   setBackground,
   className,
   onClose,
+  isCreate,
+  onSelect,
 }: {
-  id: string;
+  id?: string;
   background: string;
   setBackground: (background: string) => void;
   className?: string;
   onClose: () => void;
+  isCreate?: boolean;
+  onSelect?: (value: string) => void;
 }) {
   const router = useRouter();
 
   const onSubmit = async () => {
-    if (background) {
+    if (background && id) {
       await UpdateColor(id, background).then((res) => {
         if (res.success) {
           toast.success(res.success);
@@ -161,19 +174,24 @@ export function GradientPicker({
                 key={s}
                 style={{ background: s }}
                 className="rounded-md h-6 w-6 cursor-pointer active:scale-105"
-                onClick={() => setBackground(s)}
+                onClick={() => {
+                  setBackground(s);
+                  onSelect?.(s);
+                }}
               />
             ))}
 
-            <GradientButton background={background}>
-              <Button
-                size="lg"
-                style={{ background: background }}
-                onClick={onSubmit}
-              >
-                Lưu thay đổi
-              </Button>
-            </GradientButton>
+            {!isCreate && (
+              <GradientButton background={background}>
+                <Button
+                  size="lg"
+                  style={{ background: background }}
+                  onClick={onSubmit}
+                >
+                  Lưu thay đổi
+                </Button>
+              </GradientButton>
+            )}
           </TabsContent>
 
           <TabsContent value="gradient" className="mt-0">
@@ -183,20 +201,25 @@ export function GradientPicker({
                   key={s}
                   style={{ background: s }}
                   className="rounded-md h-6 w-6 cursor-pointer active:scale-105"
-                  onClick={() => setBackground(s)}
+                  onClick={() => {
+                    setBackground(s);
+                    onSelect?.(s);
+                  }}
                 />
               ))}
             </div>
 
-            <GradientButton background={background}>
-              <Button
-                size="lg"
-                style={{ background: background }}
-                onClick={onSubmit}
-              >
-                Lưu thay đổi
-              </Button>
-            </GradientButton>
+            {!isCreate && (
+              <GradientButton background={background}>
+                <Button
+                  size="lg"
+                  style={{ background: background }}
+                  onClick={onSubmit}
+                >
+                  Lưu thay đổi
+                </Button>
+              </GradientButton>
+            )}
           </TabsContent>
 
           <TabsContent value="image" className="mt-0">
@@ -206,20 +229,25 @@ export function GradientPicker({
                   key={s}
                   style={{ backgroundImage: s }}
                   className="rounded-md bg-cover bg-center h-12 w-full cursor-pointer active:scale-105"
-                  onClick={() => setBackground(s)}
+                  onClick={() => {
+                    setBackground(s);
+                    onSelect?.(s);
+                  }}
                 />
               ))}
             </div>
 
-            <GradientButton background={background}>
-              <Button
-                size="lg"
-                style={{ backgroundImage: background }}
-                onClick={onSubmit}
-              >
-                Lưu thay đổi
-              </Button>
-            </GradientButton>
+            {!isCreate && (
+              <GradientButton background={background}>
+                <Button
+                  size="lg"
+                  style={{ backgroundImage: background }}
+                  onClick={onSubmit}
+                >
+                  Lưu thay đổi
+                </Button>
+              </GradientButton>
+            )}
           </TabsContent>
 
           <TabsContent value="password">Change your password here.</TabsContent>
@@ -229,7 +257,10 @@ export function GradientPicker({
           id="custom"
           value={background}
           className="col-span-2 h-8 mt-4"
-          onChange={(e) => setBackground(e.currentTarget.value)}
+          onChange={(e) => {
+            setBackground(e.currentTarget.value);
+            onSelect?.(e.currentTarget.value);
+          }}
         />
       </PopoverContent>
     </Popover>

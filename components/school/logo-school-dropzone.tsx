@@ -1,7 +1,6 @@
 "use client";
 
-import { Avatar, CircularProgress, Image, Spinner } from "@nextui-org/react";
-import { progress } from "framer-motion";
+import { Avatar, CircularProgress } from "@nextui-org/react";
 import { UploadCloudIcon, X } from "lucide-react";
 import * as React from "react";
 import { useDropzone, type DropzoneOptions } from "react-dropzone";
