@@ -27,11 +27,6 @@ enum DegreeType {
   UNIVERSITY
 }
 
-enum UserRole {
-  ADMIN
-  STUDENT
-}
-
 enum StudentStatus {
   STUDYING
   DROPPED
@@ -39,210 +34,60 @@ enum StudentStatus {
   APPROVED
 }
 
-model User {
-  id            String    @id @default(cuid())
-  studentCode   String    @unique
+enum ProfileStatus {
+  ONLINE
+  OFFLINE
+  IDLE
+  BUSY
+  INVISIBLE
+}
+
+enum PostStatus {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  EXCEPT
+}
+
+enum SocialType {
+  YOUTUBE
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  TWITCH
+  TWITTER
+  PORTFOLLIO
+}
+
+model Account {
+  id String @id @default(cuid())
+
   // Account
   email         String    @unique
   emailVerified DateTime?
   password      String
   name          String
+
   // Profile
-  dob           DateTime
-  gender        Gender
-  phoneNumber   String
-  idCardNumber  String    @unique
-  address       String
+  dob          DateTime
+  gender       Gender
+  phoneNumber  String
+  idCardNumber String   @unique
+  address      String
 
-  image    String?
-  // Education
-  schoolId String
-  school   School  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-
-  program StudentProgram?
-
-  degreeType DegreeType
-
-  certificateType CertificateType
-  certificateImg  String
-
-  gradeType  GradeType
-  gradeScore Float
-
-  // Student status
-  status StudentStatus @default(AWAITING)
-
-  // Role-based authentication
-  role UserRole @default(STUDENT)
+  image String?
 
   // Two Factor Authentication
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
   // User Profile
-  profile Profile?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([email])
-  @@index([studentCode])
-  @@index([name])
-  @@index([id])
-}
-
-model School {
-  id            String  @id @default(cuid())
-  logoUrl       String
-  backgroundUrl String
-  name          String  @unique
-  description   String?
-  history       String?
-  colorValue    String
-  isPublished   Boolean @default(false)
-
-  users User[]
-
-  locations Location[]
-  programs  Program[]
-  galleries Gallery[]
-  blogs     SchoolBlog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  History   History?
-
-  @@index([name])
-  @@index([id])
-}
-
-model Location {
-  id String @id @default(cuid())
-
-  cover   String?
-  name    String  @unique
-  address String
-  isMain  Boolean @default(false)
-
-  images  LocationImage[]
-  contact LocationContact[]
-
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  student Student?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([name])
-}
-
-model LocationImage {
-  id String @id @default(cuid())
-
-  url String
-
-  locationId String
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-}
-
-model LocationContact {
-  id String @id @default(cuid())
-
-  phoneNumber  String?
-  workingHours String?
-  faxNumber    String?
-  email        String?
-  url          String?
-
-  locationId String
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-}
-
-model History {
-  id String @id @default(cuid())
-
-  content String
-
-  schoolId String @unique
-  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-}
-
-model Program {
-  id          String  @id @default(cuid())
-  name        String
-  description String
-  coverImage  String?
-  isPublished Boolean @default(false)
-
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  studentPrograms StudentProgram[]
-
-  @@unique([schoolId, name])
-  @@index([name])
-}
-
-model Gallery {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-
-  images GalleryImage[]
-
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
-}
-
-model GalleryImage {
-  id String @id @default(cuid())
-
-  url String
-
-  galleryId String
-  gallery   Gallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-}
-
-model SchoolBlog {
-  id String @id @default(cuid())
-
-  content String?
-  images  SchoolBlogImages[]
-  title   String
-
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model SchoolBlogImages {
-  id String @id @default(cuid())
-
-  url String
-
-  schoolBlogId String
-  schoolBlog   SchoolBlog @relation(fields: [schoolBlogId], references: [id], onDelete: Cascade)
-}
-
-model StudentProgram {
-  id String @id @default(cuid())
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  programId String
-  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, programId])
-  @@index([userId, programId])
 }
 
 model VerificationToken {
@@ -281,60 +126,272 @@ model TwoFactorToken {
 model TwoFactorConfirmation {
   id String @id @default(cuid())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId String  @unique
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model School {
+  id String @id @default(cuid())
+
+  logo        String
+  background  String
+  name        String  @unique
+  short       String?
+  description String?
+  history     String?
+  color       String
+  isPublished Boolean @default(false)
+
+  students Student[]
+
+  locations SchoolLocation[]
+  programs  SchoolProgram[]
+  galleries SchoolGallery[]
+  blogs     SchoolBlog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SchoolBlog {
+  id String @id @default(cuid())
+
+  content String?
+  images  SchoolBlogImages[]
+  title   String
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId])
+  @@index([title])
 }
 
-enum ProfileStatus {
-  ONLINE
-  OFFLINE
-  IDLE
-  BUSY
-  INVISIBLE
+model SchoolBlogImages {
+  id String @id @default(cuid())
+
+  url String
+
+  schoolBlogId String
+  schoolBlog   SchoolBlog @relation(fields: [schoolBlogId], references: [id], onDelete: Cascade)
+}
+
+model SchoolGallery {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  images SchoolGalleryImage[]
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model SchoolGalleryImage {
+  id String @id @default(cuid())
+
+  url String
+
+  galleryId String
+  gallery   SchoolGallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+}
+
+model SchoolLocation {
+  id String @id @default(cuid())
+
+  cover   String?
+  name    String  @unique
+  address String  @unique
+  isMain  Boolean @default(false)
+
+  images   SchoolLocationImage[]
+  contacts SchoolLocationContact[]
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SchoolLocationImage {
+  id String @id @default(cuid())
+
+  url String
+
+  locationId String
+  location   SchoolLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+model SchoolLocationContact {
+  id String @id @default(cuid())
+
+  phone String?
+  hours String?
+  fax   String?
+  email String?
+  url   String?
+
+  locationId String
+  location   SchoolLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SchoolProgram {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  cover       String?
+  isPublished Boolean @default(false)
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  studentPrograms StudentSchoolProgram[]
+  images          SchoolProgramImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+}
+
+model SchoolProgramImage {
+  id String @id @default(cuid())
+
+  url String
+
+  programId String
+  program   SchoolProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+}
+
+model StudentSchoolProgram {
+  id String @id @default(cuid())
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  programId String
+  program   SchoolProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, programId])
+}
+
+model Student {
+  id String @id @default(cuid())
+
+  // Student code
+  studentCode String? @unique
+
+  // Education
+  degreeType DegreeType
+
+  certificateType CertificateType
+  certificateImg  String
+
+  gradeType  GradeType
+  gradeScore Float
+
+  cover String?
+
+  // Student status
+  status StudentStatus @default(AWAITING)
+
+  accountId String  @unique
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Education
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  profile Profile?
+
+  program StudentSchoolProgram?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id String @id @default(cuid())
+
+  title String
+
+  hostId String  @unique
+  host   Profile @relation(fields: [hostId], references: [id], onDelete: Cascade)
+
+  participants EventProfile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventProfile {
+  id String @id @default(cuid())
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, profileId])
 }
 
 model Profile {
   id String @id @default(cuid())
 
-  coverImage String?
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   // Status
   status ProfileStatus @default(ONLINE)
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  // Hosted Events
+  hostedEvents Event[]
+
+  // Participated Events
+  participatedEvents EventProfile[]
 
   // Feeds
   posts Post[]
 
   // Biography
-  biography Biography?
+  biography ProfileBiography?
 
   // Friends
-  friends Friend[]
+  friendRequests ProfileFriend[] @relation("profileOne")
+  friendReceived ProfileFriend[] @relation("profileTwo")
 
   // Groups
-  groups ProfileGroup[]
+  ownedGroups Group[]
+  groups      ProfileGroup[]
 
   // Blogs
-  blogs Blog[]
-
-  // Events
-  eventId String?
-  event   Event?  @relation(fields: [eventId], references: [id])
+  blogs ProfileBlog[]
 
   // Messages
-
-  // Areas
-  profiles ProfileArea[]
-
-  // Socials
-  socials Social[]
+  // conversations Conversation[]
+  // seenMessages Message[] @relation("Seen")
+  // sendMessages Message[]
 
   // Comments
   postComments     PostComment[]
@@ -353,29 +410,159 @@ model Profile {
   updatedAt DateTime @updatedAt
 }
 
-enum PostStatus {
-  PUBLIC
-  PRIVATE
-  FRIENDS
-  EXCEPT
+model ProfileFriend {
+  id String @id @default(cuid())
+
+  isActive Boolean @default(false)
+
+  profileIdOne String  @unique
+  profileOne   Profile @relation("profileOne", fields: [profileIdOne], references: [id], onDelete: Cascade)
+
+  profileIdTwo String  @unique
+  profileTwo   Profile @relation("profileTwo", fields: [profileIdTwo], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// model Conversation {
+//   id String @id @default(cuid())
+
+//   name          String?
+//   cover String?
+//   isGroup       Boolean? @default(false)
+
+// // Owner
+//   ownerId String
+//   owner   Profile   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+//   messages    Message[]
+
+//   createdAt     DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Message {
+//   id String @id @default(cuid())
+
+//   body  String?
+//   image String?
+
+//   seenIds String
+//   seen    Profile @relation("Seen", fields: [seenIds], references: [id])
+
+//   conversationId String      
+//   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+//   senderId String
+//   sender   Profile   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model MessageSeen {
+//   id String @id @default(cuid())
+
+// }
+
+model Area {
+  id String @id @default(cuid())
+
+  title String @unique
+
+  biographies ProfileBiographyArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileBiography {
+  id String @id @default(cuid())
+
+  content String
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  areas   ProfileBiographyArea[]
+  socials ProfileBiographySocial[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileBiographyArea {
+  id String @id @default(cuid())
+
+  biographyId String
+  biography   ProfileBiography @relation(fields: [biographyId], references: [id], onDelete: Cascade)
+
+  areaId String
+  area   Area   @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([biographyId, areaId])
+}
+
+model ProfileBiographySocial {
+  id String @id @default(cuid())
+
+  type SocialType
+  href String
+
+  profileBiographyId String
+  profileBiography   ProfileBiography @relation(fields: [profileBiographyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, href])
+  @@index([type])
+}
+
+model ProfileBlog {
+  id String @id @default(cuid())
+
+  title   String
+  content String?
+  images  ProfileBlogImage[]
+
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+}
+
+model ProfileBlogImage {
+  id String @id @default(cuid())
+
+  url String
+
+  profileBlogId String
+  profileBlog   ProfileBlog @relation(fields: [profileBlogId], references: [id], onDelete: Cascade)
 }
 
 model Post {
   id String @id @default(cuid())
 
-  content  String?
+  content    String?
+  status     PostStatus @default(PUBLIC)
+  isArchived Boolean    @default(false)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
   images   PostImage[]
   comments PostComment[]
   likes    PostLike[]
   shares   PostShare[]
   saves    PostSave[]
-
-  status PostStatus @default(PUBLIC)
-
-  isArchived Boolean @default(false)
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -392,13 +579,8 @@ model PostImage {
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
-model PostComment {
+model PostLike {
   id String @id @default(cuid())
-
-  content String?
-
-  image      PostCommentImage?
-  isArchived Boolean           @default(false)
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -406,26 +588,56 @@ model PostComment {
   postId String
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  children PostComment[] @relation("children")
+  @@unique([profileId, postId])
+}
+
+model PostShare {
+  id String @id @default(cuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, postId])
+}
+
+model PostSave {
+  id String @id @default(cuid())
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@unique([profileId, postId])
+}
+
+model PostComment {
+  id String @id @default(cuid())
+
+  content    String?
+  image      String?
+  isArchived Boolean @default(false)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   parentCommentId String?
   parentComment   PostComment? @relation("children", fields: [parentCommentId], references: [id], onDelete: Cascade)
 
-  likes PostCommentLike[]
+  children PostComment[]     @relation("children")
+  likes    PostCommentLike[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([profileId])
-}
-
-model PostCommentImage {
-  id String @id @default(cuid())
-
-  url String
-
-  postCommentId String      @unique
-  postComment   PostComment @relation(fields: [postCommentId], references: [id], onDelete: Cascade)
+  @@index([isArchived])
 }
 
 model PostCommentLike {
@@ -440,67 +652,13 @@ model PostCommentLike {
   @@unique([profileId, postCommentId])
 }
 
-model PostLike {
-  id String @id @default(cuid())
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@unique([profileId, postId])
-  @@index([profileId])
-}
-
-model PostShare {
-  id String @id @default(cuid())
-
-  profileId String  @unique
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@index([profileId])
-}
-
-model PostSave {
-  id String @id @default(cuid())
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  Post      Post?   @relation(fields: [postId], references: [id])
-  postId    String?
-
-  @@unique([profileId, postId])
-  @@index([profileId])
-}
-
-model Biography {
-  id String @id @default(cuid())
-
-  profileId String   @unique
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Friend {
-  id String @id @default(cuid())
-
-  profileId String  @unique
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Group {
   id String @id @default(cuid())
 
-  users ProfileGroup[]
+  ownerId String
+  owner   Profile @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  profiles ProfileGroup[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -518,76 +676,5 @@ model ProfileGroup {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("UserGroup")
-}
-
-model Blog {
-  id String @id @default(cuid())
-
-  profileId String  @unique
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Event {
-  id String @id @default(cuid())
-
-  profiles Profile[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Area {
-  id String @id @default(cuid())
-
-  title String @unique
-
-  profiles ProfileArea[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([title])
-}
-
-model ProfileArea {
-  id String @id @default(cuid())
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  areaId String
-  area   Area   @relation(fields: [areaId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([profileId, areaId])
-  @@index([profileId, areaId])
-}
-
-enum SocialType {
-  YOUTUBE
-  FACEBOOK
-  INSTAGRAM
-  TIKTOK
-  TWITCH
-  TWITTER
-  PORTFOLLIO
-}
-
-model Social {
-  id String @id @default(cuid())
-
-  type SocialType
-  href String
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([profileId, groupId])
 }

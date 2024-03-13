@@ -31,37 +31,47 @@ export async function POST(req: Request) {
       gradeScore,
       email,
       idCardNumber,
-      ...value
+      certificateImg,
+      certificateType,
+      degreeType,
+      dob,
+      gender,
+      gradeType,
+      name,
+      password,
+      phoneNumber,
     } = validatedFields.data;
 
-    const exisitingUserEmail = await db.user.findUnique({
+    const exisitingAccountEmail = await db.account.findUnique({
       where: {
         email,
       },
     });
 
-    const exisitingUserIdCard = await db.user.findUnique({
+    const exisitingAccountIdCard = await db.account.findUnique({
       where: {
         idCardNumber,
       },
     });
 
-    if (exisitingUserEmail) {
+    if (exisitingAccountEmail) {
       return NextResponse.json(
         { error: "Email đã được sử dụng" },
         { status: 403 }
       );
     }
 
-    if (exisitingUserIdCard) {
+    if (exisitingAccountIdCard) {
       return NextResponse.json(
         { error: "Căn cước công dân đã được sử dụng" },
         { status: 403 }
       );
     }
 
-    if (value.password && confirmPassword) {
-      const passwordMatch = value.password === confirmPassword;
+    let hashedPassword = "";
+
+    if (password && confirmPassword) {
+      const passwordMatch = password === confirmPassword;
 
       if (!passwordMatch) {
         return NextResponse.json(
@@ -70,9 +80,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const hashedPassword = await bcrypt.hash(value.password, 10);
-
-      value.password = hashedPassword;
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
     const address = `${addressLine}, ${ward}, ${district}, ${city}`;
@@ -90,7 +98,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const existingProgram = await db.program.findUnique({
+    const existingProgram = await db.schoolProgram.findUnique({
       where: {
         schoolId_name: {
           schoolId: existingSchool.id,
@@ -101,48 +109,51 @@ export async function POST(req: Request) {
 
     if (!existingProgram) {
       return NextResponse.json(
-        { error: "Không tìm thấy chương trình đào tạo!" },
+        { error: "Không tìm thấy ngành đào tạo!" },
         { status: 404 }
       );
     }
 
-    const studentCode = generateStudentCode(value.degreeType);
-
-    const profile = await db.profile.create({
+    const account = await db.account.create({
       data: {
-        user: {
+        address,
+        email,
+        dob,
+        gender,
+        idCardNumber,
+        name,
+        password: hashedPassword,
+        phoneNumber,
+        student: {
           create: {
-            email,
-            idCardNumber,
-            studentCode: studentCode,
-            address,
+            certificateImg,
+            certificateType,
+            degreeType,
             gradeScore: parseFloat(gradeScore),
+            gradeType,
             schoolId: existingSchool.id,
             program: {
               create: {
                 programId: existingProgram.id,
               },
             },
-            ...value,
           },
         },
       },
       select: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
+        id: true,
+        image: true,
+        name: true,
+        email: true,
+        emailVerified: true,
+        isTwoFactorEnabled: true,
       },
     });
 
-    const verificationToken = await generateVerificationToken(
-      profile.user.email
-    );
+    const verificationToken = await generateVerificationToken(account.email);
 
     await sendVerificationEmail(
-      profile.user.name,
+      account.name,
       process.env.NODE_SENDER_EMAIL!,
       verificationToken.email,
       verificationToken.token
@@ -150,7 +161,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        profile,
+        account,
         message:
           "Đăng ký thành công, vui lòng check hòm thư email để xác thực người dùng",
       },

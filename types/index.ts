@@ -218,3 +218,21 @@ export const PostSchema = z.object({
   content: z.optional(z.string()),
   postImages: z.optional(z.array(z.string())),
 });
+
+export const NewSchoolSchema = z.object({
+  name: z.string().min(1, {
+    message: "Vui lòng nhập tên trường",
+  }),
+  logo: z.string().min(1, {
+    message: "Vui lòng chọn ảnh đại diện cho trường",
+  }),
+  short: z.string().min(1, {
+    message: "Vui lòng nhập giới thiệu ngắn cho trường",
+  }),
+  background: z.string().min(1, {
+    message: "Vui lòng chọn hình nền cho trường",
+  }),
+  color: z.string().min(1, {
+    message: "Vui lòng nhập mã màu đại diện cho trường",
+  }),
+});

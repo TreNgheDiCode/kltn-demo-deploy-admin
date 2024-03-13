@@ -1,6 +1,4 @@
-// @ts-ignore
-const { PrismaClient } = require("@prisma/client");
-// @ts-ignore
+import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 async function main() {
@@ -8,21 +6,19 @@ async function main() {
     await db.school.createMany({
       data: [
         {
-          logoUrl:
-            "https://utfs.io/f/7fe89f50-7db2-4b9b-93fd-829532ba21ed-nm33wo.jpg",
-          backgroundUrl:
+          logo: "https://utfs.io/f/7fe89f50-7db2-4b9b-93fd-829532ba21ed-nm33wo.jpg",
+          background:
             "https://utfs.io/f/edca68a3-f850-41b2-801c-2351a0f65b08-zi32f6.png",
           name: "HUFLIT AMERICA",
-          colorValue: "#9fff5b",
+          color: "#9fff5b",
           isPublished: true,
         },
         {
-          logoUrl:
-            "https://utfs.io/f/7317e9f8-b11f-4bd3-974b-f7caa344a9d2-jlxnzo.jpg",
-          backgroundUrl:
+          logo: "https://utfs.io/f/7317e9f8-b11f-4bd3-974b-f7caa344a9d2-jlxnzo.jpg",
+          background:
             "https://utfs.io/f/98263804-6bb4-4ed5-99d8-aa2be115cf76-csekpy.png",
           name: "Metropolitan International",
-          colorValue: "#003234",
+          color: "#003234",
           isPublished: true,
         },
       ],
@@ -30,13 +26,12 @@ async function main() {
 
     const schools = await db.school.findMany();
 
-    await db.program.createMany({
+    await db.schoolProgram.createMany({
       data: [
         {
           name: "UI UX Design Specialist",
           description: "Test",
-
-          coverImage:
+          cover:
             "https://utfs.io/f/1ddd79dd-dbf9-4841-aa39-fd363ad66639-i4sqms.png",
           isPublished: true,
           schoolId: schools[0].id,
@@ -44,7 +39,7 @@ async function main() {
         {
           name: "Khoa Học Máy Tính",
           description: "Test",
-          coverImage:
+          cover:
             "https://utfs.io/f/e5f5624d-5d06-458a-a2eb-9b11e21447eb-1yjes.jpg",
           isPublished: true,
           schoolId: schools[1].id,
@@ -60,4 +55,12 @@ async function main() {
   }
 }
 
-main();
+main()
+  .then(async () => {
+    await db.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await db.$disconnect();
+    process.exit(1);
+  });

@@ -20,13 +20,13 @@ export async function GET(
       );
     }
 
-    const user = await db.user.findUnique({
+    const student = await db.student.findUnique({
       where: {
         studentCode: params.studentCode,
       },
     });
 
-    if (!user) {
+    if (!student) {
       return NextResponse.json(
         { error: "Không tìm thấy học sinh" },
         { status: 404 }
@@ -35,7 +35,7 @@ export async function GET(
 
     const profile = await db.profile.findUnique({
       where: {
-        userId: user.id,
+        studentId: student.id,
       },
     });
 
@@ -72,7 +72,6 @@ export async function GET(
         postId: post.id,
       },
       include: {
-        image: true,
         children: {
           select: {
             id: true,

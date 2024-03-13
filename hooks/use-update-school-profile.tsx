@@ -5,6 +5,8 @@ interface UpdateSchoolData {
   logo?: string;
   background?: string;
   name?: string;
+  short?: string;
+  color?: string;
   isPublished: boolean;
 }
 

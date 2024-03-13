@@ -1,6 +1,6 @@
 import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
-import { GetUserByEmail } from "@/lib/user";
+import { GetUserByEmail } from "@/lib/account";
 import { LoginSchema } from "@/types";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";

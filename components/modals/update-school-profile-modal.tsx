@@ -2,6 +2,7 @@
 
 import {
   UpdateName,
+  UpdateShort,
   updateBackground,
   updateLogo,
   updateStatus,
@@ -16,6 +17,7 @@ import {
   Radio,
   RadioGroup,
   Spinner,
+  Textarea,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Key, useEffect, useState } from "react";
@@ -33,12 +35,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { PickerExample } from "../color-picker";
 
 export const UpdateSchoolProfileModal = () => {
   const router = useRouter();
   const { isOpen, onClose, data } = useUpdateSchoolProfile();
 
+  const [color, setColor] = useState(data.color);
   const [name, setName] = useState(data.name);
+  const [short, setShort] = useState(data.short);
   const [logo, setLogo] = useState<LogoFile | undefined>({ file: data.logo });
   const [background, setBackground] = useState<LogoFile | undefined>({
     file: data.logo,
@@ -182,7 +187,9 @@ export const UpdateSchoolProfileModal = () => {
   };
 
   useEffect(() => {
+    setColor(data.color);
     setName(data.name);
+    setShort(data.short);
     setLogo({ file: data.logo });
     setBackground({ file: data.background });
     setStatus(data.isPublished);
@@ -191,6 +198,23 @@ export const UpdateSchoolProfileModal = () => {
   const updateName = async () => {
     if (name) {
       await UpdateName(data.id, name).then((res) => {
+        if (res.success) {
+          toast.success(res.success);
+        }
+
+        if (res.error) {
+          toast.error(res.error);
+        }
+      });
+    }
+
+    onClose();
+    router.refresh();
+  };
+
+  const updateShort = async () => {
+    if (short) {
+      await UpdateShort(data.id, short).then((res) => {
         if (res.success) {
           toast.success(res.success);
         }
@@ -232,6 +256,14 @@ export const UpdateSchoolProfileModal = () => {
               value={background}
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-primary font-semibold text-lg">Mã màu</h1>
+            <PickerExample
+              color={data.color || "#FFFFFF"}
+              id={data.id}
+              onClose={onClose}
+            />
+          </div>
           <Input
             label="Tên trường"
             labelPlacement="outside"
@@ -247,8 +279,30 @@ export const UpdateSchoolProfileModal = () => {
               )
             }
             classNames={{
-              inputWrapper: "pr-0",
+              inputWrapper:
+                "pr-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0",
               label: "text-primary font-semibold text-lg",
+            }}
+          />
+          <Textarea
+            label="Giới thiệu ngắn"
+            labelPlacement="outside"
+            size="md"
+            onValueChange={setShort}
+            value={short}
+            placeholder="Nhập giới thiệu ngắn cho trường của bạn"
+            endContent={
+              short !== data.short && (
+                <Button variant="ghost" onClick={updateShort}>
+                  Lưu
+                </Button>
+              )
+            }
+            classNames={{
+              inputWrapper:
+                "pr-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0",
+              label: "text-primary font-semibold text-lg",
+              input: "scrollbar-hide",
             }}
           />
           <div className="space-y-2">

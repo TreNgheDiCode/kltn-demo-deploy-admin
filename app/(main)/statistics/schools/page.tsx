@@ -14,7 +14,6 @@ const SchoolPage = async ({
   return (
     <div className="space-y-3 max-h-screen">
       <HeadingSchool schools={schools} />
-
       {selectSchool ? (
         <>
           <Card className="overflow-y-auto max-h-[calc(100vh-116px)]">

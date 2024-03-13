@@ -1,8 +1,27 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { SchoolLib } from "@/types/type";
-import { Image, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  Image,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Check, PlusCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "../ui/command";
+import { useCreateSchool } from "@/hooks/use-create-school";
 
 interface SchoolSelectProps {
   schools: SchoolLib[];
@@ -15,6 +34,8 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
 
   const schoolId = searchParams.get("id") as string;
 
+  const currentSchool = schools.find((school) => school.id === schoolId);
+
   const onSelect = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -22,42 +43,86 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
 
     router.push(pathname + "?" + params.toString());
   };
+
+  const { isOpen, onOpen: onTrigger, onClose } = useDisclosure();
+
+  const { onOpen } = useCreateSchool();
+
   return (
-    <Select
-      disallowEmptySelection
-      defaultSelectedKeys={schoolId ? [schoolId] : undefined}
-      className="max-w-[250px] lg:max-w-[400px]"
-      onChange={(e) => {
-        onSelect(e.target.value);
-      }}
-      items={schools}
-      size="sm"
-      aria-label="Vui lòng chọn trường học"
-      placeholder="Vui lòng chọn trường học"
-      variant="bordered"
-      renderValue={(items) => {
-        return items.map((item) => (
-          <div key={item.key} className="flex items-center gap-2">
-            <Image
-              alt="school logo"
-              src={item.data?.logoUrl}
-              className="size-6 flex-1"
-            />
-            <span className="truncate">{item.data?.name}</span>
-          </div>
-        ));
-      }}
-    >
-      {(school) => (
-        <SelectItem
-          startContent={
-            <Image alt="school logo" src={school.logoUrl} className="size-6" />
-          }
-          key={school.id}
+    <Popover isOpen={isOpen}>
+      <PopoverTrigger>
+        <Button
+          onClick={onTrigger}
+          aria-label="Chọn một trường học"
+          aria-expanded={true}
+          role="combobox"
+          variant="shadow"
+          color="primary"
+          className="flex items-center gap-2"
         >
-          {school.name}
-        </SelectItem>
-      )}
-    </Select>
+          {currentSchool ? (
+            <>
+              <Image
+                alt="school logo"
+                src={currentSchool?.logo}
+                className="size-6 flex-1"
+              />
+              <span className="truncate">{currentSchool?.name}</span>
+            </>
+          ) : (
+            "Vui lòng chọn trường học"
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <Command>
+          <CommandInput placeholder="Tìm kiếm trường học..." />
+          <CommandList>
+            <CommandEmpty>Không tìm thấy trường học</CommandEmpty>
+            <CommandGroup heading="Trường học">
+              {schools.map((school) => (
+                <CommandItem
+                  onSelect={() => {
+                    onSelect(school.id);
+                    onClose();
+                  }}
+                  key={school.id}
+                  className="flex items-center justify-between gap-2 text-primary"
+                >
+                  <Image
+                    alt="school logo"
+                    src={school?.logo}
+                    className="size-6 flex-1"
+                  />
+                  {school.name}
+                  <Check
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      currentSchool?.name === school.name
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+          <CommandSeparator />
+          <CommandList>
+            <CommandGroup>
+              <CommandItem
+                onSelect={() => {
+                  onOpen();
+                  onClose();
+                }}
+              >
+                <PlusCircle className="mr-2 h-5 w-5" />
+                Thêm trường học mới
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };

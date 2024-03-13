@@ -21,7 +21,6 @@ export async function GET(
         comments: {
           include: {
             likes: true,
-            image: true,
             children: true,
           },
         },

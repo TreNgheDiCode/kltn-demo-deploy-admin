@@ -5,7 +5,7 @@ export const GetSchoolsLib = async () => {
     select: {
       id: true,
       name: true,
-      logoUrl: true,
+      logo: true,
     },
   });
 
@@ -34,9 +34,13 @@ export const GetSchoolsById = async (id: string) => {
           name: true,
         },
       },
-      users: {
+      students: {
         select: {
-          name: true,
+          account: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
     },
@@ -68,9 +72,13 @@ export const GetSchoolsByIdApi = async (id: string) => {
           name: true,
         },
       },
-      users: {
+      students: {
         select: {
-          name: true,
+          account: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
     },

@@ -13,13 +13,29 @@ export async function GET(
       );
     }
 
-    const user = await db.user.findUnique({
+    const student = await db.student.findUnique({
       where: {
         studentCode: params.studentCode,
       },
+      include: {
+        account: {
+          select: {
+            dob: true,
+            address: true,
+            name: true,
+            image: true,
+          },
+        },
+        school: {
+          select: {
+            name: true,
+            logo: true,
+          },
+        },
+      },
     });
 
-    if (!user) {
+    if (!student) {
       return NextResponse.json(
         { error: "Không tìm thấy học sinh" },
         { status: 404 }
@@ -28,25 +44,9 @@ export async function GET(
 
     const profile = await db.profile.findUnique({
       where: {
-        userId: user.id,
+        studentId: student.id,
       },
-      include: {
-        user: {
-          select: {
-            dob: true,
-            address: true,
-            studentCode: true,
-            name: true,
-            image: true,
-            school: {
-              select: {
-                name: true,
-                logoUrl: true,
-              },
-            },
-          },
-        },
-      },
+      include: {},
     });
 
     if (!profile) {
