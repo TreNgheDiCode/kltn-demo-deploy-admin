@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const users = await db.account.findMany({
+    const accounts = await db.account.findMany({
       select: {
         id: true,
         name: true,
@@ -14,12 +14,12 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(users, { status: 200 });
+    return NextResponse.json(accounts, { status: 200 });
   } catch (error) {
-    console.log("GET ALL STUDENT ERROR", error);
+    console.log("GET ALL ACCOUNTS ERROR", error);
 
     return NextResponse.json(
-      { error: "Lỗi lấy thông tin tất cả học sinh" },
+      { error: "Lỗi lấy thông tin tất cả tài khoản" },
       { status: 500 }
     );
   }
