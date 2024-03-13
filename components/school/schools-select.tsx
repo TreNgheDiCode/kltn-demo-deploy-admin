@@ -8,6 +8,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  useDisclosure,
 } from "@nextui-org/react";
 import { Check, PlusCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -43,12 +44,15 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
     router.push(pathname + "?" + params.toString());
   };
 
+  const { isOpen, onOpen: onTrigger, onClose } = useDisclosure();
+
   const { onOpen } = useCreateSchool();
 
   return (
-    <Popover>
+    <Popover isOpen={isOpen}>
       <PopoverTrigger>
         <Button
+          onClick={onTrigger}
           aria-label="Chọn một trường học"
           aria-expanded={true}
           role="combobox"
@@ -78,7 +82,10 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
             <CommandGroup heading="Trường học">
               {schools.map((school) => (
                 <CommandItem
-                  onSelect={() => onSelect(school.id)}
+                  onSelect={() => {
+                    onSelect(school.id);
+                    onClose();
+                  }}
                   key={school.id}
                   className="flex items-center justify-between gap-2 text-primary"
                 >
@@ -103,7 +110,12 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
           <CommandSeparator />
           <CommandList>
             <CommandGroup>
-              <CommandItem onSelect={onOpen}>
+              <CommandItem
+                onSelect={() => {
+                  onOpen();
+                  onClose();
+                }}
+              >
                 <PlusCircle className="mr-2 h-5 w-5" />
                 Thêm trường học mới
               </CommandItem>

@@ -260,7 +260,7 @@ model SchoolProgram {
   school   School @relation(fields: [schoolId], references: [id])
 
   studentPrograms StudentSchoolProgram[]
-  images          SchoolProgramImages[]
+  images          SchoolProgramImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -268,7 +268,7 @@ model SchoolProgram {
   @@unique([schoolId, name])
 }
 
-model SchoolProgramImages {
+model SchoolProgramImage {
   id String @id @default(cuid())
 
   url String
