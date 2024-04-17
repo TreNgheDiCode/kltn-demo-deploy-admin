@@ -49,7 +49,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
   const { onOpen } = useCreateSchool();
 
   return (
-    <Popover isOpen={isOpen}>
+    <Popover isOpen={isOpen} onOpenChange={onClose}>
       <PopoverTrigger>
         <Button
           onClick={onTrigger}

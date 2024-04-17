@@ -1,0 +1,584 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Account {
+  id String [pk]
+  email String [unique, not null]
+  emailVerified DateTime
+  password String [not null]
+  name String [not null]
+  dob DateTime [not null]
+  gender Gender [not null]
+  phoneNumber String [not null]
+  idCardNumber String [unique, not null]
+  address String [not null]
+  image String
+  isTwoFactorEnabled Boolean [not null, default: false]
+  twoFactorConfirmation TwoFactorConfirmation
+  student Student
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table VerificationToken {
+  id String [pk]
+  email String [not null]
+  token String [unique, not null]
+  expires DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (email, token) [unique]
+  }
+}
+
+Table PasswordResetToken {
+  id String [pk]
+  email String [not null]
+  token String [unique, not null]
+  expires DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (email, token) [unique]
+  }
+}
+
+Table TwoFactorToken {
+  id String [pk]
+  email String [not null]
+  token String [unique, not null]
+  expires DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (email, token) [unique]
+  }
+}
+
+Table TwoFactorConfirmation {
+  id String [pk]
+  accountId String [unique, not null]
+  account Account [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table School {
+  id String [pk]
+  logo String [not null]
+  background String [not null]
+  name String [unique, not null]
+  short String
+  description String
+  history String
+  color String [not null]
+  isPublished Boolean [not null, default: false]
+  students Student [not null]
+  locations SchoolLocation [not null]
+  programs SchoolProgram [not null]
+  galleries SchoolGallery [not null]
+  blogs SchoolBlog [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table SchoolBlog {
+  id String [pk]
+  content String
+  images SchoolBlogImages [not null]
+  title String [not null]
+  schoolId String [not null]
+  school School [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table SchoolBlogImages {
+  id String [pk]
+  url String [not null]
+  schoolBlogId String [not null]
+  schoolBlog SchoolBlog [not null]
+}
+
+Table SchoolGallery {
+  id String [pk]
+  name String [not null]
+  description String
+  images SchoolGalleryImage [not null]
+  schoolId String [not null]
+  school School [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table SchoolGalleryImage {
+  id String [pk]
+  url String [not null]
+  galleryId String [not null]
+  gallery SchoolGallery [not null]
+}
+
+Table SchoolLocation {
+  id String [pk]
+  cover String
+  name String [unique, not null]
+  address String [unique, not null]
+  isMain Boolean [not null, default: false]
+  images SchoolLocationImage [not null]
+  contacts SchoolLocationContact [not null]
+  schoolId String [not null]
+  school School [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table SchoolLocationImage {
+  id String [pk]
+  url String [not null]
+  locationId String [not null]
+  location SchoolLocation [not null]
+}
+
+Table SchoolLocationContact {
+  id String [pk]
+  phone String
+  hours String
+  fax String
+  email String
+  url String
+  locationId String [not null]
+  location SchoolLocation [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table SchoolProgram {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  cover String
+  isPublished Boolean [not null, default: false]
+  schoolId String [not null]
+  school School [not null]
+  studentPrograms StudentSchoolProgram [not null]
+  images SchoolProgramImage [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (schoolId, name) [unique]
+  }
+}
+
+Table SchoolProgramImage {
+  id String [pk]
+  url String [not null]
+  programId String [not null]
+  program SchoolProgram [not null]
+}
+
+Table StudentSchoolProgram {
+  id String [pk]
+  studentId String [unique, not null]
+  student Student [not null]
+  programId String [not null]
+  program SchoolProgram [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (studentId, programId) [unique]
+  }
+}
+
+Table Student {
+  id String [pk]
+  studentCode String [unique]
+  degreeType DegreeType [not null]
+  certificateType CertificateType [not null]
+  certificateImg String [not null]
+  gradeType GradeType [not null]
+  gradeScore Float [not null]
+  cover String
+  status StudentStatus [not null, default: 'AWAITING']
+  accountId String [unique, not null]
+  account Account [not null]
+  schoolId String [not null]
+  school School [not null]
+  profile Profile
+  program StudentSchoolProgram
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Event {
+  id String [pk]
+  title String [not null]
+  hostId String [unique, not null]
+  host Profile [not null]
+  participants EventProfile [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table EventProfile {
+  id String [pk]
+  eventId String [not null]
+  event Event [not null]
+  profileId String [not null]
+  profile Profile [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (eventId, profileId) [unique]
+  }
+}
+
+Table Profile {
+  id String [pk]
+  status ProfileStatus [not null, default: 'ONLINE']
+  studentId String [unique, not null]
+  student Student [not null]
+  hostedEvents Event [not null]
+  participatedEvents EventProfile [not null]
+  posts Post [not null]
+  biography ProfileBiography
+  friendRequests ProfileFriend [not null]
+  friendReceived ProfileFriend [not null]
+  ownedGroups Group [not null]
+  groups ProfileGroup [not null]
+  blogs ProfileBlog [not null]
+  postComments PostComment [not null]
+  postCommentLikes PostCommentLike [not null]
+  postLikes PostLike [not null]
+  postShares PostShare [not null]
+  postSaved PostSave [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProfileFriend {
+  id String [pk]
+  isActive Boolean [not null, default: false]
+  profileIdOne String [unique, not null]
+  profileOne Profile [not null]
+  profileIdTwo String [unique, not null]
+  profileTwo Profile [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Area {
+  id String [pk]
+  title String [unique, not null]
+  biographies ProfileBiographyArea [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProfileBiography {
+  id String [pk]
+  content String [not null]
+  profileId String [unique, not null]
+  profile Profile [not null]
+  areas ProfileBiographyArea [not null]
+  socials ProfileBiographySocial [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProfileBiographyArea {
+  id String [pk]
+  biographyId String [not null]
+  biography ProfileBiography [not null]
+  areaId String [not null]
+  area Area [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (biographyId, areaId) [unique]
+  }
+}
+
+Table ProfileBiographySocial {
+  id String [pk]
+  type SocialType [not null]
+  href String [not null]
+  profileBiographyId String [not null]
+  profileBiography ProfileBiography [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (type, href) [unique]
+  }
+}
+
+Table ProfileBlog {
+  id String [pk]
+  title String [not null]
+  content String
+  images ProfileBlogImage [not null]
+  profileId String [unique, not null]
+  profile Profile [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProfileBlogImage {
+  id String [pk]
+  url String [not null]
+  profileBlogId String [not null]
+  profileBlog ProfileBlog [not null]
+}
+
+Table Post {
+  id String [pk]
+  content String
+  status PostStatus [not null, default: 'PUBLIC']
+  isArchived Boolean [not null, default: false]
+  profileId String [not null]
+  profile Profile [not null]
+  images PostImage [not null]
+  comments PostComment [not null]
+  likes PostLike [not null]
+  shares PostShare [not null]
+  saves PostSave [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table PostImage {
+  id String [pk]
+  url String [not null]
+  postId String [not null]
+  post Post [not null]
+}
+
+Table PostLike {
+  id String [pk]
+  profileId String [not null]
+  profile Profile [not null]
+  postId String [not null]
+  post Post [not null]
+
+  indexes {
+    (profileId, postId) [unique]
+  }
+}
+
+Table PostShare {
+  id String [pk]
+  profileId String [not null]
+  profile Profile [not null]
+  postId String [not null]
+  post Post [not null]
+
+  indexes {
+    (profileId, postId) [unique]
+  }
+}
+
+Table PostSave {
+  id String [pk]
+  profileId String [not null]
+  profile Profile [not null]
+  postId String [not null]
+  post Post [not null]
+
+  indexes {
+    (profileId, postId) [unique]
+  }
+}
+
+Table PostComment {
+  id String [pk]
+  content String
+  image String
+  isArchived Boolean [not null, default: false]
+  profileId String [not null]
+  profile Profile [not null]
+  postId String [not null]
+  post Post [not null]
+  parentCommentId String
+  parentComment PostComment
+  children PostComment [not null]
+  likes PostCommentLike [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table PostCommentLike {
+  id String [pk]
+  profileId String [not null]
+  profile Profile [not null]
+  postCommentId String [not null]
+  postComment PostComment [not null]
+
+  indexes {
+    (profileId, postCommentId) [unique]
+  }
+}
+
+Table Group {
+  id String [pk]
+  ownerId String [not null]
+  owner Profile [not null]
+  profiles ProfileGroup [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProfileGroup {
+  id String [pk]
+  profileId String [not null]
+  profile Profile [not null]
+  groupId String [not null]
+  group Group [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (profileId, groupId) [unique]
+  }
+}
+
+Enum Gender {
+  MALE
+  FEMALE
+}
+
+Enum GradeType {
+  GPA
+  CGPA
+}
+
+Enum CertificateType {
+  IELTS
+  TOEFL
+}
+
+Enum DegreeType {
+  HIGHSCHOOL
+  UNIVERSITY
+}
+
+Enum StudentStatus {
+  STUDYING
+  DROPPED
+  AWAITING
+  APPROVED
+}
+
+Enum ProfileStatus {
+  ONLINE
+  OFFLINE
+  IDLE
+  BUSY
+  INVISIBLE
+}
+
+Enum PostStatus {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  EXCEPT
+}
+
+Enum SocialType {
+  YOUTUBE
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  TWITCH
+  TWITTER
+  PORTFOLLIO
+}
+
+Ref: TwoFactorConfirmation.accountId - Account.id [delete: Cascade]
+
+Ref: SchoolBlog.schoolId > School.id
+
+Ref: SchoolBlogImages.schoolBlogId > SchoolBlog.id [delete: Cascade]
+
+Ref: SchoolGallery.schoolId > School.id
+
+Ref: SchoolGalleryImage.galleryId > SchoolGallery.id [delete: Cascade]
+
+Ref: SchoolLocation.schoolId > School.id [delete: Cascade]
+
+Ref: SchoolLocationImage.locationId > SchoolLocation.id [delete: Cascade]
+
+Ref: SchoolLocationContact.locationId > SchoolLocation.id [delete: Cascade]
+
+Ref: SchoolProgram.schoolId > School.id
+
+Ref: SchoolProgramImage.programId > SchoolProgram.id [delete: Cascade]
+
+Ref: StudentSchoolProgram.studentId - Student.id [delete: Cascade]
+
+Ref: StudentSchoolProgram.programId > SchoolProgram.id [delete: Cascade]
+
+Ref: Student.accountId - Account.id [delete: Cascade]
+
+Ref: Student.schoolId > School.id [delete: Cascade]
+
+Ref: Event.hostId > Profile.id [delete: Cascade]
+
+Ref: EventProfile.eventId > Event.id [delete: Cascade]
+
+Ref: EventProfile.profileId > Profile.id [delete: Cascade]
+
+Ref: Profile.studentId - Student.id [delete: Cascade]
+
+Ref: ProfileFriend.profileIdOne > Profile.id [delete: Cascade]
+
+Ref: ProfileFriend.profileIdTwo > Profile.id [delete: Cascade]
+
+Ref: ProfileBiography.profileId - Profile.id [delete: Cascade]
+
+Ref: ProfileBiographyArea.biographyId > ProfileBiography.id [delete: Cascade]
+
+Ref: ProfileBiographyArea.areaId > Area.id [delete: Cascade]
+
+Ref: ProfileBiographySocial.profileBiographyId > ProfileBiography.id [delete: Cascade]
+
+Ref: ProfileBlog.profileId > Profile.id [delete: Cascade]
+
+Ref: ProfileBlogImage.profileBlogId > ProfileBlog.id [delete: Cascade]
+
+Ref: Post.profileId > Profile.id [delete: Cascade]
+
+Ref: PostImage.postId > Post.id [delete: Cascade]
+
+Ref: PostLike.profileId > Profile.id [delete: Cascade]
+
+Ref: PostLike.postId > Post.id [delete: Cascade]
+
+Ref: PostShare.profileId > Profile.id [delete: Cascade]
+
+Ref: PostShare.postId > Post.id [delete: Cascade]
+
+Ref: PostSave.profileId > Profile.id [delete: Cascade]
+
+Ref: PostSave.postId > Post.id
+
+Ref: PostComment.profileId > Profile.id [delete: Cascade]
+
+Ref: PostComment.postId > Post.id [delete: Cascade]
+
+Ref: PostComment.parentCommentId - PostComment.id [delete: Cascade]
+
+Ref: PostCommentLike.profileId > Profile.id [delete: Cascade]
+
+Ref: PostCommentLike.postCommentId > PostComment.id [delete: Cascade]
+
+Ref: Group.ownerId > Profile.id [delete: Cascade]
+
+Ref: ProfileGroup.profileId > Profile.id [delete: Cascade]
+
+Ref: ProfileGroup.groupId > Group.id [delete: Cascade]
