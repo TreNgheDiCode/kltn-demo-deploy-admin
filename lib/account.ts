@@ -12,6 +12,7 @@ export const GetUserByEmail = async (email: string) => {
         password: true,
         emailVerified: true,
         name: true,
+        student: true,
       },
     });
 

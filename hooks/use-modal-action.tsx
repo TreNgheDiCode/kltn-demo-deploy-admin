@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type UpdateSchoolProfile = {
+type ModalAction = {
   title: string;
   description?: string;
   isOpen: boolean;
@@ -9,7 +9,7 @@ type UpdateSchoolProfile = {
   onAction: () => void;
 };
 
-export const useModalAction = create<UpdateSchoolProfile>((set) => ({
+export const useModalAction = create<ModalAction>((set) => ({
   isOpen: false,
   title: "",
   description: undefined,

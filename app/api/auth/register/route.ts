@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
-import { RegisterSchema } from "@/types";
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { generateStudentCode, generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/email";
+import { generateVerificationToken } from "@/lib/tokens";
+import { RegisterSchema } from "@/types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
