@@ -1,6 +1,6 @@
 "use client";
 
-import { SchoolStudentExtend } from "@/types/type";
+import { SchoolProgramExtend } from "@/types/type";
 import {
   Button,
   Chip,
@@ -28,46 +28,34 @@ import {
   SearchIcon,
 } from "lucide-react";
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale/vi";
 
-interface SchoolStudentProps {
-  students: SchoolStudentExtend[];
+interface SchoolProgramTableProps {
+  programs: SchoolProgramExtend[];
 }
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  AWAITING: "default",
-  STUDYING: "warning",
-  APPROVED: "success",
-  DROPPED: "danger",
-};
-
-const degreeColorMap: Record<string, ChipProps["color"]> = {
-  HIGHSCHOOL: "warning",
-  UNIVERSITY: "success",
-};
 
 const columns = [
   { name: "Id", uid: "id", sortable: true },
-  { name: "Học sinh", uid: "name", sortable: true },
-  { name: "Ngày sinh", uid: "dob" },
-  { name: "Ngành đào tạo", uid: "program", sortable: true },
+  { name: "Tên ngành đào tạo", uid: "name", sortable: true },
+  { name: "Mô tả", uid: "description", sortable: true },
   { name: "Trạng thái", uid: "status", sortable: true },
-  { name: "Bằng cấp", uid: "degree", sortable: true },
-  { name: "Điểm tích lũy", uid: "gradeScore", sortable: true },
   { name: "Hành động", uid: "actions" },
 ];
 
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  true: "success",
+  false: "default",
+};
+
+const INITIAL_COLUMNS = ["name", "status", "actions"];
+
 const statusOptions = [
-  { name: "AWAITING", uid: "AWAITING" },
-  { name: "STUDYING", uid: "STUDYING" },
-  { name: "APPROVED", uid: "APPROVED" },
-  { name: "DROPPED", uid: "DROPPED" },
+  { name: "TRUE", uid: "true" },
+  { name: "FALSE", uid: "false" },
 ];
 
-const INITIAL_COLUMNS = ["name", "program", "status", "actions"];
-
-export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
+export const SchoolProgramTable = ({
+  programs,
+}: Readonly<SchoolProgramTableProps>) => {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -75,10 +63,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   );
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "dob",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
 
   const [page, setPage] = useState(1);
 
@@ -93,24 +78,24 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredStudents = [...students];
+    let filteredPrograms = [...programs];
 
     if (hasSearchFilter) {
-      filteredStudents = filteredStudents.filter((student) =>
-        student.account.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPrograms = filteredPrograms.filter((program) =>
+        program.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredStudents = filteredStudents.filter((student) =>
-        Array.from(statusFilter).includes(student.status)
+      filteredPrograms = filteredPrograms.filter((program) =>
+        Array.from(statusFilter).includes(program.isPublished.toString())
       );
     }
 
-    return filteredStudents;
-  }, [students, filterValue, statusFilter, hasSearchFilter]);
+    return filteredPrograms;
+  }, [programs, filterValue, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -122,13 +107,13 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: SchoolStudentExtend, b: SchoolStudentExtend) => {
+    return [...items].sort((a: SchoolProgramExtend, b: SchoolProgramExtend) => {
       const first = a[
-        sortDescriptor.column as keyof SchoolStudentExtend
-      ] as number;
+        sortDescriptor.column as keyof SchoolProgramExtend
+      ] as unknown as number;
       const second = b[
-        sortDescriptor.column as keyof SchoolStudentExtend
-      ] as number;
+        sortDescriptor.column as keyof SchoolProgramExtend
+      ] as unknown as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -136,66 +121,43 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   }, [sortDescriptor, items]);
 
   const renderCell = useCallback(
-    (student: SchoolStudentExtend, columnKey: Key) => {
+    (program: SchoolProgramExtend, columnKey: Key) => {
       switch (columnKey) {
         case "id":
           return (
-            <p className="font-bold text-tiny text-primary">{student.id}</p>
+            <p className="font-bold text-tiny text-primary">{program.id}</p>
           );
         case "name":
           return (
             <User
-              avatarProps={{ radius: "lg", src: student.account.image || "" }}
-              description={student.studentCode}
-              name={student.account.name}
+              avatarProps={{ radius: "lg", src: program.cover || "" }}
+              name={program.name}
             />
           );
-        case "dob":
+        case "description":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {format(student.account.dob, "dd MMMM, yyyy", {
-                locale: vi,
-              })}
+              {program.description}
             </p>
-          );
-        case "program":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {student.program?.program.name}
-            </p>
-          );
-        case "degree":
-          return (
-            <div className="flex items-center justify-center">
-              <Chip
-                className="capitalize"
-                color={degreeColorMap[student.degreeType]}
-                size="sm"
-                variant="flat"
-              >
-                {student.degreeType}
-              </Chip>
-            </div>
           );
         case "status":
           return (
             <div className="flex items-center justify-center">
               <Chip
                 className="capitalize"
-                color={statusColorMap[student.status]}
+                color={
+                  program.isPublished
+                    ? statusColorMap.true
+                    : statusColorMap.false
+                }
                 size="sm"
                 variant="flat"
               >
-                {student.status}
+                {program.isPublished ? "Hiển thị" : "Tạm ẩn"}
               </Chip>
             </div>
           );
-        case "gradeScore":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary text-center">
-              {student.gradeScore + " (" + student.gradeType + ")"}
-            </p>
-          );
+
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
@@ -320,13 +282,13 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
               </DropdownMenu>
             </Dropdown>
             <Button color="primary" endContent={<PlusIcon />}>
-              Thêm học sinh
+              Thêm ngành đào tạo
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Tổng số: {students.length} học sinh
+            Tổng số: {programs.length} ngành đào tạo
           </span>
           <label className="flex items-center text-default-400 text-small">
             Số dòng mỗi trang:
@@ -348,7 +310,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    students.length,
+    programs.length,
     onClear,
   ]);
 
@@ -397,10 +359,9 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
     onNextPage,
     onPreviousPage,
   ]);
-
   return (
     <Table
-      aria-label="School students table with custom cells, pagination and sorting"
+      aria-label="School programs table with custom cells, pagination and sorting"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
@@ -426,7 +387,10 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"Không tìm thấy học sinh"} items={sortedItems}>
+      <TableBody
+        emptyContent={"Không tìm thấy ngành đào tạo"}
+        items={sortedItems}
+      >
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
