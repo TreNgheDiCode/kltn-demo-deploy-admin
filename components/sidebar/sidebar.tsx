@@ -45,7 +45,7 @@ export const Sidebar = () => {
   return (
     <aside
       ref={sidebarRef}
-      className="group/sidebar h-screen relative w-72 p-3 flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl scrollbar-hide"
+      className="group/sidebar h-screen fixed w-72 p-3 flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl scrollbar-hide"
     >
       <div
         role="button"
@@ -64,7 +64,7 @@ export const Sidebar = () => {
         isCompact
         className="p-0 flex flex-col gap-3"
         defaultExpandedKeys={
-          pathname.startsWith("/statistics") ? ["statistics"] : ["all"]
+          pathname.startsWith("/manangements") ? ["manangements"] : ["all"]
         }
       >
         <AccordionItem
@@ -81,10 +81,10 @@ export const Sidebar = () => {
         >
           <ButtonsAll isCollapsed={isCollapsed} />
         </AccordionItem>
-        {pathname.startsWith("/statistics") && (
+        {pathname.startsWith("/manangements") && (
           <AccordionItem
-            key={"statistics"}
-            aria-label="statistics"
+            key={"manangements"}
+            aria-label="manangements"
             indicator={<ChevronsUpDown />}
             title={!isCollapsed && "QUẢN LÝ"}
             classNames={{
