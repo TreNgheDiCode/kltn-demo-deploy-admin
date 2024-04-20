@@ -31,3 +31,11 @@ export type SchoolStudentExtend = {
   };
   degreeType: DegreeType;
 };
+
+export type SchoolLocationExtend = {
+  id: string;
+  name: string;
+  address: string;
+  cover: string | null;
+  isMain: boolean;
+};

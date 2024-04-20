@@ -2,7 +2,6 @@ import { HeadingSchool } from "@/components/school/heading";
 import { HeadingNavigation } from "@/components/school/heading-navigation";
 import { SchoolHeader } from "@/components/school/school-header";
 import { GetSchoolsById, GetSchoolsLib } from "@/lib/schools";
-import { GetStudentsBySchoolId } from "@/lib/student";
 
 const SchoolPage = async ({
   searchParams,
@@ -11,9 +10,6 @@ const SchoolPage = async ({
 }) => {
   const schools = await GetSchoolsLib();
   const selectSchool = await GetSchoolsById((searchParams.id as string) ?? "");
-  const students = await GetStudentsBySchoolId(
-    (searchParams.id as string) ?? ""
-  );
 
   return (
     <div className="space-y-3">
@@ -21,7 +17,11 @@ const SchoolPage = async ({
       {selectSchool ? (
         <div className="space-y-3">
           <SchoolHeader selectSchool={selectSchool} />
-          <HeadingNavigation school={selectSchool} students={students || []} />
+          <HeadingNavigation
+            school={selectSchool}
+            students={selectSchool.students || []}
+            locations={selectSchool.locations || []}
+          />
         </div>
       ) : (
         <div className="font-semibold text-center text-lg">
