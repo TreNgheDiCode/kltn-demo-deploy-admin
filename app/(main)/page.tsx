@@ -1,5 +1,4 @@
 import { checkRole } from "@/lib/roles";
-import { auth, redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function Home() {

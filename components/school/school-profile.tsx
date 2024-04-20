@@ -21,8 +21,6 @@ interface SchoolProfileProps {
 }
 
 export const SchoolProfile = ({ school }: SchoolProfileProps) => {
-  const { onOpen } = useUpdateSchoolProfile();
-
   const Editor = useMemo(
     () =>
       dynamic(() => import("@/components/school/description-editor"), {
@@ -33,41 +31,6 @@ export const SchoolProfile = ({ school }: SchoolProfileProps) => {
 
   return (
     <div className="space-y-3">
-      <div
-        className={`relative flex flex-col items-center justify-center w-full h-[35vh] border-5 border-primary gap-2`}
-      >
-        <Avatar src={school.logo} className="z-10" size="lg" />
-        <h1 className="font-bold text-white dark:text-primary text-4xl z-10 text-center">
-          {school.name}
-        </h1>
-        <Button
-          onClick={() =>
-            onOpen({
-              isPublished: school.isPublished,
-              name: school.name,
-              id: school.id,
-              logo: school.logo,
-              background: school.background,
-              short: school.short || "",
-              color: school.color,
-            })
-          }
-          startContent={<Pencil className="size-4" />}
-          color="primary"
-          variant="shadow"
-          className="z-10 absolute right-3 bottom-3 bg-white dark:bg-background text-primary"
-        >
-          Chỉnh sửa thông tin
-        </Button>
-        <Image
-          alt="school cover"
-          src={school.background}
-          fill
-          className="absolute object-cover blur-sm"
-          quality={100}
-          priority
-        />
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-2">
           <HeadingTitle text="Thông tin" />

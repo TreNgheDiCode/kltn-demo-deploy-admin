@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button, Link } from "@nextui-org/react";
 import { LayoutDashboard, LayoutList } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface ButtonsAllProps {
   isCollapsed: boolean;
@@ -11,16 +11,10 @@ interface ButtonsAllProps {
 
 export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const onClick = () => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    params.set("subject", "profiles");
-    params.set("category", "list");
-
-    router.push("/statistics/profiles" + "?" + params.toString());
+    router.push("/manangements/profiles");
   };
 
   return (
@@ -42,15 +36,15 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
       <Button
         onClick={onClick}
         startContent={<LayoutList className="w-4 h-4" />}
-        color={pathname.startsWith("/statistics") ? "primary" : undefined}
-        variant={pathname.startsWith("/statistics") ? "shadow" : "light"}
+        color={pathname.startsWith("/manangements") ? "primary" : undefined}
+        variant={pathname.startsWith("/manangements") ? "shadow" : "light"}
         className={cn(
           "items-center flex-row justify-start text-sm",
           isCollapsed && "w-fit min-w-0"
         )}
         size="sm"
       >
-        {!isCollapsed && "Thống kê"}
+        {!isCollapsed && "Quản lý"}
       </Button>
     </div>
   );
