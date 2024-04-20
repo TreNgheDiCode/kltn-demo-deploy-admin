@@ -1,5 +1,6 @@
 import ResetPasswordEmail from "@/template/reset-password-email";
 import { VerificationEmail } from "@/template/verification-email";
+import WelcomeEmail from "@/template/welcome-email";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 
@@ -60,6 +61,33 @@ export const sendPasswordResetEmail = async (
     from: "gabayan170@gmail.com",
     to: email,
     subject: "Reset your password",
+    html: emailHtml,
+  };
+
+  await transporter.sendMail(options);
+};
+
+export const sendWelcomeEmail = async (
+  name: string,
+  studentCode: string,
+  email: string
+) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "gabayan170@gmail.com",
+      pass: process.env.EMAIL_APP_PASSWORD,
+    },
+  });
+
+  const emailHtml = render(
+    <WelcomeEmail name={name} studentCode={studentCode} />
+  );
+
+  const options = {
+    from: "gabayan170@gmail.com",
+    to: email,
+    subject: "Welcome to Canadian Student Management Center",
     html: emailHtml,
   };
 

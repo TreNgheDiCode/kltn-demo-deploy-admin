@@ -12,15 +12,22 @@ export const nameSchema = z.object({
 });
 
 export const LoginSchema = z.object({
-  email: z
-    .string()
-    .min(1, {
-      message: "Email is required",
-    })
-    .email(),
+  email: z.optional(
+    z
+      .string()
+      .min(1, {
+        message: "Email is required",
+      })
+      .email()
+  ),
   password: z.string().min(1, {
     message: "Password is required",
   }),
+  studentCode: z.optional(
+    z.string().min(10, {
+      message: "Student code is required minimum of 10 characters",
+    })
+  ),
 });
 
 export const RegisterSchema = z

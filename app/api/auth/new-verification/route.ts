@@ -5,8 +5,6 @@ export async function POST(req: Request) {
   try {
     const token = await req.json();
 
-    console.log(token);
-
     if (!token) {
       return NextResponse.json(
         { error: "Vui lòng truyền vào mã xác thực" },
