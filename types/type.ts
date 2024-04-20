@@ -39,3 +39,11 @@ export type SchoolLocationExtend = {
   cover: string | null;
   isMain: boolean;
 };
+
+export type SchoolProgramExtend = {
+  id: string;
+  name: string;
+  description: string;
+  cover: string | null;
+  isPublished: boolean;
+};

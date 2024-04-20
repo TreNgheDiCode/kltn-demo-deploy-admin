@@ -29,7 +29,11 @@ export const GetSchoolsById = async (id: string) => {
       },
       programs: {
         select: {
+          id: true,
           name: true,
+          description: true,
+          cover: true,
+          isPublished: true,
         },
       },
       galleries: {

@@ -3,6 +3,7 @@
 import {
   SchoolExtend,
   SchoolLocationExtend,
+  SchoolProgramExtend,
   SchoolStudentExtend,
 } from "@/types/type";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
@@ -10,17 +11,20 @@ import { SchoolStudentTable } from "./school-student-table";
 import { SchoolDescription } from "./school-description";
 import { SchoolHistory } from "./school-history";
 import { SchoolLocationTable } from "./school-location-table";
+import { SchoolProgramTable } from "./school-program-table";
 
 interface HeadingNavgationProps {
   school: SchoolExtend;
   students: SchoolStudentExtend[];
   locations: SchoolLocationExtend[];
+  programs: SchoolProgramExtend[];
 }
 
 export const HeadingNavigation = ({
   school,
   students,
   locations,
+  programs,
 }: HeadingNavgationProps) => {
   return (
     <Card>
@@ -41,7 +45,9 @@ export const HeadingNavigation = ({
           <Tab key="location" title="Cơ sở">
             <SchoolLocationTable locations={locations} />
           </Tab>
-          <Tab key="education" title="Ngành đào tạo"></Tab>
+          <Tab key="education" title="Ngành đào tạo">
+            <SchoolProgramTable programs={programs} />
+          </Tab>
           <Tab key="gallery" title="Thư viện"></Tab>
           <Tab key="blog" title="Blog"></Tab>
         </Tabs>
