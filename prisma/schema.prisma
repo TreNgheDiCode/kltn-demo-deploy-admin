@@ -222,6 +222,7 @@ model SchoolLocation {
 
   images   SchoolLocationImage[]
   contacts SchoolLocationContact[]
+  students StudentSchoolLocation[]
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -298,6 +299,21 @@ model StudentSchoolProgram {
   @@unique([studentId, programId])
 }
 
+model StudentSchoolLocation {
+  id String @id @default(cuid())
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  locationId String
+  location   SchoolLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, locationId])
+}
+
 model Student {
   id String @id @default(cuid())
 
@@ -327,7 +343,8 @@ model Student {
 
   profile Profile?
 
-  program StudentSchoolProgram?
+  program  StudentSchoolProgram?
+  location StudentSchoolLocation?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

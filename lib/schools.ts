@@ -20,8 +20,11 @@ export const GetSchoolsById = async (id: string) => {
     include: {
       locations: {
         select: {
+          id: true,
           name: true,
           address: true,
+          cover: true,
+          isMain: true,
         },
       },
       programs: {
@@ -36,11 +39,28 @@ export const GetSchoolsById = async (id: string) => {
       },
       students: {
         select: {
+          id: true,
+          studentCode: true,
           account: {
             select: {
+              image: true,
               name: true,
+              dob: true,
             },
           },
+          program: {
+            select: {
+              program: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          status: true,
+          degreeType: true,
+          gradeType: true,
+          gradeScore: true,
         },
       },
     },

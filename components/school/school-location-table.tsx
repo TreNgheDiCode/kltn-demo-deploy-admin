@@ -1,10 +1,8 @@
 "use client";
 
-import { SchoolStudentExtend } from "@/types/type";
+import { SchoolLocationExtend } from "@/types/type";
 import {
   Button,
-  Chip,
-  ChipProps,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -28,57 +26,30 @@ import {
   SearchIcon,
 } from "lucide-react";
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale/vi";
 
-interface SchoolStudentProps {
-  students: SchoolStudentExtend[];
+interface SchoolLocationTableProps {
+  locations: SchoolLocationExtend[];
 }
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  AWAITING: "default",
-  STUDYING: "warning",
-  APPROVED: "success",
-  DROPPED: "danger",
-};
-
-const degreeColorMap: Record<string, ChipProps["color"]> = {
-  HIGHSCHOOL: "warning",
-  UNIVERSITY: "success",
-};
 
 const columns = [
   { name: "Id", uid: "id", sortable: true },
-  { name: "Học sinh", uid: "name", sortable: true },
-  { name: "Ngày sinh", uid: "dob" },
-  { name: "Ngành đào tạo", uid: "program", sortable: true },
-  { name: "Trạng thái", uid: "status", sortable: true },
-  { name: "Bằng cấp", uid: "degree", sortable: true },
-  { name: "Điểm tích lũy", uid: "gradeScore", sortable: true },
+  { name: "Tên cơ sở", uid: "name", sortable: true },
+  { name: "Địa chỉ", uid: "address", sortable: true },
   { name: "Hành động", uid: "actions" },
 ];
 
-const statusOptions = [
-  { name: "AWAITING", uid: "AWAITING" },
-  { name: "STUDYING", uid: "STUDYING" },
-  { name: "APPROVED", uid: "APPROVED" },
-  { name: "DROPPED", uid: "DROPPED" },
-];
+const INITIAL_COLUMNS = ["name", "address", "actions"];
 
-const INITIAL_COLUMNS = ["name", "program", "status", "actions"];
-
-export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
+export const SchoolLocationTable = ({
+  locations,
+}: Readonly<SchoolLocationTableProps>) => {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "dob",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
 
   const [page, setPage] = useState(1);
 
@@ -93,24 +64,16 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredStudents = [...students];
+    let filteredLocations = [...locations];
 
     if (hasSearchFilter) {
-      filteredStudents = filteredStudents.filter((student) =>
-        student.account.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredStudents = filteredStudents.filter((student) =>
-        Array.from(statusFilter).includes(student.status)
+      filteredLocations = filteredLocations.filter((location) =>
+        location.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredStudents;
-  }, [students, filterValue, statusFilter, hasSearchFilter]);
+    return filteredLocations;
+  }, [locations, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -122,78 +85,39 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: SchoolStudentExtend, b: SchoolStudentExtend) => {
-      const first = a[
-        sortDescriptor.column as keyof SchoolStudentExtend
-      ] as number;
-      const second = b[
-        sortDescriptor.column as keyof SchoolStudentExtend
-      ] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+    return [...items].sort(
+      (a: SchoolLocationExtend, b: SchoolLocationExtend) => {
+        const first = a[
+          sortDescriptor.column as keyof SchoolLocationExtend
+        ] as unknown as number;
+        const second = b[
+          sortDescriptor.column as keyof SchoolLocationExtend
+        ] as unknown as number;
+        const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
+        return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      }
+    );
   }, [sortDescriptor, items]);
 
   const renderCell = useCallback(
-    (student: SchoolStudentExtend, columnKey: Key) => {
+    (location: SchoolLocationExtend, columnKey: Key) => {
       switch (columnKey) {
         case "id":
           return (
-            <p className="font-bold text-tiny text-primary">{student.id}</p>
+            <p className="font-bold text-tiny text-primary">{location.id}</p>
           );
         case "name":
           return (
             <User
-              avatarProps={{ radius: "lg", src: student.account.image || "" }}
-              description={student.studentCode}
-              name={student.account.name}
+              avatarProps={{ radius: "lg", src: location.cover || "" }}
+              name={location.name}
             />
           );
-        case "dob":
+        case "address":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {format(student.account.dob, "dd MMMM, yyyy", {
-                locale: vi,
-              })}
-            </p>
-          );
-        case "program":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {student.program?.program.name}
-            </p>
-          );
-        case "degree":
-          return (
-            <div className="flex items-center justify-center">
-              <Chip
-                className="capitalize"
-                color={degreeColorMap[student.degreeType]}
-                size="sm"
-                variant="flat"
-              >
-                {student.degreeType}
-              </Chip>
-            </div>
-          );
-        case "status":
-          return (
-            <div className="flex items-center justify-center">
-              <Chip
-                className="capitalize"
-                color={statusColorMap[student.status]}
-                size="sm"
-                variant="flat"
-              >
-                {student.status}
-              </Chip>
-            </div>
-          );
-        case "gradeScore":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary text-center">
-              {student.gradeScore + " (" + student.gradeType + ")"}
+              {location.address}
             </p>
           );
         case "actions":
@@ -277,30 +201,6 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Trạng thái
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
                   Danh mục
                 </Button>
               </DropdownTrigger>
@@ -320,13 +220,13 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
               </DropdownMenu>
             </Dropdown>
             <Button color="primary" endContent={<PlusIcon />}>
-              Thêm học sinh
+              Thêm cơ sở
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Tổng số: {students.length} học sinh
+            Tổng số: {locations.length} cơ sở
           </span>
           <label className="flex items-center text-default-400 text-small">
             Số dòng mỗi trang:
@@ -344,11 +244,10 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
     );
   }, [
     filterValue,
-    statusFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    students.length,
+    locations.length,
     onClear,
   ]);
 
@@ -400,7 +299,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
 
   return (
     <Table
-      aria-label="School students table with custom cells, pagination and sorting"
+      aria-label="School locations table with custom cells, pagination and sorting"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
@@ -426,7 +325,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No students found"} items={sortedItems}>
+      <TableBody emptyContent={"Không tìm thấy cơ sở"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
