@@ -24,6 +24,10 @@ export const VerificationEmail = ({
   confirmLink,
   senderEmail,
 }: VerificationEmailProps) => {
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "";
+
   return (
     <Html>
       <Preview>Hello, {name}</Preview>
@@ -31,7 +35,7 @@ export const VerificationEmail = ({
         <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
           <Section className="mt-[32px]">
             <Img
-              src={"logo-red.webp"}
+              src={`${baseUrl}/static/logo_icon_light.png`}
               width="40"
               height="37"
               alt="Logo"
