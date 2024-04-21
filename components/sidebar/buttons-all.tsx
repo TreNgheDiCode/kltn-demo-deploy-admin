@@ -14,7 +14,7 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
   const router = useRouter();
 
   const onClick = () => {
-    router.push("/manangements/profiles");
+    router.push("/managements/profiles");
   };
 
   return (
@@ -36,8 +36,8 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
       <Button
         onClick={onClick}
         startContent={<LayoutList className="w-4 h-4" />}
-        color={pathname.startsWith("/manangements") ? "primary" : undefined}
-        variant={pathname.startsWith("/manangements") ? "shadow" : "light"}
+        color={pathname.startsWith("/managements") ? "primary" : undefined}
+        variant={pathname.startsWith("/managements") ? "shadow" : "light"}
         className={cn(
           "items-center flex-row justify-start text-sm",
           isCollapsed && "w-fit min-w-0"

@@ -10,6 +10,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
+  Link,
   Pagination,
   Selection,
   SortDescriptor,
@@ -50,7 +51,7 @@ const degreeColorMap: Record<string, ChipProps["color"]> = {
 
 const columns = [
   { name: "Id", uid: "id", sortable: true },
-  { name: "Học sinh", uid: "name", sortable: true },
+  { name: "Học sinh", uid: "name" },
   { name: "Ngày sinh", uid: "dob" },
   { name: "Ngành đào tạo", uid: "program", sortable: true },
   { name: "Trạng thái", uid: "status", sortable: true },
@@ -79,7 +80,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "dob",
+    column: "account.name",
     direction: "ascending",
   });
 
@@ -209,8 +210,9 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu>
-                  <DropdownItem>Xem chi tiết</DropdownItem>
-                  <DropdownItem>Chỉnh sửa thông tin</DropdownItem>
+                  <DropdownItem href={`/managements/students/${student.id}`}>
+                    Xem thông tin chi tiết
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>

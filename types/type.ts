@@ -1,4 +1,16 @@
-import { DegreeType, GradeType, School, StudentStatus } from "@prisma/client";
+import {
+  Account,
+  DegreeType,
+  GradeType,
+  Profile,
+  School,
+  SchoolLocation,
+  SchoolProgram,
+  Student,
+  StudentSchoolLocation,
+  StudentSchoolProgram,
+  StudentStatus,
+} from "@prisma/client";
 
 export type SchoolLib = {
   id: string;
@@ -65,3 +77,53 @@ export type City = {
   Name: string;
   Districts: District[];
 };
+
+// const student: ({
+//   account: {
+//       id: string;
+//       email: string;
+//       emailVerified: Date | null;
+//       password: string;
+//       name: string;
+//       dob: Date;
+//       gender: $Enums.Gender;
+//       phoneNumber: string;
+//       idCardNumber: string;
+//       ... 4 more ...;
+//       updatedAt: Date;
+//   };
+//   school: {
+//       ...;
+//   };
+//   profile: {
+//       ...;
+//   } | null;
+//   program: ({
+//       ...;
+//   } & {
+//       ...;
+//   }) | null;
+//   location: {
+//       ...;
+//   } | null;
+// } & {
+//   ...;
+// }) | null
+
+export type StudentLib =
+  | (Student & {
+      account: Account | null;
+      school: School | null;
+      profile: Profile | null;
+      program:
+        | (StudentSchoolProgram & {
+            program: SchoolProgram;
+          })
+        | null;
+      location:
+        | (StudentSchoolLocation & {
+            location: SchoolLocation;
+          })
+        | null;
+    })
+  | null;

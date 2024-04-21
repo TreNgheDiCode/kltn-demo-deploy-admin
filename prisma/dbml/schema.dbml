@@ -217,6 +217,7 @@ Table Student {
   gradeType GradeType [not null]
   gradeScore Float [not null]
   cover String
+  additional String
   status StudentStatus [not null, default: 'AWAITING']
   accountId String [unique, not null]
   account Account [not null]

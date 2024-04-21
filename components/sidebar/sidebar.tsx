@@ -64,7 +64,7 @@ export const Sidebar = () => {
         isCompact
         className="p-0 flex flex-col gap-3"
         defaultExpandedKeys={
-          pathname.startsWith("/manangements") ? ["manangements"] : ["all"]
+          pathname.startsWith("/managements") ? ["managements"] : ["all"]
         }
       >
         <AccordionItem
@@ -81,10 +81,10 @@ export const Sidebar = () => {
         >
           <ButtonsAll isCollapsed={isCollapsed} />
         </AccordionItem>
-        {pathname.startsWith("/manangements") && (
+        {pathname.startsWith("/managements") && (
           <AccordionItem
-            key={"manangements"}
-            aria-label="manangements"
+            key={"managements"}
+            aria-label="managements"
             indicator={<ChevronsUpDown />}
             title={!isCollapsed && "QUẢN LÝ"}
             classNames={{
