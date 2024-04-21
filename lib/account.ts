@@ -13,6 +13,7 @@ export const GetAccountByEmail = async (email: string) => {
         emailVerified: true,
         name: true,
         student: true,
+        isLocked: true,
       },
     });
 

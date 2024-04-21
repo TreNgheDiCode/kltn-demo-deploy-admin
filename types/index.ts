@@ -246,6 +246,7 @@ export const NewSchoolSchema = z.object({
 });
 
 export const UpdateStudent = z.object({
+  isLocked: z.optional(z.boolean()),
   status: z.optional(
     z.enum([
       StudentStatus.APPROVED,
@@ -253,6 +254,125 @@ export const UpdateStudent = z.object({
       StudentStatus.STUDYING,
       StudentStatus.AWAITING,
     ])
+  ),
+  email: z.optional(
+    z
+      .string()
+      .min(1, {
+        message: "Email is required",
+      })
+      .email({
+        message: "Invalid type of email",
+      })
+  ),
+  name: z.optional(
+    z.string().min(1, {
+      message: "Fullname is required",
+    })
+  ),
+  dob: z.optional(
+    z
+      .date({
+        required_error: "Date of birth is required",
+      })
+      .min(new Date("1970-01-01"), {
+        message: "Your age is too old",
+      })
+      .max(new Date("2006-31-12"), {
+        message: "Your age is too young",
+      })
+  ),
+  gender: z.optional(
+    z.enum([Gender.MALE, Gender.FEMALE], {
+      invalid_type_error: "Invalid type, please reselect",
+    })
+  ),
+  phoneNumber: z.optional(
+    z
+      .string({
+        invalid_type_error: "Invalid phone number",
+        required_error: "Phone number is required",
+      })
+      .min(10, {
+        message: "Minimum 10 numbers is required",
+      })
+      .max(13, {
+        message: "Maximum 13 numbers is required",
+      })
+  ),
+  idCardNumber: z.optional(
+    z
+      .string({
+        required_error: "Id card number is required",
+      })
+      .min(1, {
+        message: "Id card number is required",
+      })
+  ),
+  city: z.optional(
+    z.string().min(1, {
+      message: "City is required",
+    })
+  ),
+  district: z.optional(
+    z.string().min(1, {
+      message: "District is required",
+    })
+  ),
+  ward: z.optional(
+    z.string().min(1, {
+      message: "Ward is required",
+    })
+  ),
+  addressLine: z.optional(
+    z.string().min(1, {
+      message: "Address line is required",
+    })
+  ),
+  schoolName: z.optional(
+    z
+      .string({
+        required_error: "School is required",
+      })
+      .min(1, {
+        message: "School is required",
+      })
+  ),
+  programName: z.optional(
+    z
+      .string({
+        required_error: "Program is required",
+      })
+      .min(1, {
+        message: "Program is required",
+      })
+  ),
+  degreeType: z.optional(
+    z.enum([DegreeType.HIGHSCHOOL, DegreeType.UNIVERSITY], {
+      required_error: "Degree type is required",
+      invalid_type_error: "Invalid type, please reselect",
+    })
+  ),
+  certificateType: z.optional(
+    z.enum([CertificateType.IELTS, CertificateType.TOEFL], {
+      required_error: "Certificate type is required",
+      invalid_type_error: "Invalid type, please reselect",
+    })
+  ),
+  gradeType: z.optional(
+    z.enum([GradeType.GPA, GradeType.CGPA], {
+      required_error: "Grade type is required",
+      invalid_type_error: "Invalid type, please reselect",
+    })
+  ),
+  gradeScore: z.optional(
+    z
+      .string({
+        required_error: "Grade score is required",
+      })
+      .min(1, {
+        message: "Grade score is required",
+      })
   ),
   additional: z.optional(z.string()),
 });

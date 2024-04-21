@@ -31,6 +31,13 @@ export async function POST(req: Request) {
         );
       }
 
+      if (existingAccount.isLocked) {
+        return NextResponse.json(
+          { error: "Tài khoản của bạn đã bị khóa" },
+          { status: 403 }
+        );
+      }
+
       const isPasswordMatch = await bcrypt.compare(
         password,
         existingAccount.password
@@ -83,6 +90,7 @@ export async function POST(req: Request) {
           account: {
             select: {
               password: true,
+              isLocked: true,
             },
           },
           status: true,
@@ -93,6 +101,13 @@ export async function POST(req: Request) {
         return NextResponse.json(
           { error: "Không tồn tại sinh viên với mã sinh viên này" },
           { status: 401 }
+        );
+      }
+
+      if (existingStudent.account.isLocked) {
+        return NextResponse.json(
+          { error: "Tài khoản của bạn đã bị khóa" },
+          { status: 403 }
         );
       }
 

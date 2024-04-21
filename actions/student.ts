@@ -1,8 +1,16 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
-import { generateStudentCode, generateVerificationToken } from "@/lib/tokens";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "@/lib/email";
+import {
+  generatePasswordResetToken,
+  generateStudentCode,
+  generateVerificationToken,
+} from "@/lib/tokens";
 import { UpdateStudent } from "@/types";
 import { z } from "zod";
 
@@ -32,13 +40,152 @@ export const updateStudent = async (
       return { error: "Không tìm thấy học sinh" };
     }
 
+    if (data.email && data.email !== existingStudent.account.email) {
+      const existingAccount = await db.account.findUnique({
+        where: {
+          email: data.email,
+        },
+      });
+
+      if (existingAccount) {
+        return { error: "Email đã tồn tại" };
+      }
+
+      if (
+        data.idCardNumber &&
+        data.idCardNumber !== existingStudent.account.idCardNumber
+      ) {
+        const existIdCard = await db.account.findUnique({
+          where: {
+            idCardNumber: data.idCardNumber,
+          },
+        });
+
+        if (existIdCard) {
+          return { error: "CCCD/CMND đã tồn tại" };
+        }
+      }
+
+      const address = `${data.addressLine}, ${data.ward}, ${data.district}, ${data.city}`;
+
+      const existingSchool = await db.school.findUnique({
+        where: {
+          name: data.schoolName,
+        },
+      });
+
+      if (!existingSchool) {
+        return { error: "Không tìm thấy trường học" };
+      }
+
+      const existingProgram = await db.schoolProgram.findUnique({
+        where: {
+          schoolId_name: {
+            schoolId: existingSchool.id,
+            name: data.programName!,
+          },
+        },
+      });
+
+      if (!existingProgram) {
+        return { error: "Không tìm thấy ngành đào tạo" };
+      }
+
+      await db.student.update({
+        where: {
+          id,
+        },
+        data: {
+          status: "AWAITING",
+          degreeType: data.degreeType,
+          gradeType: data.gradeType,
+          gradeScore: parseFloat(data.gradeScore!),
+          certificateType: data.certificateType,
+          account: {
+            update: {
+              email: data.email,
+              name: data.name,
+              dob: data.dob,
+              gender: data.gender,
+              phoneNumber: data.phoneNumber,
+              idCardNumber: data.idCardNumber,
+              address,
+            },
+          },
+          program: {
+            update: {
+              programId: existingProgram.id,
+            },
+          },
+        },
+      });
+
+      await db.student.update({
+        where: {
+          id,
+        },
+        data: {
+          schoolId: existingSchool.id,
+        },
+      });
+
+      const verificationToken = await generateVerificationToken(data.email);
+
+      await sendVerificationEmail(
+        data.name!,
+        process.env.NODE_SENDER_EMAIL!,
+        verificationToken.email,
+        verificationToken.token
+      );
+
+      return {
+        success:
+          "Cập nhật thông tin học sinh thành công, vui lòng xác thực email để mở khóa tính năng!",
+      };
+    }
+
+    if (data.isLocked) {
+      await db.student.update({
+        where: {
+          id,
+        },
+        data: {
+          account: {
+            update: {
+              isLocked: true,
+            },
+          },
+        },
+      });
+
+      return { success: "Khóa tài khoản học sinh thành công" };
+    }
+
+    if (data.isLocked === false) {
+      await db.student.update({
+        where: {
+          id,
+        },
+        data: {
+          account: {
+            update: {
+              isLocked: false,
+            },
+          },
+        },
+      });
+
+      return { success: "Mở khóa tài khoản học sinh thành công" };
+    }
+
     if (data.status === "DROPPED" && !existingStudent.studentCode) {
       await db.student.update({
         where: {
           id: existingStudent.id,
         },
         data: {
-          ...data,
+          status: data.status,
+          additional: data.additional,
         },
       });
 
@@ -100,12 +247,82 @@ export const updateStudent = async (
       return { success: "Duyệt học sinh thành công" };
     }
 
+    if (
+      data.idCardNumber &&
+      data.idCardNumber !== existingStudent.account.idCardNumber
+    ) {
+      const existIdCard = await db.account.findUnique({
+        where: {
+          idCardNumber: data.idCardNumber,
+        },
+      });
+
+      if (existIdCard) {
+        return { error: "CCCD/CMND đã tồn tại" };
+      }
+    }
+
+    const address = `${data.addressLine}, ${data.ward}, ${data.district}, ${data.city}`;
+
+    const existingSchool = await db.school.findUnique({
+      where: {
+        name: data.schoolName,
+      },
+    });
+
+    if (!existingSchool) {
+      return { error: "Không tìm thấy trường học" };
+    }
+
+    const existingProgram = await db.schoolProgram.findUnique({
+      where: {
+        schoolId_name: {
+          schoolId: existingSchool.id,
+          name: data.programName!,
+        },
+      },
+    });
+
+    if (!existingProgram) {
+      return { error: "Không tìm thấy ngành đào tạo" };
+    }
+
     await db.student.update({
       where: {
         id,
       },
       data: {
-        ...data,
+        status: data.status,
+        additional: data.additional,
+        degreeType: data.degreeType,
+        gradeType: data.gradeType,
+        gradeScore: parseFloat(data.gradeScore!),
+        certificateType: data.certificateType,
+        account: {
+          update: {
+            email: data.email,
+            name: data.name,
+            dob: data.dob,
+            gender: data.gender,
+            phoneNumber: data.phoneNumber,
+            idCardNumber: data.idCardNumber,
+            address,
+          },
+        },
+        program: {
+          update: {
+            programId: existingProgram.id,
+          },
+        },
+      },
+    });
+
+    await db.student.update({
+      where: {
+        id,
+      },
+      data: {
+        schoolId: existingSchool.id,
       },
     });
 
@@ -114,5 +331,42 @@ export const updateStudent = async (
     console.log("UPDATE STUDENT ACTION ERROR", error);
 
     return { error: "Lỗi cập nhật thông tin học sinh" };
+  }
+};
+
+export const sendPasswordReset = async (email: string, name: string) => {
+  try {
+    const passwordResetToken = await generatePasswordResetToken(email);
+
+    await sendPasswordResetEmail(
+      name,
+      passwordResetToken.email,
+      passwordResetToken.token
+    );
+
+    return { success: "Gửi yêu cầu khôi phục mật khẩu thành công" };
+  } catch (error) {
+    console.log("STUDENT RESET PASSWORD ACTION ERROR", error);
+
+    return { error: "Gửi yêu cầu khôi phục mật khẩu thất bại" };
+  }
+};
+
+export const sendEmailVerfication = async (email: string, name: string) => {
+  try {
+    const verificationToken = await generateVerificationToken(email);
+
+    await sendVerificationEmail(
+      name,
+      process.env.NODE_SENDER_EMAIL!,
+      verificationToken.email,
+      verificationToken.token
+    );
+
+    return { success: "Gửi yêu cầu xác thực email thành công" };
+  } catch (error) {
+    console.log("STUDENT VERIFICATION EMAIL ACTION ERROR", error);
+
+    return { error: "Gửi yêu cầu xác thực email thất bại" };
   }
 };

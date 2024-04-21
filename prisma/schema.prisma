@@ -83,6 +83,8 @@ model Account {
 
   image String?
 
+  isLocked Boolean @default(false)
+
   // Two Factor Authentication
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?

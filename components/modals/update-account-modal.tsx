@@ -1,10 +1,11 @@
 "use client";
 
+import { updateStudent } from "@/actions/student";
 import { useCities, useDistricts, useWards } from "@/hooks/use-country";
-import { useCreateAccount } from "@/hooks/use-create-account";
 import { useModalAction } from "@/hooks/use-modal-action";
 import { useSchools } from "@/hooks/use-schools";
-import { RegisterSchema } from "@/types";
+import { useUpdateAccount } from "@/hooks/use-update-account";
+import { UpdateStudent } from "@/types";
 import { City, District, Ward } from "@/types/type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseDate } from "@internationalized/date";
@@ -25,98 +26,85 @@ import {
   RadioGroup,
   Select,
   SelectItem,
+  Selection,
+  Textarea,
 } from "@nextui-org/react";
-import { CertificateType, DegreeType, Gender, GradeType } from "@prisma/client";
-import { I18nProvider } from "@react-aria/i18n";
 import {
-  Calendar,
-  Eye,
-  EyeOff,
-  File,
-  Home,
-  Key,
-  Mail,
-  NotebookText,
-  Phone,
-  Tag,
-} from "lucide-react";
-import { useState } from "react";
+  CertificateType,
+  DegreeType,
+  Gender,
+  GradeType,
+  StudentStatus,
+} from "@prisma/client";
+import { I18nProvider } from "@react-aria/i18n";
+import { Calendar, Home, Mail, NotebookText, Phone, Tag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidCity } from "react-icons/bi";
-import { GiStreetLight } from "react-icons/gi";
 import { FaStreetView } from "react-icons/fa";
+import { GiStreetLight } from "react-icons/gi";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
-import { useAccountCertificateImage } from "@/hooks/use-account-certificate-image";
-import { register } from "@/actions/account";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-type AccountSchema = z.infer<typeof RegisterSchema>;
+type AccountSchema = z.infer<typeof UpdateStudent>;
 
-const CreateAccountModal = () => {
+const UpdateAccountModal = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
-  const { isOpen, onClose } = useCreateAccount();
+  const { isOpen, onClose, data } = useUpdateAccount();
+  const [status, setStatus] = useState<string>("");
+  const [additional, setAdditional] = useState("");
   const cancel = useModalAction();
-  const certificate = useAccountCertificateImage();
+
+  useEffect(() => {
+    setStatus(data?.status.toString() ?? "");
+    setAdditional(data?.additional ?? "");
+  }, [data?.status, data?.additional]);
 
   const onDispose = () => {
     onClose();
     cancel.onClose();
   };
 
-  const toggleVisibility = () => {
-    setIsVisible(true);
-
-    setTimeout(() => setIsVisible(false), 1000);
-  };
-
-  const toggleConfirmVisibility = () => {
-    setIsConfirmVisible(true);
-
-    setTimeout(() => setIsConfirmVisible(false), 1000);
-  };
-
   const schools = useSchools();
 
+  const addressComps = data?.account?.address.split(", ");
+
   const form = useForm<AccountSchema>({
-    resolver: zodResolver(RegisterSchema),
+    resolver: zodResolver(UpdateStudent),
     defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-      name: "",
-      dob: new Date("2006-01-01"),
-      gender: Gender.MALE,
-      phoneNumber: "",
-      idCardNumber: "",
-      city: "",
-      district: "",
-      ward: "",
-      addressLine: "",
-      schoolName: "",
-      programName: "",
-      degreeType: DegreeType.HIGHSCHOOL,
-      certificateType: CertificateType.IELTS,
-      gradeType: GradeType.GPA,
-      gradeScore: "0",
+      email: data?.account?.email,
+      name: data?.account?.name,
+      dob: data?.account?.dob,
+      gender: data?.account?.gender,
+      phoneNumber: data?.account?.phoneNumber,
+      idCardNumber: data?.account?.idCardNumber,
+      city: addressComps && addressComps[3],
+      district: addressComps && addressComps[2],
+      ward: addressComps && addressComps[1],
+      addressLine: addressComps && addressComps[0],
+      schoolName: data?.school?.name,
+      programName: data?.program?.program.name,
+      degreeType: data?.degreeType,
+      certificateType: data?.certificateType,
+      gradeType: data?.gradeType,
+      gradeScore: data?.gradeScore.toString(),
     },
   });
 
   const onSubmit = async (values: AccountSchema) => {
     setIsLoading(true);
 
-    await register(values)
+    const selectStatus: StudentStatus = status as StudentStatus;
+
+    await updateStudent(data?.id!, {
+      status: selectStatus,
+      additional,
+      ...values,
+    })
       .then((res) => {
-        console.log(res);
         if (res.success) {
           toast.success(res.success);
           router.refresh();
@@ -131,15 +119,14 @@ const CreateAccountModal = () => {
   };
 
   form.watch("schoolName");
-  form.watch("certificateImg");
   form.watch("gradeType");
   form.watch("certificateType");
   form.watch("degreeType");
 
   const cities: City[] = useCities() || [];
-  const districts: District[] = useDistricts(form.getValues("city")) || [];
+  const districts: District[] = useDistricts(form.getValues("city")!) || [];
   const wards: Ward[] =
-    useWards(form.getValues("city"), form.getValues("district")) || [];
+    useWards(form.getValues("city")!, form.getValues("district")!) || [];
 
   if (!schools) {
     return (
@@ -152,6 +139,10 @@ const CreateAccountModal = () => {
   const programs =
     schools.find((school) => school.name === form.getValues("schoolName"))
       ?.programs || [];
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatus(e.target.value);
+  };
 
   return (
     <Modal
@@ -166,7 +157,7 @@ const CreateAccountModal = () => {
         {(onClose) => (
           <>
             <ModalHeader className="text-[#7D1F1F] text-xl dark:text-primary font-bold">
-              Thêm tài khoản mới
+              Cập nhật thông tin tài khoản
             </ModalHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -203,84 +194,6 @@ const CreateAccountModal = () => {
                         </FormItem>
                       )}
                     />
-                    {/* Password */}
-                    <FormField
-                      name="password"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              isDisabled={isLoading}
-                              label="Mật khẩu"
-                              labelPlacement="outside"
-                              type={isVisible ? "text" : "password"}
-                              variant="bordered"
-                              size="md"
-                              placeholder="Nhập mật khẩu tài khoản"
-                              startContent={<Key className="size-4" />}
-                              endContent={
-                                <button
-                                  className="focus:outline-none"
-                                  type="button"
-                                  onClick={toggleVisibility}
-                                >
-                                  {isVisible ? (
-                                    <EyeOff className="size-4" />
-                                  ) : (
-                                    <Eye className="size-4" />
-                                  )}
-                                </button>
-                              }
-                              errorMessage={fieldState.error?.message}
-                              isInvalid={!!fieldState.error}
-                              isRequired
-                              onValueChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    {/* Confirm Password */}
-                    <FormField
-                      name="confirmPassword"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              isDisabled={isLoading}
-                              label="Nhập lại mật khẩu"
-                              labelPlacement="outside"
-                              type={isConfirmVisible ? "text" : "password"}
-                              variant="bordered"
-                              size="md"
-                              placeholder="Nhập lại mật khẩu tài khoản"
-                              startContent={<Key className="size-4" />}
-                              endContent={
-                                <button
-                                  className="focus:outline-none"
-                                  type="button"
-                                  onClick={toggleConfirmVisibility}
-                                >
-                                  {isConfirmVisible ? (
-                                    <EyeOff className="size-4" />
-                                  ) : (
-                                    <Eye className="size-4" />
-                                  )}
-                                </button>
-                              }
-                              errorMessage={fieldState.error?.message}
-                              isInvalid={!!fieldState.error}
-                              isRequired
-                              onValueChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
                     {/* Name */}
                     <FormField
                       name="name"
@@ -307,6 +220,41 @@ const CreateAccountModal = () => {
                         </FormItem>
                       )}
                     />
+                    <Select
+                      disallowEmptySelection
+                      items={[
+                        StudentStatus.APPROVED,
+                        StudentStatus.AWAITING,
+                        StudentStatus.DROPPED,
+                        StudentStatus.STUDYING,
+                      ]}
+                      isDisabled={isLoading}
+                      label="Trạng thái"
+                      labelPlacement="outside"
+                      variant="bordered"
+                      size="md"
+                      aria-label="Chọn bằng cấp"
+                      placeholder="Chọn bằng cấp"
+                      isRequired
+                      onChange={handleStatusChange}
+                      defaultSelectedKeys={[data?.status!]}
+                      classNames={{
+                        listbox: "text-primary",
+                      }}
+                    >
+                      <SelectItem key={StudentStatus.AWAITING}>
+                        AWAITING
+                      </SelectItem>
+                      <SelectItem key={StudentStatus.APPROVED}>
+                        APPROVED
+                      </SelectItem>
+                      <SelectItem key={StudentStatus.DROPPED}>
+                        DROPPED
+                      </SelectItem>
+                      <SelectItem key={StudentStatus.STUDYING}>
+                        STUDYING
+                      </SelectItem>
+                    </Select>
                   </div>
                   <Divider />
                   <h1 className="text-[#7D1F1F] dark:text-primary text-base font-semibold">
@@ -641,7 +589,7 @@ const CreateAccountModal = () => {
                               items={schools}
                               isDisabled={isLoading}
                               label="School"
-                              selectedKeys={[field.value]}
+                              selectedKeys={[field.value!]}
                               labelPlacement="outside"
                               variant="bordered"
                               size="md"
@@ -703,7 +651,7 @@ const CreateAccountModal = () => {
                                   errorMessage={fieldState.error?.message}
                                   isInvalid={!!fieldState.error}
                                   isRequired
-                                  selectedKeys={[field.value]}
+                                  selectedKeys={[field.value!]}
                                   classNames={{
                                     listbox: "text-primary",
                                   }}
@@ -802,92 +750,6 @@ const CreateAccountModal = () => {
                             </FormItem>
                           )}
                         />
-                        {/* Language Image URL */}
-                        {form.getValues("certificateType") != null &&
-                          (form.getValues("certificateImg") != null ? (
-                            <FormField
-                              name="certificateImg"
-                              control={form.control}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <HoverCard>
-                                      <HoverCardTrigger>
-                                        <Input
-                                          readOnly={true}
-                                          label="Ảnh chứng chỉ"
-                                          labelPlacement="outside"
-                                          size="md"
-                                          variant="faded"
-                                          classNames={{
-                                            input: "cursor-default",
-                                          }}
-                                          isClearable
-                                          onValueChange={field.onChange}
-                                          {...field}
-                                          value={
-                                            field.value &&
-                                            "Trỏ chuột để hiển thị hình ảnh chi tiết"
-                                          }
-                                        />
-                                      </HoverCardTrigger>
-                                      <HoverCardContent
-                                        align="center"
-                                        alignOffset={10}
-                                        className="flex w-80 items-center justify-center rounded-md"
-                                      >
-                                        <Image
-                                          width={300}
-                                          src={field.value}
-                                          alt="certificate-image"
-                                          isZoomed
-                                          isBlurred
-                                          shadow="md"
-                                        />
-                                      </HoverCardContent>
-                                    </HoverCard>
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                          ) : (
-                            <>
-                              <FormField
-                                name="certificateImg"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        onClick={() =>
-                                          certificate.onOpen((e) =>
-                                            form.setValue("certificateImg", e)
-                                          )
-                                        }
-                                        role="button"
-                                        value="Đăng tải hình ảnh"
-                                        readOnly={true}
-                                        label="Đường dẫn hình ảnh"
-                                        labelPlacement="outside"
-                                        size="md"
-                                        variant="faded"
-                                        startContent={
-                                          <File className="mr-2 size-4" />
-                                        }
-                                        errorMessage={fieldState.error?.message}
-                                        isInvalid={!!fieldState.error}
-                                        isRequired
-                                        classNames={{
-                                          input: "cursor-default",
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </FormItem>
-                                )}
-                              />
-                            </>
-                          ))}
                         {/* Overall Score */}
                         <FormField
                           name="gradeType"
@@ -960,6 +822,18 @@ const CreateAccountModal = () => {
                       </>
                     )}
                   </div>
+                  <h1 className="text-[#7D1F1F] dark:text-primary text-base font-semibold">
+                    Thông tin bổ sung
+                  </h1>
+                  <Textarea
+                    size="md"
+                    variant="bordered"
+                    label={"Thông tin bổ sung? (nếu có)"}
+                    labelPlacement="outside"
+                    defaultValue={additional}
+                    placeholder="Mô tả chi tiết tại đây"
+                    onValueChange={(value) => setAdditional(value)}
+                  />
                 </ModalBody>
                 <ModalFooter>
                   <Button
@@ -975,8 +849,13 @@ const CreateAccountModal = () => {
                   >
                     Đóng
                   </Button>
-                  <Button color="primary" type="submit" isDisabled={isLoading}>
-                    Thêm
+                  <Button
+                    color="primary"
+                    type="submit"
+                    isDisabled={isLoading}
+                    isLoading={isLoading}
+                  >
+                    Cập nhật
                   </Button>
                 </ModalFooter>
               </form>
@@ -988,4 +867,4 @@ const CreateAccountModal = () => {
   );
 };
 
-export default CreateAccountModal;
+export default UpdateAccountModal;

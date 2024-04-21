@@ -14,6 +14,7 @@ Table Account {
   idCardNumber String [unique, not null]
   address String [not null]
   image String
+  isLocked Boolean [not null, default: false]
   isTwoFactorEnabled Boolean [not null, default: false]
   twoFactorConfirmation TwoFactorConfirmation
   student Student
