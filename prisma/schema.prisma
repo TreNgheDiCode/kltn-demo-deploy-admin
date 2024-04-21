@@ -331,6 +331,8 @@ model Student {
 
   cover String?
 
+  additional String?
+
   // Student status
   status StudentStatus @default(AWAITING)
 

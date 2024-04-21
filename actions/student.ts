@@ -32,6 +32,19 @@ export const updateStudent = async (
       return { error: "Không tìm thấy học sinh" };
     }
 
+    if (data.status === "DROPPED" && !existingStudent.studentCode) {
+      await db.student.update({
+        where: {
+          id: existingStudent.id,
+        },
+        data: {
+          ...data,
+        },
+      });
+
+      return { success: "Từ chối học sinh thành công" };
+    }
+
     if (!existingStudent.account.emailVerified) {
       const verificationToken = await generateVerificationToken(
         existingStudent.account.email

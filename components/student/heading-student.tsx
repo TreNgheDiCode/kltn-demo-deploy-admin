@@ -1,6 +1,7 @@
 "use client";
 
 import { updateStudent } from "@/actions/student";
+import { useDeclineStudent } from "@/hooks/use-decline-student";
 import { UpdateStudent } from "@/types";
 import { StudentLib } from "@/types/type";
 import { Button, Card, CardHeader, Chip, ChipProps } from "@nextui-org/react";
@@ -24,8 +25,11 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 export const HeadingStudent = ({ student }: HeadingStudentProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const decline = useDeclineStudent();
 
   if (!student || !student.account) return null;
+
+  console.log(student.status);
 
   const onAcceptance = async (values: z.infer<typeof UpdateStudent>) => {
     if (!values) return;
@@ -68,11 +72,20 @@ export const HeadingStudent = ({ student }: HeadingStudentProps) => {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Chip
+            className="capitalize"
+            color={statusColorMap[student.status]}
+            size="md"
+            variant="shadow"
+          >
+            {student.status}
+          </Chip>
           {!student.studentCode && student.status === "AWAITING" && (
             <>
               <Button
                 isDisabled={isLoading}
                 isLoading={isLoading}
+                onPress={() => decline.onOpen(student.id)}
                 color="danger"
                 variant="shadow"
                 size="md"
@@ -92,16 +105,6 @@ export const HeadingStudent = ({ student }: HeadingStudentProps) => {
                 Duyệt
               </Button>
             </>
-          )}
-          {student.studentCode && (
-            <Chip
-              className="capitalize"
-              color={statusColorMap[student.status]}
-              size="md"
-              variant="shadow"
-            >
-              {student.status}
-            </Chip>
           )}
         </div>
       </CardHeader>

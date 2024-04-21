@@ -254,4 +254,5 @@ export const UpdateStudent = z.object({
       StudentStatus.AWAITING,
     ])
   ),
+  additional: z.optional(z.string()),
 });
