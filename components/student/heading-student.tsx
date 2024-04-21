@@ -29,8 +29,6 @@ export const HeadingStudent = ({ student }: HeadingStudentProps) => {
 
   if (!student || !student.account) return null;
 
-  console.log(student.status);
-
   const onAcceptance = async (values: z.infer<typeof UpdateStudent>) => {
     if (!values) return;
 

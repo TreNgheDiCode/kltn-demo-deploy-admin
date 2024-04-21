@@ -22,6 +22,7 @@ export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
           tabContent: "group-data-[selected=true]:font-bold",
         }}
         selectedKey={pathname.split("/").slice(1, 3).join("/")}
+        defaultSelectedKey={"managements/schools"}
       >
         <Tab
           key={"managements/accounts"}
