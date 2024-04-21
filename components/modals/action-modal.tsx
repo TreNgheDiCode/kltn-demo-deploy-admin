@@ -24,10 +24,10 @@ export const ActionModal = () => {
             <ModalBody className="text-primary">{description}</ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
-                Close
+                Quay lại
               </Button>
               <Button color="primary" onPress={onAction}>
-                Confirm
+                Đồng ý
               </Button>
             </ModalFooter>
           </>

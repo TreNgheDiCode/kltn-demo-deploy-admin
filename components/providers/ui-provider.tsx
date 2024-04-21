@@ -24,7 +24,7 @@ export const UIProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <NextUIProvider navigate={router.push} className="w-full h-full">
       {children}
-      <Toaster />
+      <Toaster richColors />
     </NextUIProvider>
   );
 };

@@ -30,6 +30,7 @@ import {
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale/vi";
+import { useCreateAccount } from "@/hooks/use-create-account";
 
 interface SchoolStudentProps {
   students: SchoolStudentExtend[];
@@ -68,6 +69,8 @@ const statusOptions = [
 const INITIAL_COLUMNS = ["name", "program", "status", "actions"];
 
 export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
+  const account = useCreateAccount();
+
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -319,7 +322,11 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button
+              color="primary"
+              endContent={<PlusIcon />}
+              onPress={account.onOpen}
+            >
               Thêm học sinh
             </Button>
           </div>
@@ -350,6 +357,7 @@ export const SchoolStudentTable = ({ students }: SchoolStudentProps) => {
     onRowsPerPageChange,
     students.length,
     onClear,
+    account.onOpen,
   ]);
 
   const bottomContent = useMemo(() => {
