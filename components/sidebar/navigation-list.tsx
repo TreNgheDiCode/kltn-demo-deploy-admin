@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { ScrollShadow, Tab, Tabs } from "@nextui-org/react";
-import { Info, School2, ScrollText } from "lucide-react";
+import { Info, School2, ScrollText, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 interface NavigationListProps {
@@ -24,35 +24,45 @@ export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
         selectedKey={pathname.split("/").slice(1, 3).join("/")}
       >
         <Tab
-          key={"manangements/profiles"}
+          key={"managements/accounts"}
+          title={
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              {!isCollapsed && "Tài khoản"}
+            </div>
+          }
+          href="/managements/accounts"
+        />
+        <Tab
+          key={"managements/profiles"}
           title={
             <div className="flex items-center gap-2">
               <ScrollText className="h-4 w-4" />
               {!isCollapsed && "Hồ sơ"}
             </div>
           }
-          href="/manangements/profiles"
-        ></Tab>
+          href="/managements/profiles"
+        />
         <Tab
-          key={"manangements/schools"}
+          key={"managements/schools"}
           title={
             <div className="flex items-center gap-2">
               <School2 className="h-4 w-4" />
               {!isCollapsed && "Trường học"}
             </div>
           }
-          href="/manangements/schools"
-        ></Tab>
+          href="/managements/schools"
+        />
         <Tab
-          key={"manangements/contacts"}
+          key={"managements/contacts"}
           title={
             <div className="flex items-center gap-2">
               <Info className="h-4 w-4" />
               {!isCollapsed && "Phản hồi"}
             </div>
           }
-          href="/manangements/contacts"
-        ></Tab>
+          href="/managements/contacts"
+        />
       </Tabs>
     </ScrollShadow>
   );

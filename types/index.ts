@@ -4,6 +4,7 @@ import {
   Gender,
   GradeType,
   PostStatus,
+  StudentStatus,
 } from "@prisma/client";
 import { z } from "zod";
 
@@ -242,4 +243,15 @@ export const NewSchoolSchema = z.object({
   color: z.string().min(1, {
     message: "Vui lòng nhập mã màu đại diện cho trường",
   }),
+});
+
+export const UpdateStudent = z.object({
+  status: z.optional(
+    z.enum([
+      StudentStatus.APPROVED,
+      StudentStatus.DROPPED,
+      StudentStatus.STUDYING,
+      StudentStatus.AWAITING,
+    ])
+  ),
 });
