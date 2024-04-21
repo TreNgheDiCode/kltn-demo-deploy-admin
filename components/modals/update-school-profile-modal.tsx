@@ -16,12 +16,12 @@ import {
   Input,
   Radio,
   RadioGroup,
-  Spinner,
   Textarea,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { Key, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PickerExample } from "../color-picker";
 import {
   BackgroundFile,
   BackgroundSchoolDropzone,
@@ -35,7 +35,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { PickerExample } from "../color-picker";
 
 export const UpdateSchoolProfileModal = () => {
   const router = useRouter();

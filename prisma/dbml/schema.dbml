@@ -128,6 +128,7 @@ Table SchoolLocation {
   isMain Boolean [not null, default: false]
   images SchoolLocationImage [not null]
   contacts SchoolLocationContact [not null]
+  students StudentSchoolLocation [not null]
   schoolId String [not null]
   school School [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -193,6 +194,20 @@ Table StudentSchoolProgram {
   }
 }
 
+Table StudentSchoolLocation {
+  id String [pk]
+  studentId String [unique, not null]
+  student Student [not null]
+  locationId String [not null]
+  location SchoolLocation [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (studentId, locationId) [unique]
+  }
+}
+
 Table Student {
   id String [pk]
   studentCode String [unique]
@@ -209,6 +224,7 @@ Table Student {
   school School [not null]
   profile Profile
   program StudentSchoolProgram
+  location StudentSchoolLocation
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
@@ -522,6 +538,10 @@ Ref: SchoolProgramImage.programId > SchoolProgram.id [delete: Cascade]
 Ref: StudentSchoolProgram.studentId - Student.id [delete: Cascade]
 
 Ref: StudentSchoolProgram.programId > SchoolProgram.id [delete: Cascade]
+
+Ref: StudentSchoolLocation.studentId - Student.id [delete: Cascade]
+
+Ref: StudentSchoolLocation.locationId > SchoolLocation.id [delete: Cascade]
 
 Ref: Student.accountId - Account.id [delete: Cascade]
 
