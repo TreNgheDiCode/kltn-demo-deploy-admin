@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const { email, password, studentCode } = validatedFields.data;
 
-    if (email) {
+    if (email && !studentCode) {
       const existingAccount = await GetAccountByEmail(email);
 
       if (!existingAccount) {
@@ -71,17 +71,10 @@ export async function POST(req: Request) {
         );
       }
 
-      if (existingAccount.student?.studentCode) {
-        return NextResponse.json(
-          { error: "Vui lòng sử dụng mã sinh viên để đăng nhập" },
-          { status: 401 }
-        );
-      }
-
       return NextResponse.json(existingAccount, { status: 200 });
     }
 
-    if (studentCode) {
+    if (studentCode && !email) {
       const existingStudent = await db.student.findUnique({
         where: {
           studentCode,
