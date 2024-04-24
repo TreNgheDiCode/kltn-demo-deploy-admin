@@ -4,7 +4,12 @@ import { NextResponse } from "next/server";
 export default authMiddleware({
   // Routes that can always be accessed, and have
   // no authentication information
-  ignoredRoutes: ["/unauthorized", "/login", "/api/auth/login"],
+  ignoredRoutes: [
+    "/unauthorized",
+    "/login",
+    "/api/auth/login",
+    "/api/schools/full",
+  ],
   afterAuth: (auth, req) => {
     const isApiRoutes = req.nextUrl.pathname.startsWith("/api");
     const isAdmin = auth.sessionClaims?.metadata.role === "ADMIN";
