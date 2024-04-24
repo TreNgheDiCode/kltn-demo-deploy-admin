@@ -9,6 +9,7 @@ export default authMiddleware({
     "/login",
     "/api/auth/login",
     "/api/schools/full",
+    "/api/country",
   ],
   afterAuth: (auth, req) => {
     const isApiRoutes = req.nextUrl.pathname.startsWith("/api");
