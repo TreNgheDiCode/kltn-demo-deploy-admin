@@ -31,11 +31,12 @@ import { z } from "zod";
 import { SingleImageDropzone } from "../single-image-dropzone";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { QuillEditor } from "./quill-editor";
-import { createNews } from "@/actions/news";
+import { createNews, deleteNews } from "@/actions/news";
 import { toast } from "sonner";
 import { NewsLib } from "@/types/type";
 import Banner from "../banner";
 import { X } from "lucide-react";
+import { useModalAction } from "@/hooks/use-modal-action";
 
 type NewsSchema = z.infer<typeof NewsSchema>;
 
@@ -82,6 +83,7 @@ export const NewsForm = ({
   isPreview,
   initialData,
 }: Readonly<NewsFormProps>) => {
+  const action = useModalAction();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState<File>();
@@ -134,6 +136,7 @@ export const NewsForm = ({
 
         if (res.success) {
           router.push("/managements/news");
+          router.refresh();
           toast.success(res.success);
         }
       })
@@ -179,6 +182,23 @@ export const NewsForm = ({
       }
     }
     setIsUploading(false);
+  };
+
+  const onDelete = async (id: string) => {
+    setIsLoading(true);
+    await deleteNews(id)
+      .then((res) => {
+        if (res.error) {
+          toast.error(res.error);
+        }
+
+        if (res.success) {
+          toast.success(res.success);
+          action.onClose();
+          router.refresh();
+        }
+      })
+      .finally(() => setIsUploading(false));
   };
 
   return (
@@ -449,6 +469,25 @@ export const NewsForm = ({
             />
           </CardBody>
           <CardFooter className="gap-4 justify-end">
+            {/* On Delete */}
+            {isPreview && (
+              <Button
+                onPress={() =>
+                  action.onOpen(
+                    () => onDelete(initialData!.id),
+                    "Bạn có chắc chắn muốn xóa tin tức này?",
+                    "Hành động đã thực hiện sẽ không thể hủy bỏ"
+                  )
+                }
+                isLoading={isLoading}
+                isDisabled={isLoading}
+                type="button"
+                variant="shadow"
+                color="danger"
+              >
+                Xóa tin tức
+              </Button>
+            )}
             {/* On Save */}
             <Button
               onPress={() => {

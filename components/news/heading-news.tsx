@@ -8,7 +8,6 @@ export const HeadingNews = () => {
   const parts = pathname.split("/");
   const isCreate = pathname.includes("create");
   const hasSubPath = parts.length > 3;
-  console.log(parts.length);
 
   return (
     <Card>
