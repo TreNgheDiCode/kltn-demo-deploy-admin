@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { ScrollShadow, Tab, Tabs } from "@nextui-org/react";
-import { Info, School2, ScrollText, User } from "lucide-react";
+import { Info, Newspaper, School2, ScrollText, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 interface NavigationListProps {
@@ -35,16 +35,6 @@ export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
           href="/managements/accounts"
         />
         <Tab
-          key={"managements/profiles"}
-          title={
-            <div className="flex items-center gap-2">
-              <ScrollText className="h-4 w-4" />
-              {!isCollapsed && "Hồ sơ"}
-            </div>
-          }
-          href="/managements/profiles"
-        />
-        <Tab
           key={"managements/schools"}
           title={
             <div className="flex items-center gap-2">
@@ -54,6 +44,16 @@ export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
           }
           href="/managements/schools"
         />
+        <Tab
+          key={"managements/news"}
+          title={
+            <div className="flex items-center gap-2">
+              <Newspaper className="h-4 w-4" />
+              {!isCollapsed && "Tin tức"}
+            </div>
+          }
+          href="/managements/news"
+        ></Tab>
         <Tab
           key={"managements/contacts"}
           title={

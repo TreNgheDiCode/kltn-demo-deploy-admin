@@ -64,6 +64,12 @@ enum SocialType {
   PORTFOLLIO
 }
 
+enum NewsType {
+  ANNOUNCEMENT // Thông báo từ trường hoặc từ phía công ty
+  EVENT // Sự kiện
+  BLOG // Các bài viết chung chung (dạng như tham quan trường hoặc hướng dẫn gì đó)
+}
+
 // MODELS
 model Account {
   id String @id @default(cuid())
@@ -158,35 +164,10 @@ model School {
   locations SchoolLocation[]
   programs  SchoolProgram[]
   galleries SchoolGallery[]
-  blogs     SchoolBlog[]
+  news      News[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model SchoolBlog {
-  id String @id @default(cuid())
-
-  content String?
-  images  SchoolBlogImages[]
-  title   String
-
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([title])
-}
-
-model SchoolBlogImages {
-  id String @id @default(cuid())
-
-  url String
-
-  schoolBlogId String
-  schoolBlog   SchoolBlog @relation(fields: [schoolBlogId], references: [id], onDelete: Cascade)
 }
 
 model SchoolGallery {
@@ -704,4 +685,33 @@ model ProfileGroup {
   updatedAt DateTime @updatedAt
 
   @@unique([profileId, groupId])
+}
+
+model News {
+  id String @id @default(cuid())
+
+  title       String
+  content     String?
+  type        NewsType
+  cover       String
+  isPublished Boolean  @default(true)
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  images NewsImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([title])
+}
+
+model NewsImage {
+  id String @id @default(cuid())
+
+  url String
+
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
 }

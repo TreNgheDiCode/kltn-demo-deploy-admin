@@ -45,7 +45,7 @@ export const Sidebar = () => {
   return (
     <aside
       ref={sidebarRef}
-      className="group/sidebar h-screen fixed w-72 p-3 flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl scrollbar-hide"
+      className="group/sidebar sticky h-screen w-72 p-3 flex flex-col bg-gray-100 gap-3 rounded-r-3xl dark:bg-[#2a2d30] shadow-2xl scrollbar-hide"
     >
       <div
         role="button"

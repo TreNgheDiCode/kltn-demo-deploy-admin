@@ -13,7 +13,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <UIProvider>
         <main className="w-full flex bg-gray-200 dark:bg-background">
           <Sidebar />
-          <div className="pl-72 w-full">{children}</div>
+          <div className="w-full">{children}</div>
         </main>
       </UIProvider>
     </ThemeProvider>

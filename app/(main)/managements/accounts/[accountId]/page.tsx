@@ -1,11 +1,11 @@
 interface ProfileIdPageProps {
   params: {
-    profileId: string;
+    accountId: string;
   };
 }
 
 const ProfileIdPage = ({ params }: ProfileIdPageProps) => {
-  return <div>{params.profileId}</div>;
+  return <div>{params.accountId}</div>;
 };
 
 export default ProfileIdPage;
