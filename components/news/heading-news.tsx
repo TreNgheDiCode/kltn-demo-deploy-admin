@@ -5,23 +5,23 @@ import { usePathname } from "next/navigation";
 
 export const HeadingNews = () => {
   const pathname = usePathname();
+  const parts = pathname.split("/");
   const isCreate = pathname.includes("create");
+  const hasSubPath = parts.length > 3;
+  console.log(parts.length);
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="hidden lg:flex flex-col gap-2">
           <h1 className="font-semibold text-lg text-primary">
-            {isCreate ? "Thêm tin tức mới" : "Quản lý tin tức"}
+            {!hasSubPath && "Quản lý tin tức"}
+            {isCreate && "Thêm tin tức mới"}
+            {!isCreate && hasSubPath && "Cập nhật tin tức"}
           </h1>
-          {!isCreate && (
-            <p className="text-muted-foreground text-sm">
-              Thêm và chỉnh sửa các tin tức về trường học hoặc công ty
-            </p>
-          )}
         </div>
         <div>
-          {isCreate && (
+          {hasSubPath && (
             <Button
               as={Link}
               href="/managements/news"

@@ -12,13 +12,19 @@ export const createNews = async (values: z.infer<typeof NewsSchema>) => {
       return { error: "Trường dữ liệu không hợp lệ" };
     }
 
-    await db.news.create({
-      data: {
+    await db.news.upsert({
+      where: {
+        id: values.id,
+      },
+      update: {
+        ...values,
+      },
+      create: {
         ...values,
       },
     });
 
-    return { success: "Tạo tin tức thành công" };
+    return { success: "Cập nhật tin tức thành công" };
   } catch (error) {
     console.log("ERROR CREATE NEWS ACTION", error);
 

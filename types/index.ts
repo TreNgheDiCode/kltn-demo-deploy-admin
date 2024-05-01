@@ -379,6 +379,7 @@ export const UpdateStudent = z.object({
 });
 
 export const NewsSchema = z.object({
+  id: z.optional(z.string()),
   title: z.string().min(1, {
     message: "Vui lòng nhập tiêu đề",
   }),
