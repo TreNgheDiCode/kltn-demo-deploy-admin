@@ -24,13 +24,13 @@ export const createNews = async (values: z.infer<typeof NewsSchema>) => {
           ...values,
         },
       });
+    } else {
+      await db.news.create({
+        data: {
+          ...values,
+        },
+      });
     }
-
-    await db.news.create({
-      data: {
-        ...values,
-      },
-    });
 
     return { success: "Cập nhật tin tức thành công" };
   } catch (error) {

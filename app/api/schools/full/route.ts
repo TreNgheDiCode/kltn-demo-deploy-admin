@@ -8,11 +8,7 @@ export async function GET() {
         isPublished: true,
       },
       include: {
-        news: {
-          include: {
-            images: true,
-          },
-        },
+        news: true,
         galleries: {
           include: {
             images: true,
