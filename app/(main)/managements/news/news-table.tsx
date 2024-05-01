@@ -10,6 +10,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
+  Link,
   Pagination,
   Selection,
   SortDescriptor,
@@ -49,7 +50,8 @@ const columns = [
   { name: "Id", uid: "id", sortable: true },
   { name: "Tiêu đề", uid: "title", sortable: true },
   { name: "Loại tin tức", uid: "type", sortable: true },
-  { name: "Trạng thái", uid: "isPublished", sortable: true },
+  { name: "Trạng thái", uid: "status", sortable: true },
+  { name: "Trường học", uid: "schoolName", sortable: true },
   { name: "Ngày tạo", uid: "createdAt", sortable: true },
   { name: "Ngày cập nhật", uid: "updatedAt", sortable: true },
   { name: "Ảnh đại diện", uid: "cover" },
@@ -171,9 +173,15 @@ export const NewsTable = ({ news }: NewsProps) => {
               size="sm"
               variant="flat"
             >
-              {news.isPublished}
+              {news.isPublished.toString().toUpperCase()}
             </Chip>
           </div>
+        );
+      case "schoolName":
+        return (
+          <p className="font-bold text-tiny text-primary">
+            {news.school?.name || "Không có thông tin"}
+          </p>
         );
       case "createdAt":
         return (
@@ -207,7 +215,7 @@ export const NewsTable = ({ news }: NewsProps) => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem href={`/managements/students/${news.id}`}>
+                <DropdownItem href={`/managements/news/${news.id}`}>
                   Xem thông tin chi tiết
                 </DropdownItem>
               </DropdownMenu>
@@ -343,7 +351,12 @@ export const NewsTable = ({ news }: NewsProps) => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
+            <Button
+              as={Link}
+              href="/managements/news/create"
+              color="primary"
+              endContent={<PlusIcon />}
+            >
               Thêm tin tức
             </Button>
           </div>

@@ -36,7 +36,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 
-export const UpdateSchoolProfileModal = () => {
+const UpdateSchoolProfileModal = () => {
   const router = useRouter();
   const { isOpen, onClose, data } = useUpdateSchoolProfile();
 
@@ -358,3 +358,5 @@ export const UpdateSchoolProfileModal = () => {
     </Dialog>
   );
 };
+
+export default UpdateSchoolProfileModal;

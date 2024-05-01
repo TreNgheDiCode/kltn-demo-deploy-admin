@@ -7,7 +7,6 @@ const NewsPage = async () => {
 
   return (
     <div className="space-y-4">
-      <HeadingNews />
       <NewsTable news={news} />
     </div>
   );
