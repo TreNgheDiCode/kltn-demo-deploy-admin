@@ -1,5 +1,7 @@
 "use client";
 
+import { deleteNews } from "@/actions/news";
+import { useModalAction } from "@/hooks/use-modal-action";
 import { NewsLib } from "@/types/type";
 import {
   Button,
@@ -28,8 +30,12 @@ import {
   MoreVertical,
   PlusIcon,
   SearchIcon,
+  Sheet,
+  Trash,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 interface NewsProps {
   news: NewsLib[];
@@ -79,6 +85,9 @@ const INITIAL_COLUMNS = [
 ];
 
 export const NewsTable = ({ news }: NewsProps) => {
+  const action = useModalAction();
+  const router = useRouter();
+
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -152,87 +161,125 @@ export const NewsTable = ({ news }: NewsProps) => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((news: NewsLib, columnKey: Key) => {
-    switch (columnKey) {
-      case "id":
-        return <p className="font-bold text-tiny text-primary">{news.id}</p>;
-      case "title":
-        return <p className="font-bold text-tiny text-primary">{news.title}</p>;
-      case "type":
-        return (
-          <div className="flex items-center justify-center">
-            <Chip
-              className="capitalize"
-              color={typeColorMap[news.type]}
-              size="sm"
-              variant="flat"
-            >
-              {news.type}
-            </Chip>
-          </div>
-        );
-      case "isPublished":
-        return (
-          <div className="flex items-center justify-center">
-            <Chip
-              className="capitalize"
-              color={statusColorMap[news.isPublished.toString()]}
-              size="sm"
-              variant="flat"
-            >
-              {news.isPublished.toString().toUpperCase()}
-            </Chip>
-          </div>
-        );
-      case "schoolName":
-        return (
-          <p className="font-bold text-tiny text-primary">
-            {news.school?.name || "Không có thông tin"}
-          </p>
-        );
-      case "createdAt":
-        return (
-          <p className="font-bold text-tiny capitalize text-primary">
-            {format(news.createdAt, "dd MMMM, yyyy", {
-              locale: vi,
-            })}
-          </p>
-        );
-      case "updatedAt":
-        return (
-          <p className="font-bold text-tiny capitalize text-primary">
-            {format(news.updatedAt, "dd MMMM, yyyy", {
-              locale: vi,
-            })}
-          </p>
-        );
-      case "cover":
-        return (
-          <p className="font-bold text-tiny capitalize text-primary">
-            {news.cover}
-          </p>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <MoreVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem href={`/managements/news/${news.id}`}>
-                  Xem thông tin chi tiết
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return <div></div>;
-    }
-  }, []);
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteNews(id).then((res) => {
+        if (res.error) {
+          toast.error(res.error);
+        }
+
+        if (res.success) {
+          toast.success(res.success);
+          action.onClose();
+          router.refresh();
+        }
+      });
+    },
+    [action, router]
+  );
+
+  const renderCell = useCallback(
+    (news: NewsLib, columnKey: Key) => {
+      switch (columnKey) {
+        case "id":
+          return <p className="font-bold text-tiny text-primary">{news.id}</p>;
+        case "title":
+          return (
+            <p className="font-bold text-tiny text-primary">{news.title}</p>
+          );
+        case "type":
+          return (
+            <div className="flex items-center justify-center">
+              <Chip
+                className="capitalize"
+                color={typeColorMap[news.type]}
+                size="sm"
+                variant="flat"
+              >
+                {news.type}
+              </Chip>
+            </div>
+          );
+        case "isPublished":
+          return (
+            <div className="flex items-center justify-center">
+              <Chip
+                className="capitalize"
+                color={statusColorMap[news.isPublished.toString()]}
+                size="sm"
+                variant="flat"
+              >
+                {news.isPublished.toString().toUpperCase()}
+              </Chip>
+            </div>
+          );
+        case "schoolName":
+          return (
+            <p className="font-bold text-tiny text-primary">
+              {news.school?.name || "Không có thông tin"}
+            </p>
+          );
+        case "createdAt":
+          return (
+            <p className="font-bold text-tiny capitalize text-primary">
+              {format(news.createdAt, "dd MMMM, yyyy", {
+                locale: vi,
+              })}
+            </p>
+          );
+        case "updatedAt":
+          return (
+            <p className="font-bold text-tiny capitalize text-primary">
+              {format(news.updatedAt, "dd MMMM, yyyy", {
+                locale: vi,
+              })}
+            </p>
+          );
+        case "cover":
+          return (
+            <p className="font-bold text-tiny capitalize text-primary">
+              {news.cover}
+            </p>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button isIconOnly size="sm" variant="light">
+                    <MoreVertical className="text-default-300" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  <DropdownItem
+                    endContent={<Sheet className="size-4" />}
+                    href={`/managements/news/${news.id}`}
+                  >
+                    Xem thông tin chi tiết
+                  </DropdownItem>
+                  <DropdownItem
+                    endContent={<Trash className="size-4" />}
+                    color="danger"
+                    onPress={() =>
+                      action.onOpen(
+                        () => onDelete(news.id),
+                        "Bạn có chắc chắn muốn xóa tin tức này?",
+                        "Hành động đã thực hiện sẽ không thể hủy bỏ"
+                      )
+                    }
+                  >
+                    Xóa tin tức
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
+        default:
+          return <div></div>;
+      }
+    },
+    [action, onDelete]
+  );
 
   const onNextPage = useCallback(() => {
     if (page < pages) {

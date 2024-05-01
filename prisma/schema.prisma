@@ -2,10 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator dbml {
-  provider = "prisma-dbml-generator"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -699,19 +695,8 @@ model News {
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
-  images NewsImage[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([title])
-}
-
-model NewsImage {
-  id String @id @default(cuid())
-
-  url String
-
-  newsId String
-  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
 }

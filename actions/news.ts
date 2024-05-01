@@ -12,14 +12,22 @@ export const createNews = async (values: z.infer<typeof NewsSchema>) => {
       return { error: "Trường dữ liệu không hợp lệ" };
     }
 
-    await db.news.upsert({
-      where: {
-        id: values.id,
-      },
-      update: {
-        ...values,
-      },
-      create: {
+    if (values.id) {
+      await db.news.upsert({
+        where: {
+          id: values.id,
+        },
+        update: {
+          ...values,
+        },
+        create: {
+          ...values,
+        },
+      });
+    }
+
+    await db.news.create({
+      data: {
         ...values,
       },
     });
@@ -29,5 +37,21 @@ export const createNews = async (values: z.infer<typeof NewsSchema>) => {
     console.log("ERROR CREATE NEWS ACTION", error);
 
     return { error: "Tạo tin tức thất bại" };
+  }
+};
+
+export const deleteNews = async (id: string) => {
+  try {
+    await db.news.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: "Xóa tin tức thành công" };
+  } catch (error) {
+    console.log("ERROR DELETE NEWS ACTION", error);
+
+    return { error: "Xóa tin tức thất bại" };
   }
 };
