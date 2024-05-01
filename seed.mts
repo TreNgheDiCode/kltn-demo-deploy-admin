@@ -33,11 +33,6 @@ const schools = await seed.schools((x) =>
         schoolGalleryImagesByGalleryId: [{}],
       },
     ],
-    schoolBlogs: [
-      {
-        schoolBlogImages: [{}],
-      },
-    ],
   })
 );
 
@@ -57,7 +52,9 @@ await seed.accounts(
       dob: (ctx) => copycat.dateString(ctx.seed),
       image: (ctx) => copycat.url(ctx.seed, { limit: 1000 }),
       address: (ctx) =>
-        `${copycat.streetAddress(ctx.seed)} ${copycat.streetName(ctx.seed)}, ${copycat.city(ctx.seed)}, ${copycat.country(ctx.seed)}`,
+        `${copycat.streetAddress(ctx.seed)} ${copycat.streetName(
+          ctx.seed
+        )}, ${copycat.city(ctx.seed)}, ${copycat.country(ctx.seed)}`,
       twoFactorConfirmations: [{}],
       students: (x) =>
         x(1, {

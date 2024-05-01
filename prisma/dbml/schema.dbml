@@ -80,27 +80,9 @@ Table School {
   locations SchoolLocation [not null]
   programs SchoolProgram [not null]
   galleries SchoolGallery [not null]
-  blogs SchoolBlog [not null]
+  news News [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-}
-
-Table SchoolBlog {
-  id String [pk]
-  content String
-  images SchoolBlogImages [not null]
-  title String [not null]
-  schoolId String [not null]
-  school School [not null]
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
-}
-
-Table SchoolBlogImages {
-  id String [pk]
-  url String [not null]
-  schoolBlogId String [not null]
-  schoolBlog SchoolBlog [not null]
 }
 
 Table SchoolGallery {
@@ -465,6 +447,27 @@ Table ProfileGroup {
   }
 }
 
+Table News {
+  id String [pk]
+  title String [not null]
+  content String
+  type NewsType [not null]
+  cover String [not null]
+  isPublished Boolean [not null, default: true]
+  schoolId String
+  school School
+  images NewsImage [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table NewsImage {
+  id String [pk]
+  url String [not null]
+  newsId String [not null]
+  news News [not null]
+}
+
 Enum Gender {
   MALE
   FEMALE
@@ -517,11 +520,13 @@ Enum SocialType {
   PORTFOLLIO
 }
 
+Enum NewsType {
+  ANNOUNCEMENT
+  EVENT
+  BLOG
+}
+
 Ref: TwoFactorConfirmation.accountId - Account.id [delete: Cascade]
-
-Ref: SchoolBlog.schoolId > School.id
-
-Ref: SchoolBlogImages.schoolBlogId > SchoolBlog.id [delete: Cascade]
 
 Ref: SchoolGallery.schoolId > School.id
 
@@ -604,3 +609,7 @@ Ref: Group.ownerId > Profile.id [delete: Cascade]
 Ref: ProfileGroup.profileId > Profile.id [delete: Cascade]
 
 Ref: ProfileGroup.groupId > Group.id [delete: Cascade]
+
+Ref: News.schoolId > School.id [delete: Cascade]
+
+Ref: NewsImage.newsId > News.id [delete: Cascade]

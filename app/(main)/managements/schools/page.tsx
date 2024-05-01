@@ -1,4 +1,4 @@
-import { HeadingSchool } from "@/components/school/heading";
+import { HeadingSchool } from "@/components/school/heading-school";
 import { HeadingNavigation } from "@/components/school/heading-navigation";
 import { SchoolHeader } from "@/components/school/school-header";
 import { GetSchoolsById, GetSchoolsLib } from "@/lib/schools";

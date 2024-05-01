@@ -14,7 +14,7 @@ export const ButtonsAll = ({ isCollapsed }: ButtonsAllProps) => {
   const router = useRouter();
 
   const onClick = () => {
-    router.push("/managements/profiles");
+    router.push("/managements/accounts");
   };
 
   return (
