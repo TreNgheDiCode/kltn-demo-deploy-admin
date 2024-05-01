@@ -3,6 +3,7 @@ import {
   DegreeType,
   Gender,
   GradeType,
+  NewsType,
   PostStatus,
   StudentStatus,
 } from "@prisma/client";
@@ -375,4 +376,19 @@ export const UpdateStudent = z.object({
       })
   ),
   additional: z.optional(z.string()),
+});
+
+export const NewsSchema = z.object({
+  title: z.string().min(1, {
+    message: "Vui lòng nhập tiêu đề",
+  }),
+  content: z.string().min(1, {
+    message: "Vui lòng nhập nội dung",
+  }),
+  type: z.enum([NewsType.ANNOUNCEMENT, NewsType.EVENT, NewsType.BLOG]),
+  cover: z.string().min(1, {
+    message: "Vui lòng chọn ảnh đại diện",
+  }),
+  isPublished: z.boolean(),
+  schoolId: z.optional(z.string()),
 });

@@ -5,7 +5,6 @@ import { StudentTool } from "@/components/student/student-tool";
 import { GetStudentById } from "@/lib/student";
 import { StudentLib } from "@/types/type";
 import { Card, CardBody } from "@nextui-org/react";
-import { redirect } from "next/navigation";
 
 const StudentIdPage = async ({
   params: { studentId },
@@ -15,7 +14,11 @@ const StudentIdPage = async ({
   const student: StudentLib = await GetStudentById(studentId);
 
   if (!student) {
-    redirect("/managements/schools");
+    return (
+      <div className="flex items-center justify-center font-bold text-3xl">
+        Thông tin học sinh không tồn tại
+      </div>
+    );
   }
 
   return (
