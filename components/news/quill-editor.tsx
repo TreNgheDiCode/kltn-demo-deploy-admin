@@ -45,11 +45,12 @@ export const QuillEditor = ({ preview, value, onChange }: QuillEditorProps) => {
   return (
     <Quill
       readOnly={preview}
+      theme="snow"
       value={value}
       onChange={onChange}
       modules={quillModules}
       formats={quillFormats}
-      className="w-full h-[70%] mt-10 bg-white"
+      className="w-full mt-10 bg-white"
     />
   );
 };

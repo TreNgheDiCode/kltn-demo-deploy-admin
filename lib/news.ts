@@ -13,3 +13,20 @@ export const GetNews = async () => {
 
   return news;
 };
+
+export const GetNewsById = async (id: string) => {
+  const news = await db.news.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      school: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return news;
+};

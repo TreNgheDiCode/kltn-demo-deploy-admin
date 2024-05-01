@@ -50,7 +50,7 @@ const columns = [
   { name: "Id", uid: "id", sortable: true },
   { name: "Tiêu đề", uid: "title", sortable: true },
   { name: "Loại tin tức", uid: "type", sortable: true },
-  { name: "Trạng thái", uid: "status", sortable: true },
+  { name: "Trạng thái", uid: "isPublished", sortable: true },
   { name: "Trường học", uid: "schoolName", sortable: true },
   { name: "Ngày tạo", uid: "createdAt", sortable: true },
   { name: "Ngày cập nhật", uid: "updatedAt", sortable: true },
@@ -69,7 +69,14 @@ const statusOptions = [
   { name: "TẠM ẨN", uid: "false" },
 ];
 
-const INITIAL_COLUMNS = ["title", "type", "status", "createdAt", "actions"];
+const INITIAL_COLUMNS = [
+  "title",
+  "type",
+  "isPublished",
+  "schoolName",
+  "createdAt",
+  "actions",
+];
 
 export const NewsTable = ({ news }: NewsProps) => {
   const [filterValue, setFilterValue] = useState("");
@@ -164,7 +171,7 @@ export const NewsTable = ({ news }: NewsProps) => {
             </Chip>
           </div>
         );
-      case "status":
+      case "isPublished":
         return (
           <div className="flex items-center justify-center">
             <Chip

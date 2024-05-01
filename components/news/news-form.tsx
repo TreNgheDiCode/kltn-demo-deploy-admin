@@ -13,8 +13,10 @@ import {
   Card,
   CardBody,
   CardFooter,
+  CardHeader,
   Chip,
   ChipProps,
+  Divider,
   Image,
   Input,
   Select,
@@ -31,10 +33,55 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { QuillEditor } from "./quill-editor";
 import { createNews } from "@/actions/news";
 import { toast } from "sonner";
+import { NewsLib } from "@/types/type";
+import Banner from "../banner";
+import { X } from "lucide-react";
 
 type NewsSchema = z.infer<typeof NewsSchema>;
 
-export const CreateNewsForm = () => {
+interface NewsFormProps {
+  isPreview?: boolean;
+  initialData?: NewsLib;
+}
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  true: "success",
+  false: "default",
+};
+
+const statusLabelMap = {
+  true: "Hiển thị",
+  false: "Tạm ẩn",
+};
+
+const newsType = [
+  {
+    key: NewsType.ANNOUNCEMENT,
+    label: "Thông báo",
+    color: "default",
+  },
+  {
+    key: NewsType.EVENT,
+    label: "Sự kiện",
+    color: "warning",
+  },
+  {
+    key: NewsType.BLOG,
+    label: "Blog",
+    color: "success",
+  },
+];
+
+const typeColorMap: Record<string, ChipProps["color"]> = {
+  ANNOUNCEMENT: "default",
+  EVENT: "warning",
+  BLOG: "success",
+};
+
+export const NewsForm = ({
+  isPreview,
+  initialData,
+}: Readonly<NewsFormProps>) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState<File>();
@@ -48,14 +95,16 @@ export const CreateNewsForm = () => {
     resolver: zodResolver(NewsSchema),
     mode: "all",
     defaultValues: {
-      title: "",
-      content: "",
-      cover: "",
-      isPublished: false,
-      type: NewsType.ANNOUNCEMENT,
-      schoolId: "",
+      title: initialData?.title || "",
+      content: initialData?.content || "",
+      cover: initialData?.cover || "",
+      isPublished: initialData?.isPublished || false,
+      type: initialData?.type || NewsType.ANNOUNCEMENT,
+      schoolId: initialData?.schoolId || undefined,
     },
   });
+
+  form.watch("cover");
 
   if (!schools) {
     return (
@@ -73,6 +122,10 @@ export const CreateNewsForm = () => {
     setIsLoading(true);
     values.isPublished = true;
 
+    if (isPreview) {
+      values.id = initialData?.id;
+    }
+
     await createNews(values)
       .then((res) => {
         if (res.error) {
@@ -82,6 +135,29 @@ export const CreateNewsForm = () => {
         if (res.success) {
           router.push("/managements/news");
           toast.success(res.success);
+        }
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  const onSave = async (values: NewsSchema) => {
+    setIsLoading(true);
+    values.isPublished = false;
+
+    if (isPreview) {
+      values.id = initialData?.id;
+    }
+
+    await createNews(values)
+      .then((res) => {
+        if (res.error) {
+          toast.error(res.error);
+        }
+
+        if (res.success) {
+          toast.success(res.success);
+          router.refresh();
+          router.push("/managements/news");
         }
       })
       .finally(() => setIsLoading(false));
@@ -105,32 +181,39 @@ export const CreateNewsForm = () => {
     setIsUploading(false);
   };
 
-  const newsType = [
-    {
-      key: NewsType.ANNOUNCEMENT,
-      label: "Thông báo",
-      color: "default",
-    },
-    {
-      key: NewsType.EVENT,
-      label: "Sự kiện",
-      color: "warning",
-    },
-    {
-      key: NewsType.BLOG,
-      label: "Blog",
-      color: "success",
-    },
-  ];
-
-  const typeColorMap: Record<string, ChipProps["color"]> = {
-    ANNOUNCEMENT: "default",
-    EVENT: "warning",
-    BLOG: "success",
-  };
-
   return (
     <Card>
+      {isPreview && (
+        <CardHeader className="flex flex-col items-start p-6 space-y-4">
+          {!initialData?.isPublished && (
+            <Banner
+              variant={"warning"}
+              label="Tin tức này hiện đang tạm ẩn và sẽ không được xuất hiện ở bất kỳ đâu"
+            />
+          )}
+          <div className="flex items-center gap-2">
+            <label className="block text-foreground font-bold text-base">
+              Trạng thái:
+            </label>
+            <Chip
+              className="capitalize"
+              color={statusColorMap[initialData!.isPublished.toString()]}
+              size="md"
+              variant="flat"
+              classNames={{
+                content: "uppercase",
+              }}
+            >
+              {
+                statusLabelMap[
+                  initialData!.isPublished.toString() as keyof typeof statusLabelMap
+                ]
+              }
+            </Chip>
+          </div>
+        </CardHeader>
+      )}
+      <Divider />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardBody className="p-6 flex flex-col gap-4">
@@ -157,7 +240,7 @@ export const CreateNewsForm = () => {
                 </FormItem>
               )}
             />
-            {form.getValues("cover") ? (
+            {form.getValues("cover") !== "" ? (
               <FormField
                 control={form.control}
                 name="cover"
@@ -174,6 +257,17 @@ export const CreateNewsForm = () => {
                         label="Ảnh đại diện"
                         labelPlacement="outside"
                         value={field.value}
+                        endContent={
+                          isPreview && (
+                            <X
+                              className="text-rose-500 hover:bg-rose-500/30 rounded-full size-6 cursor-pointer hover:scale-110 hover:shadow-2xl"
+                              onClick={() => {
+                                form.setValue("cover", "");
+                                setFile(undefined);
+                              }}
+                            />
+                          )
+                        }
                       />
                     </FormControl>
                   </FormItem>
@@ -289,6 +383,7 @@ export const CreateNewsForm = () => {
                         base: "w-[250px]",
                       }}
                       items={schools}
+                      selectedKey={field.value}
                       onSelectionChange={(select) => {
                         if (select == null) return field.onChange(undefined);
                         field.onChange(select);
@@ -356,13 +451,17 @@ export const CreateNewsForm = () => {
           <CardFooter className="gap-4 justify-end">
             {/* On Save */}
             <Button
+              onPress={() => {
+                const allValues = form.getValues();
+                onSave(allValues);
+              }}
               isLoading={isLoading}
               isDisabled={isLoading}
               type="button"
               variant="shadow"
-              color="success"
+              color="danger"
             >
-              Lưu & Thoát
+              Lưu ở chế độ tạm ẩn
             </Button>
             {/* On Publish */}
             <Button
