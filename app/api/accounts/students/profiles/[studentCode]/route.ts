@@ -32,6 +32,11 @@ export async function GET(
             logo: true,
           },
         },
+        profile: {
+          include: {
+            posts: true,
+          },
+        },
       },
     });
 
@@ -42,21 +47,7 @@ export async function GET(
       );
     }
 
-    const profile = await db.profile.findUnique({
-      where: {
-        studentId: student.id,
-      },
-      include: {},
-    });
-
-    if (!profile) {
-      return NextResponse.json(
-        { error: "Không tồn tại hồ sơ" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(profile, { status: 200 });
+    return NextResponse.json(student, { status: 200 });
   } catch (error) {
     console.log("GET PROFILE BY STUDENT CODE ERROR", error);
 
