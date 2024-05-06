@@ -79,37 +79,24 @@ export type City = {
   Districts: District[];
 };
 
-// const student: ({
-//   account: {
-//       id: string;
-//       email: string;
-//       emailVerified: Date | null;
-//       password: string;
-//       name: string;
-//       dob: Date;
-//       gender: $Enums.Gender;
-//       phoneNumber: string;
-//       idCardNumber: string;
-//       ... 4 more ...;
-//       updatedAt: Date;
-//   };
-//   school: {
-//       ...;
-//   };
-//   profile: {
-//       ...;
-//   } | null;
-//   program: ({
-//       ...;
-//   } & {
-//       ...;
-//   }) | null;
-//   location: {
-//       ...;
-//   } | null;
-// } & {
-//   ...;
-// }) | null
+export type AccountLib = {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  dob: Date;
+  emailVerified: Date | null;
+  phoneNumber: string;
+  address: string;
+  idCardNumber: string;
+  isTwoFactorEnabled: boolean;
+  student: {
+    id: string;
+    studentCode: string | null;
+    status: StudentStatus;
+  } | null;
+  isLocked: boolean;
+};
 
 export type StudentLib =
   | (Student & {

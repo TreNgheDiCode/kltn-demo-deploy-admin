@@ -238,6 +238,22 @@ export const updateStudent = async (
         },
       });
 
+      const student = await db.student.findUnique({
+        where: {
+          studentCode,
+        },
+      });
+
+      if (!student) {
+        return { error: "Không tìm thấy học sinh" };
+      }
+
+      await db.profile.create({
+        data: {
+          studentId: student.id,
+        },
+      });
+
       await sendWelcomeEmail(
         updatedStudent.account.name,
         studentCode,
