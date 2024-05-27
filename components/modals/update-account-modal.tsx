@@ -85,12 +85,6 @@ const UpdateAccountModal = () => {
       district: addressComps && addressComps[2],
       ward: addressComps && addressComps[1],
       addressLine: addressComps && addressComps[0],
-      schoolName: data?.school?.name,
-      programName: data?.program?.program.name,
-      degreeType: data?.degreeType,
-      certificateType: data?.certificateType,
-      gradeType: data?.gradeType,
-      gradeScore: data?.gradeScore.toString(),
     },
   });
 
@@ -118,11 +112,6 @@ const UpdateAccountModal = () => {
       .finally(() => setIsLoading(false));
   };
 
-  form.watch("schoolName");
-  form.watch("gradeType");
-  form.watch("certificateType");
-  form.watch("degreeType");
-
   const cities: City[] = useCities() || [];
   const districts: District[] = useDistricts(form.getValues("city")!) || [];
   const wards: Ward[] =
@@ -135,10 +124,6 @@ const UpdateAccountModal = () => {
       </div>
     );
   }
-
-  const programs =
-    schools.find((school) => school.name === form.getValues("schoolName"))
-      ?.programs || [];
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value);
@@ -185,7 +170,6 @@ const UpdateAccountModal = () => {
                               startContent={<Mail className="size-4" />}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               isClearable
                               onValueChange={field.onChange}
                               {...field}
@@ -211,7 +195,6 @@ const UpdateAccountModal = () => {
                               startContent={<Tag className="size-4" />}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               isClearable
                               onValueChange={field.onChange}
                               {...field}
@@ -235,7 +218,6 @@ const UpdateAccountModal = () => {
                       size="md"
                       aria-label="Chọn bằng cấp"
                       placeholder="Chọn bằng cấp"
-                      isRequired
                       onChange={handleStatusChange}
                       defaultSelectedKeys={[data?.status!]}
                       classNames={{
@@ -281,7 +263,6 @@ const UpdateAccountModal = () => {
                                 size="md"
                                 errorMessage={fieldState.error?.message}
                                 isInvalid={!!fieldState.error}
-                                isRequired
                                 onChange={(e) => {
                                   const calendarDate = e;
                                   field.onChange(
@@ -313,7 +294,6 @@ const UpdateAccountModal = () => {
                               defaultValue={Gender.MALE}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               classNames={{
                                 label: "text-sm text-primary",
                               }}
@@ -344,7 +324,6 @@ const UpdateAccountModal = () => {
                               startContent={<Phone className="size-4" />}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               isClearable
                               onValueChange={field.onChange}
                               {...field}
@@ -370,7 +349,6 @@ const UpdateAccountModal = () => {
                               startContent={<NotebookText className="size-4" />}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               isClearable
                               onValueChange={field.onChange}
                               {...field}
@@ -405,7 +383,6 @@ const UpdateAccountModal = () => {
                               }
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               listboxProps={{
                                 itemClasses: {
                                   base: [
@@ -454,7 +431,6 @@ const UpdateAccountModal = () => {
                               }
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               listboxProps={{
                                 itemClasses: {
                                   base: [
@@ -509,7 +485,6 @@ const UpdateAccountModal = () => {
                               }
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               listboxProps={{
                                 itemClasses: {
                                   base: [
@@ -560,7 +535,6 @@ const UpdateAccountModal = () => {
                               startContent={<Home className="size-4" />}
                               errorMessage={fieldState.error?.message}
                               isInvalid={!!fieldState.error}
-                              isRequired
                               isClearable
                               className="pt-6"
                               onValueChange={field.onChange}
@@ -572,256 +546,6 @@ const UpdateAccountModal = () => {
                     />
                   </div>
                   <Divider />
-                  <h1 className="text-[#7D1F1F] dark:text-primary text-base font-semibold">
-                    Trường học
-                  </h1>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {/* School Name */}
-                    <FormField
-                      name="schoolName"
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Select
-                              data-testid="school-name"
-                              disallowEmptySelection
-                              items={schools}
-                              isDisabled={isLoading}
-                              label="School"
-                              selectedKeys={[field.value!]}
-                              labelPlacement="outside"
-                              variant="bordered"
-                              size="md"
-                              aria-label="Chọn trường học"
-                              placeholder="Chọn trường học"
-                              errorMessage={fieldState.error?.message}
-                              isInvalid={!!fieldState.error}
-                              isRequired
-                              onSelectionChange={field.onChange}
-                              classNames={{
-                                listbox: "text-primary",
-                              }}
-                              {...field}
-                            >
-                              {schools.map((school) => (
-                                <SelectItem
-                                  key={school.name}
-                                  startContent={
-                                    <Image
-                                      width={30}
-                                      src={
-                                        schools.filter(
-                                          (item) => item.name === school.name
-                                        )[0].logo
-                                      }
-                                      alt="Logo"
-                                    />
-                                  }
-                                >
-                                  {school.name}
-                                </SelectItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {form.getValues("schoolName") && (
-                      <>
-                        {/* Program Name */}
-                        <FormField
-                          name="programName"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Select
-                                  onSelectionChange={field.onChange}
-                                  disallowEmptySelection
-                                  items={programs}
-                                  isDisabled={isLoading}
-                                  label="Ngành đào tạo"
-                                  labelPlacement="outside"
-                                  variant="bordered"
-                                  size="md"
-                                  aria-label="Choose ngành đào tạo"
-                                  placeholder="Choose ngành đào tạo"
-                                  errorMessage={fieldState.error?.message}
-                                  isInvalid={!!fieldState.error}
-                                  isRequired
-                                  selectedKeys={[field.value!]}
-                                  classNames={{
-                                    listbox: "text-primary",
-                                  }}
-                                  {...field}
-                                >
-                                  {programs.map((program) => (
-                                    <SelectItem key={program.name}>
-                                      {program.name}
-                                    </SelectItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        {/* degreeName */}
-                        <FormField
-                          name="degreeType"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Select
-                                  disallowEmptySelection
-                                  items={[
-                                    DegreeType.HIGHSCHOOL,
-                                    DegreeType.UNIVERSITY,
-                                  ]}
-                                  isDisabled={isLoading}
-                                  label="Bằng cấp"
-                                  labelPlacement="outside"
-                                  variant="bordered"
-                                  size="md"
-                                  aria-label="Chọn bằng cấp"
-                                  placeholder="Chọn bằng cấp"
-                                  errorMessage={fieldState.error?.message}
-                                  isInvalid={!!fieldState.error}
-                                  isRequired
-                                  onSelectionChange={field.onChange}
-                                  defaultSelectedKeys={[DegreeType.HIGHSCHOOL]}
-                                  classNames={{
-                                    listbox: "text-primary",
-                                  }}
-                                  {...field}
-                                >
-                                  <SelectItem key={DegreeType.HIGHSCHOOL}>
-                                    Highschool
-                                  </SelectItem>
-                                  <SelectItem key={DegreeType.UNIVERSITY}>
-                                    University
-                                  </SelectItem>
-                                </Select>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Language Type */}
-                        <FormField
-                          name="certificateType"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Select
-                                  disallowEmptySelection
-                                  items={[
-                                    CertificateType.IELTS,
-                                    CertificateType.TOEFL,
-                                  ]}
-                                  isDisabled={isLoading}
-                                  label="Chứng chỉ"
-                                  labelPlacement="outside"
-                                  variant="bordered"
-                                  size="md"
-                                  aria-label="Chọn chứng chỉ"
-                                  placeholder="Chọn chứng chỉ"
-                                  errorMessage={fieldState.error?.message}
-                                  isInvalid={!!fieldState.error}
-                                  isRequired
-                                  onSelectionChange={field.onChange}
-                                  defaultSelectedKeys={[CertificateType.IELTS]}
-                                  classNames={{
-                                    listbox: "text-primary",
-                                  }}
-                                  {...field}
-                                >
-                                  <SelectItem key={CertificateType.IELTS}>
-                                    IELTS
-                                  </SelectItem>
-                                  <SelectItem key={CertificateType.TOEFL}>
-                                    TOEFL
-                                  </SelectItem>
-                                </Select>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        {/* Overall Score */}
-                        <FormField
-                          name="gradeType"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <FormItem>
-                              <FormControl>
-                                <RadioGroup
-                                  orientation="horizontal"
-                                  isDisabled={isLoading}
-                                  label="Overall Score"
-                                  size="md"
-                                  defaultValue={field.value}
-                                  errorMessage={fieldState.error?.message}
-                                  isInvalid={!!fieldState.error}
-                                  isRequired
-                                  classNames={{
-                                    label: "text-sm text-primary",
-                                    wrapper: "gap-x-4",
-                                  }}
-                                  onValueChange={field.onChange}
-                                  {...field}
-                                >
-                                  <Radio value={GradeType.GPA}>
-                                    GPA (?/4.0)
-                                  </Radio>
-                                  <Radio value={GradeType.CGPA}>
-                                    CGPA (?/10.0)
-                                  </Radio>
-                                </RadioGroup>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Grade Score */}
-                        <FormField
-                          name="gradeScore"
-                          control={form.control}
-                          render={({ field, fieldState }) => (
-                            <FormItem className="flex-1">
-                              <FormControl>
-                                <Input
-                                  isDisabled={isLoading}
-                                  defaultValue={"1"}
-                                  type="number"
-                                  min={0}
-                                  max={
-                                    form.getValues("gradeType") ===
-                                    GradeType.GPA
-                                      ? 4
-                                      : 10
-                                  }
-                                  step={0.1}
-                                  label="Điểm trung bình tích lũy"
-                                  labelPlacement="outside"
-                                  variant="bordered"
-                                  size="md"
-                                  errorMessage={fieldState.error?.message}
-                                  isInvalid={!!fieldState.error}
-                                  isRequired
-                                  className="w-full max-w-[150px] pt-6"
-                                  onValueChange={field.onChange}
-                                  {...field}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </>
-                    )}
-                  </div>
                   <h1 className="text-[#7D1F1F] dark:text-primary text-base font-semibold">
                     Thông tin bổ sung
                   </h1>

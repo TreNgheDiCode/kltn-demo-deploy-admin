@@ -39,7 +39,26 @@ export const GetAccountByEmail = async (email: string) => {
         password: true,
         emailVerified: true,
         name: true,
-        student: true,
+        dob: true,
+        phoneNumber: true,
+        student: {
+          select: {
+            school: {
+              select: {
+                name: true,
+              },
+            },
+            program: {
+              select: {
+                program: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         isLocked: true,
       },
     });
