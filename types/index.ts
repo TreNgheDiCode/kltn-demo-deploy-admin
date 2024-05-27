@@ -1,5 +1,6 @@
 import {
   CertificateType,
+  Country,
   DegreeType,
   Gender,
   GradeType,
@@ -244,6 +245,7 @@ export const NewSchoolSchema = z.object({
   color: z.string().min(1, {
     message: "Vui lòng nhập mã màu đại diện cho trường",
   }),
+  country: z.enum([Country.AUSTRALIA, Country.CANADA, Country.KOREA]),
 });
 
 export const UpdateStudent = z.object({

@@ -12,11 +12,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { PickerExample } from "../color-picker";
-import {
-  BackgroundFile,
-  BackgroundSchoolDropzone,
-} from "../school/background-school-dropzone";
-import { LogoFile, LogoSchoolDropzone } from "../school/logo-school-dropzone";
+import { BackgroundSchoolDropzone } from "../school/background-school-dropzone";
+import { LogoSchoolDropzone } from "../school/logo-school-dropzone";
 import {
   Dialog,
   DialogContent,
