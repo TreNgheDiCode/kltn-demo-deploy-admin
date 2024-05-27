@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Country, PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 async function main() {
@@ -12,6 +12,7 @@ async function main() {
           name: "HUFLIT AMERICA",
           color: "#9fff5b",
           isPublished: true,
+          country: Country.CANADA,
         },
         {
           logo: "https://utfs.io/f/7317e9f8-b11f-4bd3-974b-f7caa344a9d2-jlxnzo.jpg",
@@ -20,6 +21,7 @@ async function main() {
           name: "Metropolitan International",
           color: "#003234",
           isPublished: true,
+          country: Country.CANADA,
         },
       ],
     });
