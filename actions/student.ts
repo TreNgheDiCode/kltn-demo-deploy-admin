@@ -21,6 +21,8 @@ export const updateStudent = async (
   try {
     const validatedFields = UpdateStudent.safeParse(values);
 
+    console.log(values);
+
     if (!validatedFields.success) {
       return { error: "Trường dữ liệu không hợp lệ" };
     }
@@ -68,39 +70,12 @@ export const updateStudent = async (
 
       const address = `${data.addressLine}, ${data.ward}, ${data.district}, ${data.city}`;
 
-      const existingSchool = await db.school.findUnique({
-        where: {
-          name: data.schoolName,
-        },
-      });
-
-      if (!existingSchool) {
-        return { error: "Không tìm thấy trường học" };
-      }
-
-      const existingProgram = await db.schoolProgram.findUnique({
-        where: {
-          schoolId_name: {
-            schoolId: existingSchool.id,
-            name: data.programName!,
-          },
-        },
-      });
-
-      if (!existingProgram) {
-        return { error: "Không tìm thấy ngành đào tạo" };
-      }
-
       await db.student.update({
         where: {
           id,
         },
         data: {
           status: "AWAITING",
-          degreeType: data.degreeType,
-          gradeType: data.gradeType,
-          gradeScore: parseFloat(data.gradeScore!),
-          certificateType: data.certificateType,
           account: {
             update: {
               email: data.email,
@@ -112,20 +87,6 @@ export const updateStudent = async (
               address,
             },
           },
-          program: {
-            update: {
-              programId: existingProgram.id,
-            },
-          },
-        },
-      });
-
-      await db.student.update({
-        where: {
-          id,
-        },
-        data: {
-          schoolId: existingSchool.id,
         },
       });
 
@@ -280,29 +241,6 @@ export const updateStudent = async (
 
     const address = `${data.addressLine}, ${data.ward}, ${data.district}, ${data.city}`;
 
-    const existingSchool = await db.school.findUnique({
-      where: {
-        name: data.schoolName,
-      },
-    });
-
-    if (!existingSchool) {
-      return { error: "Không tìm thấy trường học" };
-    }
-
-    const existingProgram = await db.schoolProgram.findUnique({
-      where: {
-        schoolId_name: {
-          schoolId: existingSchool.id,
-          name: data.programName!,
-        },
-      },
-    });
-
-    if (!existingProgram) {
-      return { error: "Không tìm thấy ngành đào tạo" };
-    }
-
     await db.student.update({
       where: {
         id,
@@ -310,10 +248,6 @@ export const updateStudent = async (
       data: {
         status: data.status,
         additional: data.additional,
-        degreeType: data.degreeType,
-        gradeType: data.gradeType,
-        gradeScore: parseFloat(data.gradeScore!),
-        certificateType: data.certificateType,
         account: {
           update: {
             email: data.email,
@@ -325,20 +259,6 @@ export const updateStudent = async (
             address,
           },
         },
-        program: {
-          update: {
-            programId: existingProgram.id,
-          },
-        },
-      },
-    });
-
-    await db.student.update({
-      where: {
-        id,
-      },
-      data: {
-        schoolId: existingSchool.id,
       },
     });
 

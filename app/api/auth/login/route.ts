@@ -1,10 +1,9 @@
+import { GetAccountByEmail } from "@/lib/account";
 import { sendVerificationEmail } from "@/lib/email";
 import { generateVerificationToken } from "@/lib/tokens";
-import { GetAccountByEmail } from "@/lib/account";
 import { LoginSchema } from "@/types";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
@@ -72,61 +71,6 @@ export async function POST(req: Request) {
       }
 
       return NextResponse.json(existingAccount, { status: 200 });
-    }
-
-    if (studentCode && !email) {
-      const existingStudent = await db.student.findUnique({
-        where: {
-          studentCode,
-        },
-        select: {
-          account: {
-            select: {
-              password: true,
-              isLocked: true,
-            },
-          },
-          status: true,
-        },
-      });
-
-      if (!existingStudent) {
-        return NextResponse.json(
-          { error: "Không tồn tại sinh viên với mã sinh viên này" },
-          { status: 401 }
-        );
-      }
-
-      if (existingStudent.account.isLocked) {
-        return NextResponse.json(
-          { error: "Tài khoản của bạn đã bị khóa" },
-          { status: 403 }
-        );
-      }
-
-      const isPasswordMatch = await bcrypt.compare(
-        password,
-        existingStudent.account.password
-      );
-
-      if (!isPasswordMatch) {
-        return NextResponse.json(
-          { error: "Thông tin tài khoản không chính xác" },
-          { status: 403 }
-        );
-      }
-
-      if (existingStudent.status === "AWAITING") {
-        return NextResponse.json(
-          {
-            error:
-              "Tài khoản của bạn đang chờ duyệt, vui lòng liên hệ lại hỗ trợ sau 3-4 ngày làm việc nếu chưa có thông tin",
-          },
-          { status: 403 }
-        );
-      }
-
-      return NextResponse.json({ success: "Đăng nhập thành công" });
     }
   } catch (error) {
     console.log("ERROR LOGIN:", error);

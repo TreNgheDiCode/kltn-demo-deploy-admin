@@ -66,6 +66,12 @@ enum NewsType {
   BLOG // Các bài viết chung chung (dạng như tham quan trường hoặc hướng dẫn gì đó)
 }
 
+enum Country {
+  AUSTRALIA
+  KOREA
+  CANADA
+}
+
 // MODELS
 model Account {
   id String @id @default(cuid())
@@ -154,6 +160,7 @@ model School {
   history     String?
   color       String
   isPublished Boolean @default(false)
+  country     Country
 
   students Student[]
 
