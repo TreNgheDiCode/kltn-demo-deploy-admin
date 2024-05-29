@@ -2,6 +2,7 @@ import {
   Account,
   DegreeType,
   GradeType,
+  News,
   Profile,
   School,
   SchoolLocation,
@@ -127,3 +128,9 @@ export type StudentLib =
         | null;
     })
   | null;
+
+export type NewsLib = News & {
+  school: {
+    name: string;
+  } | null;
+};

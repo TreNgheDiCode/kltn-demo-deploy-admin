@@ -34,7 +34,20 @@ export async function GET(
         },
         profile: {
           include: {
-            posts: true,
+            posts: {
+              include: {
+                images: true,
+                likes: true,
+                saves: true,
+                comments: {
+                  include: {
+                    likes: true,
+                    children: true,
+                  },
+                },
+              },
+            },
+            biography: true,
           },
         },
       },
@@ -49,8 +62,6 @@ export async function GET(
 
     return NextResponse.json(student, { status: 200 });
   } catch (error) {
-    console.log("GET PROFILE BY STUDENT CODE ERROR", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin hồ sơ theo mã học sinh" },
       { status: 500 }

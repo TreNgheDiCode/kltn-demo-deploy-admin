@@ -49,7 +49,7 @@ export const HeadingNavigation = ({
             <SchoolProgramTable programs={programs} />
           </Tab>
           <Tab key="gallery" title="Thư viện"></Tab>
-          <Tab key="blog" title="Blog"></Tab>
+          <Tab key="new" title="Tin tức"></Tab>
         </Tabs>
       </CardBody>
     </Card>

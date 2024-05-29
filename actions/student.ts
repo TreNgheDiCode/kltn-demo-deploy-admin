@@ -226,15 +226,27 @@ export const updateStudent = async (
           studentCode,
           status: "APPROVED",
         },
-        select: {
+        include: {
           account: {
             select: {
               email: true,
               name: true,
             },
           },
-          studentCode: true,
-          status: true,
+        },
+      });
+
+      const student = await db.student.findUnique({
+        where: {
+          studentCode,
+        },
+      });
+
+      if (!student) return;
+
+      await db.profile.create({
+        data: {
+          studentId: student.id,
         },
       });
 

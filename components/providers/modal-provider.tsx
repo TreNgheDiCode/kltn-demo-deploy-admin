@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { ActionModal } from "../modals/action-modal";
-import { UpdateSchoolProfileModal } from "../modals/update-school-profile-modal";
 import { CreateSchoolModal } from "../modals/create-school-modal";
 
 import { CertificateImageModal } from "../modals/create-account-form/upload-account-certificate-image-modal";
@@ -15,6 +14,10 @@ const CreateAccountModal = dynamic(
 );
 const UpdateAccountModal = dynamic(
   () => import("../modals/update-account-modal"),
+  { ssr: false }
+);
+const UpdateSchoolProfileModal = dynamic(
+  () => import("../modals/update-school-profile-modal"),
   { ssr: false }
 );
 
