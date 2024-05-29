@@ -1,6 +1,5 @@
-import { HeadingNews } from "@/components/news/heading-news";
 import { GetNews } from "@/lib/news";
-import { NewsTable } from "./news-table";
+import { NewsTable } from "../../../../components/news/news-table";
 
 const NewsPage = async () => {
   const news = await GetNews();

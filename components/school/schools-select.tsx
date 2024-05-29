@@ -79,9 +79,10 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
           <CommandInput placeholder="Tìm kiếm trường học..." />
           <CommandList>
             <CommandEmpty>Không tìm thấy trường học</CommandEmpty>
-            <CommandGroup heading="Trường học">
+            <CommandGroup>
               {schools.map((school) => (
                 <CommandItem
+                  value={school.id}
                   onSelect={() => {
                     onSelect(school.id);
                     onClose();

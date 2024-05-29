@@ -11,6 +11,13 @@ export async function GET() {
         email: true,
         emailVerified: true,
         isTwoFactorEnabled: true,
+        student: {
+          select: {
+            id: true,
+            studentCode: true,
+            status: true,
+          },
+        },
       },
     });
 

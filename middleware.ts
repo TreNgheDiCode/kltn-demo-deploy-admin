@@ -1,40 +1,23 @@
-import { authMiddleware } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default authMiddleware({
-  // Routes that can always be accessed, and have
-  // no authentication information
-  ignoredRoutes: [
-    "/unauthorized",
-    "/login",
-    "/api/auth/login",
-    "/api/schools/full",
-    "/api/country",
-  ],
-  afterAuth: (auth, req) => {
-    const isApiRoutes = req.nextUrl.pathname.startsWith("/api");
-    const isAdmin = auth.sessionClaims?.metadata.role === "ADMIN";
-    const isLoggedIn = auth.sessionId;
+const isPublicRoute = createRouteMatcher(["/login", "/api(.*)"]);
 
-    if (isApiRoutes) {
-      return NextResponse.next();
+export default clerkMiddleware(
+  (auth, req) => {
+    if (!auth().userId && !isPublicRoute(req)) {
+      return auth().redirectToSignIn();
     }
 
-    if (isLoggedIn) {
-      if (!isAdmin) {
-        return Response.redirect(new URL("/unauthorized", req.url));
-      }
-
-      return NextResponse.next();
-    } else {
-      return Response.redirect(new URL("/login", req.url));
+    if (auth().userId && auth().sessionClaims?.metadata.role !== "ADMIN") {
+      return auth().redirectToSignIn();
     }
   },
-});
+  { debug: true }
+);
 
 export const config = {
   // Protects all routes, including api/trpc.
   // See https://clerk.com/docs/references/nextjs/auth-middleware
   // for more information about configuring your Middleware
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

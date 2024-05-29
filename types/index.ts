@@ -1,5 +1,6 @@
 import {
   CertificateType,
+  Country,
   DegreeType,
   Gender,
   GradeType,
@@ -244,6 +245,7 @@ export const NewSchoolSchema = z.object({
   color: z.string().min(1, {
     message: "Vui lòng nhập mã màu đại diện cho trường",
   }),
+  country: z.enum([Country.AUSTRALIA, Country.CANADA, Country.KOREA]),
 });
 
 export const UpdateStudent = z.object({
@@ -329,51 +331,6 @@ export const UpdateStudent = z.object({
     z.string().min(1, {
       message: "Address line is required",
     })
-  ),
-  schoolName: z.optional(
-    z
-      .string({
-        required_error: "School is required",
-      })
-      .min(1, {
-        message: "School is required",
-      })
-  ),
-  programName: z.optional(
-    z
-      .string({
-        required_error: "Program is required",
-      })
-      .min(1, {
-        message: "Program is required",
-      })
-  ),
-  degreeType: z.optional(
-    z.enum([DegreeType.HIGHSCHOOL, DegreeType.UNIVERSITY], {
-      required_error: "Degree type is required",
-      invalid_type_error: "Invalid type, please reselect",
-    })
-  ),
-  certificateType: z.optional(
-    z.enum([CertificateType.IELTS, CertificateType.TOEFL], {
-      required_error: "Certificate type is required",
-      invalid_type_error: "Invalid type, please reselect",
-    })
-  ),
-  gradeType: z.optional(
-    z.enum([GradeType.GPA, GradeType.CGPA], {
-      required_error: "Grade type is required",
-      invalid_type_error: "Invalid type, please reselect",
-    })
-  ),
-  gradeScore: z.optional(
-    z
-      .string({
-        required_error: "Grade score is required",
-      })
-      .min(1, {
-        message: "Grade score is required",
-      })
   ),
   additional: z.optional(z.string()),
 });

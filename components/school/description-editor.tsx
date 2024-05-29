@@ -1,9 +1,17 @@
 "use client";
 
 import { useEdgeStore } from "@/hooks/edgestore";
-import { BlockNoteView, useCreateBlockNote } from "@blocknote/react";
-import "@blocknote/react/style.css";
+import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/shadcn";
+import "@blocknote/shadcn/style.css";
+import "@blocknote/core/fonts/inter.css";
 import { useTheme } from "next-themes";
+import * as Select from "../ui/select";
+import * as Button from "../ui/button";
+import * as Tabs from "../ui/tabs";
+import * as Popover from "../ui/popover";
+import * as Label from "../ui/label";
+import * as Input from "../ui/input";
 
 interface EditorProps {
   editable: boolean;
@@ -33,6 +41,14 @@ const Editor = ({ editable, initialContent, onChange }: EditorProps) => {
       onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
       editor={editor}
       theme={resolvedTheme === "dark" ? "dark" : "light"}
+      shadCNComponents={{
+        Select,
+        Button,
+        Tabs,
+        Popover,
+        Label,
+        Input,
+      }}
     />
   );
 };

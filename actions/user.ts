@@ -1,8 +1,7 @@
 "use server";
 
 import { nameSchema } from "@/types";
-import { auth } from "@clerk/nextjs";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 export const update = async (values: z.infer<typeof nameSchema>) => {
