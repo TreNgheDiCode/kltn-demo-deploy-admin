@@ -21,8 +21,6 @@ export const updateStudent = async (
   try {
     const validatedFields = UpdateStudent.safeParse(values);
 
-    console.log(values);
-
     if (!validatedFields.success) {
       return { error: "Trường dữ liệu không hợp lệ" };
     }
@@ -187,27 +185,15 @@ export const updateStudent = async (
           studentCode,
           status: "APPROVED",
         },
-        include: {
+        select: {
           account: {
             select: {
               email: true,
               name: true,
             },
           },
-        },
-      });
-
-      const student = await db.student.findUnique({
-        where: {
-          studentCode,
-        },
-      });
-
-      if (!student) return;
-
-      await db.profile.create({
-        data: {
-          studentId: student.id,
+          studentCode: true,
+          status: true,
         },
       });
 
@@ -276,8 +262,6 @@ export const updateStudent = async (
 
     return { success: "Cập nhật thông tin học sinh thành công" };
   } catch (error) {
-    console.log("UPDATE STUDENT ACTION ERROR", error);
-
     return { error: "Lỗi cập nhật thông tin học sinh" };
   }
 };
@@ -294,8 +278,6 @@ export const sendPasswordReset = async (email: string, name: string) => {
 
     return { success: "Gửi yêu cầu khôi phục mật khẩu thành công" };
   } catch (error) {
-    console.log("STUDENT RESET PASSWORD ACTION ERROR", error);
-
     return { error: "Gửi yêu cầu khôi phục mật khẩu thất bại" };
   }
 };
@@ -313,8 +295,6 @@ export const sendEmailVerfication = async (email: string, name: string) => {
 
     return { success: "Gửi yêu cầu xác thực email thành công" };
   } catch (error) {
-    console.log("STUDENT VERIFICATION EMAIL ACTION ERROR", error);
-
     return { error: "Gửi yêu cầu xác thực email thất bại" };
   }
 };

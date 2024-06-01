@@ -27,10 +27,7 @@ export async function DELETE(
         }
       );
     } else {
-      return NextResponse.json(
-        { error: "Không tìm thấy lượt thích để xóa" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Xóa like thất bại" }, { status: 404 });
     }
   } catch (error) {
     return NextResponse.json({ error: "Lỗi khi xóa likes" }, { status: 500 });
