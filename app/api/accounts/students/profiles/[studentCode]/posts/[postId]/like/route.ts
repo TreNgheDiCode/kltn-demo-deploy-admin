@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
@@ -14,7 +15,7 @@ export async function GET(
     });
 
     if (!profile) {
-      return { error: "Không tìm thấy hồ sơ" };
+      return NextResponse.json({ error: "Không tìm thấy hồ sơ" });
     }
 
     const post = await db.post.findUnique({
@@ -25,7 +26,7 @@ export async function GET(
     });
 
     if (!post) {
-      return { error: "không tìm thấy bài viết" };
+      return NextResponse.json({ error: "không tìm thấy bài viết" });
     }
 
     const like = await db.postLike.findUnique({
@@ -44,7 +45,7 @@ export async function GET(
         },
       });
 
-      return { success: "Hủy thích thành công" };
+      return NextResponse.json({ success: "Hủy thích thành công" });
     }
 
     await db.postLike.create({
@@ -54,8 +55,8 @@ export async function GET(
       },
     });
 
-    return { success: "Thích bài viết thành công" };
+    return NextResponse.json({ success: "Thích bài viết thành công" });
   } catch (error) {
-    return { error: "Thích thất bại" };
+    return NextResponse.json({ error: "Thích thất bại" });
   }
 }
