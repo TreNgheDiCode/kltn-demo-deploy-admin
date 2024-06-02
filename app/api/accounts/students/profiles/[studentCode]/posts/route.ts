@@ -72,10 +72,10 @@ export async function POST(
       },
       select: {
         id: true,
+        content: true,
         images: true,
       },
     });
-
     if (!data.postImages) {
       return NextResponse.json(post, { status: 200 });
     } else {

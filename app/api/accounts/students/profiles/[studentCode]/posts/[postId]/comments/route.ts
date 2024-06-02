@@ -83,8 +83,6 @@ export async function GET(
 
     return NextResponse.json(comments, { status: 200 });
   } catch (error) {
-    console.log("ERROR GET POST BY POST & PROFILE ID", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin bình luận bài đăng" },
       { status: 500 }

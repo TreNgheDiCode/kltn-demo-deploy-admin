@@ -144,7 +144,6 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     };
   } catch (error) {
     console.log("REGISTER ACCOUNT ACTION ERROR", error);
-
     return { error: "Thêm tài khoản thất bại" };
   }
 };
