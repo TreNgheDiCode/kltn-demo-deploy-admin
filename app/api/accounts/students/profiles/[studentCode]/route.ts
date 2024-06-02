@@ -32,24 +32,6 @@ export async function GET(
             logo: true,
           },
         },
-        profile: {
-          include: {
-            posts: {
-              include: {
-                images: true,
-                likes: true,
-                saves: true,
-                comments: {
-                  include: {
-                    likes: true,
-                    children: true,
-                  },
-                },
-              },
-            },
-            biography: true,
-          },
-        },
       },
     });
 
@@ -60,8 +42,24 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(student, { status: 200 });
+    const profile = await db.profile.findUnique({
+      where: {
+        studentId: student.id,
+      },
+      include: {},
+    });
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Không tồn tại hồ sơ" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(profile, { status: 200 });
   } catch (error) {
+    console.log("GET PROFILE BY STUDENT CODE ERROR", error);
+
     return NextResponse.json(
       { error: "Lỗi lấy thông tin hồ sơ theo mã học sinh" },
       { status: 500 }
