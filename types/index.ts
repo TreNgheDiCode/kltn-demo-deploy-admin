@@ -26,11 +26,6 @@ export const LoginSchema = z.object({
   password: z.string().min(1, {
     message: "Password is required",
   }),
-  studentCode: z.optional(
-    z.string().min(10, {
-      message: "Student code is required minimum of 10 characters",
-    })
-  ),
 });
 
 export const RegisterSchema = z
@@ -83,6 +78,9 @@ export const RegisterSchema = z
       .min(1, {
         message: "Id card number is required",
       }),
+    country: z.enum([Country.AUSTRALIA, Country.CANADA, Country.KOREA], {
+      message: "Nation is required",
+    }),
     city: z.string().min(1, {
       message: "City is required",
     }),
