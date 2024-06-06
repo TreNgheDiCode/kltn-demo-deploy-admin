@@ -29,6 +29,7 @@ export async function GET(
           select: {
             studentCode: true,
             status: true,
+            profile: true
           },
         },
       },
