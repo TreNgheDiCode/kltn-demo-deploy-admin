@@ -16,7 +16,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(news, { status: 200 });
+    return NextResponse.json(news, {
+      status: 200,
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
     console.log("ERROR API GET NEWS", error);
 

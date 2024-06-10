@@ -24,15 +24,38 @@ export const createNews = async (values: z.infer<typeof NewsSchema>) => {
           ...values,
         },
       });
+
+      return { success: "Cập nhật tin tức thành công" };
     } else {
-      await db.news.create({
+      const news = await db.news.create({
         data: {
           ...values,
         },
       });
-    }
 
-    return { success: "Cập nhật tin tức thành công" };
+      const students = await db.student.findMany({});
+
+      for (const student of students) {
+        await db.newsNotification.create({
+          data: {
+            type: news.type,
+            isRead: false,
+            news: {
+              connect: {
+                id: news.id,
+              },
+            },
+            student: {
+              connect: {
+                id: student.id,
+              },
+            },
+          },
+        });
+      }
+
+      return { success: "Tạo tin tức thành công" };
+    }
   } catch (error) {
     console.log("ERROR CREATE NEWS ACTION", error);
 

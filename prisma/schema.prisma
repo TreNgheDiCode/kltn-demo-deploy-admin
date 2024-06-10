@@ -334,6 +334,11 @@ model Student {
   program  StudentSchoolProgram?
   location StudentSchoolLocation?
 
+  notifications      NewsNotification[] @relation("notifications")
+  ownedNotifications NewsNotification[] @relation("owns")
+  follows            StudentFollow[]    @relation("follows")
+  followers          StudentFollow[]    @relation("followers")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -702,8 +707,46 @@ model News {
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
+  notifications NewsNotification[] @relation("notifications")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([title])
+}
+
+model NewsNotification {
+  id String @id @default(cuid())
+
+  type   NewsType
+  isRead Boolean
+
+  studentId String
+  student   Student @relation("notifications", fields: [studentId], references: [id], onDelete: Cascade)
+
+  fromId      String?
+  fromStudent Student? @relation("owns", fields: [fromId], references: [id], onDelete: Cascade)
+
+  newsId String
+  news   News   @relation("notifications", fields: [newsId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Notification")
+}
+
+model StudentFollow {
+  id String @id @default(cuid())
+
+  studentId String
+  student   Student @relation("follows", fields: [studentId], references: [id], onDelete: Cascade)
+
+  followerId String
+  follower   Student @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, followerId])
 }
