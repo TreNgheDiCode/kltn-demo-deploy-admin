@@ -206,10 +206,26 @@ const UpdateAccountModal = () => {
                     <Select
                       disallowEmptySelection
                       items={[
-                        StudentStatus.APPROVED,
-                        StudentStatus.AWAITING,
-                        StudentStatus.DROPPED,
-                        StudentStatus.STUDYING,
+                        {
+                          key: "APPROVED",
+                          label: "APPROVED",
+                          value: StudentStatus.APPROVED,
+                        },
+                        {
+                          key: "AWAITING",
+                          label: "AWAITING",
+                          value: StudentStatus.AWAITING,
+                        },
+                        {
+                          key: "DROPPED",
+                          label: "DROPPED",
+                          value: StudentStatus.DROPPED,
+                        },
+                        {
+                          key: "STUDYING",
+                          label: "STUDYING",
+                          value: StudentStatus.STUDYING,
+                        },
                       ]}
                       isDisabled={isLoading}
                       label="Trạng thái"
