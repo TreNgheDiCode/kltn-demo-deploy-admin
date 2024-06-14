@@ -1,7 +1,10 @@
 import { db } from "@/lib/db";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { generateStudentCode, generateVerificationToken } from "@/lib/tokens";
+import { error } from "console";
+import { stat } from "fs";
 import { NextResponse } from "next/server";
+import { json } from "stream/consumers";
 
 export async function GET(
   req: Request,
@@ -29,7 +32,7 @@ export async function GET(
           select: {
             studentCode: true,
             status: true,
-            profile: true
+            profile: true,
           },
         },
       },
@@ -166,5 +169,34 @@ export async function PATCH(
       { error: "Duyệt hồ sơ thất bại" },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { address }: { address: string } = await req.json();
+    const updateAddress = await db.account.update({
+      where: {
+        id: params.id,
+      },
+      data: {
+        address: address,
+      },
+    });
+    if (!updateAddress) {
+      return NextResponse.json(
+        { error: "cập nhật address thất bại" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { success: "update địa chỉ thành công" },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json({ error: "Lỗi cập nhật account" });
   }
 }

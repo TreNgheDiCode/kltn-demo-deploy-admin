@@ -337,9 +337,21 @@ export const NewsForm = ({
                       }}
                       disallowEmptySelection
                       items={[
-                        NewsType.ANNOUNCEMENT,
-                        NewsType.EVENT,
-                        NewsType.BLOG,
+                        {
+                          key: "ANNOUNCEMENT",
+                          label: "ANNOUNCEMENT",
+                          value: NewsType.ANNOUNCEMENT,
+                        },
+                        {
+                          key: "EVENT",
+                          label: "EVENT",
+                          value: NewsType.EVENT,
+                        },
+                        {
+                          key: "BLOG",
+                          label: "BLOG",
+                          value: NewsType.BLOG,
+                        },
                       ]}
                       selectedKeys={[field.value]}
                       onSelectionChange={field.onChange}

@@ -59,7 +59,7 @@ export async function POST(
       );
     }
 
-    const data = validatedFields.data;
+    const { images, ...data } = validatedFields.data;
 
     if (!data.status) {
       data.status = PostStatus.PUBLIC;
@@ -76,10 +76,10 @@ export async function POST(
       },
     });
 
-    if (!data.postImages) {
+    if (images?.length === 0) {
       return NextResponse.json(post, { status: 200 });
     } else {
-      for (const image of data.postImages) {
+      for (const image of images!) {
         await db.postImage.create({
           data: {
             postId: post.id,
