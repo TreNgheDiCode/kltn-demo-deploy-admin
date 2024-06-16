@@ -47,6 +47,8 @@ export const GetAccountByEmail = async (email: string) => {
             school: {
               select: {
                 name: true,
+                logo: true,
+                background: true,
               },
             },
             program: {

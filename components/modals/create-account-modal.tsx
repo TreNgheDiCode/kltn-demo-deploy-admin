@@ -729,8 +729,16 @@ const CreateAccountModal = () => {
                                 <Select
                                   disallowEmptySelection
                                   items={[
-                                    DegreeType.HIGHSCHOOL,
-                                    DegreeType.UNIVERSITY,
+                                    {
+                                      key: "HIGHSCHOOL",
+                                      label: "Highschool",
+                                      value: DegreeType.HIGHSCHOOL,
+                                    },
+                                    {
+                                      key: "UNIVERSITY",
+                                      label: "University",
+                                      value: DegreeType.UNIVERSITY,
+                                    },
                                   ]}
                                   isDisabled={isLoading}
                                   label="Bằng cấp"
@@ -771,8 +779,16 @@ const CreateAccountModal = () => {
                                 <Select
                                   disallowEmptySelection
                                   items={[
-                                    CertificateType.IELTS,
-                                    CertificateType.TOEFL,
+                                    {
+                                      key: "IELTS",
+                                      label: "IELTS",
+                                      value: CertificateType.IELTS,
+                                    },
+                                    {
+                                      key: "TOEFL",
+                                      label: "TOEFL",
+                                      value: CertificateType.TOEFL,
+                                    },
                                   ]}
                                   isDisabled={isLoading}
                                   label="Chứng chỉ"
