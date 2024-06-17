@@ -348,3 +348,18 @@ export const NewsSchema = z.object({
   isPublished: z.boolean(),
   schoolId: z.optional(z.string()),
 });
+
+export const CreateScholarshipSchema = z.object({
+  name: z.string().min(1, {
+    message: "Vui lòng nhập tiêu đề",
+  }),
+  description: z.string().min(1, {
+    message: "Vui lòng nhập mô tả",
+  }),
+  cover: z.string().min(1, {
+    message: "Vui lòng chọn ảnh đại diện",
+  }),
+  isPublished: z.boolean(),
+  images: z.optional(z.array(z.string())),
+  owners: z.optional(z.array(z.string())),
+});

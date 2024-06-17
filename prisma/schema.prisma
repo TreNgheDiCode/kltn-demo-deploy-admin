@@ -164,13 +164,57 @@ model School {
 
   students Student[]
 
-  locations SchoolLocation[]
-  programs  SchoolProgram[]
-  galleries SchoolGallery[]
-  news      News[]
+  locations    SchoolLocation[]
+  programs     SchoolProgram[]
+  galleries    SchoolGallery[]
+  scholarships SchoolScholarship[]
+  news         News[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SchoolScholarship {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  cover       String?
+  isPublished Boolean @default(false)
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  owners StudentSchoolScholarship[]
+  images SchoolScholarshipImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+}
+
+model SchoolScholarshipImage {
+  id String @id @default(cuid())
+
+  url String
+
+  scholarshipId String
+  scholarship   SchoolScholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+}
+
+model StudentSchoolScholarship {
+  id String @id @default(cuid())
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  scholarshipId String
+  scholarship   SchoolScholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, scholarshipId])
 }
 
 model SchoolGallery {
@@ -331,8 +375,9 @@ model Student {
 
   profile Profile?
 
-  program  StudentSchoolProgram?
-  location StudentSchoolLocation?
+  program     StudentSchoolProgram?
+  location    StudentSchoolLocation?
+  scholarship StudentSchoolScholarship?
 
   notifications      NewsNotification[] @relation("notifications")
   ownedNotifications NewsNotification[] @relation("owns")

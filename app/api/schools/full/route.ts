@@ -45,6 +45,17 @@ export async function GET() {
             },
           },
         },
+        scholarships: {
+          include: {
+            images: true,
+            owners: {
+              include: {
+                student: true,
+              },
+            },
+            school: true,
+          },
+        },
       },
     });
 

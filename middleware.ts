@@ -11,6 +11,10 @@ export default clerkMiddleware(
     if (auth().userId && auth().sessionClaims?.metadata.role !== "ADMIN") {
       return auth().redirectToSignIn();
     }
+
+    if (auth().userId && isPublicRoute(req)) {
+      auth().protect();
+    }
   },
   { debug: true }
 );

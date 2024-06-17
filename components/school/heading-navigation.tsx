@@ -4,6 +4,7 @@ import {
   SchoolExtend,
   SchoolLocationExtend,
   SchoolProgramExtend,
+  SchoolScholarshipExtend,
   SchoolStudentExtend,
 } from "@/types/type";
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
@@ -12,12 +13,16 @@ import { SchoolDescription } from "./school-description";
 import { SchoolHistory } from "./school-history";
 import { SchoolLocationTable } from "./school-location-table";
 import { SchoolProgramTable } from "./school-program-table";
+import { News } from "@prisma/client";
+import { SchoolScholarshipTable } from "./school-scholarship-table";
 
 interface HeadingNavgationProps {
   school: SchoolExtend;
   students: SchoolStudentExtend[];
   locations: SchoolLocationExtend[];
   programs: SchoolProgramExtend[];
+  news: News[];
+  scholarships: SchoolScholarshipExtend[];
 }
 
 export const HeadingNavigation = ({
@@ -25,6 +30,8 @@ export const HeadingNavigation = ({
   students,
   locations,
   programs,
+  news,
+  scholarships,
 }: HeadingNavgationProps) => {
   return (
     <Card>
@@ -50,6 +57,9 @@ export const HeadingNavigation = ({
           </Tab>
           <Tab key="gallery" title="Thư viện"></Tab>
           <Tab key="new" title="Tin tức"></Tab>
+          <Tab key="scholarship" title="Học bổng">
+            <SchoolScholarshipTable scholarships={scholarships} />
+          </Tab>
         </Tabs>
       </CardBody>
     </Card>

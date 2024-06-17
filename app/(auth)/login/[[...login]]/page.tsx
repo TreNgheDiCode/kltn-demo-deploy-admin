@@ -6,7 +6,7 @@ const LoginPage = () => {
     <>
       <Image fill alt="background" src={"/login.jpg"} className="blur-sm" />
       <div className="flex h-full w-full items-center justify-center">
-        <SignIn redirectUrl={"/"} />
+        <SignIn fallbackRedirectUrl={"/"} />
       </div>
     </>
   );

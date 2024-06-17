@@ -69,7 +69,6 @@ export const CreateSchoolModal = () => {
           form.setValue("logo", res.url);
         }
       } catch (error) {
-        console.log(error);
         toast.error("Đăng tải ảnh đại diện thất bại");
       } finally {
         setIsUploading(false);
@@ -90,7 +89,6 @@ export const CreateSchoolModal = () => {
           form.setValue("background", res.url);
         }
       } catch (error) {
-        console.log(error);
         toast.error("Đăng tải hình nền thất bại");
       } finally {
         setIsUploading(false);

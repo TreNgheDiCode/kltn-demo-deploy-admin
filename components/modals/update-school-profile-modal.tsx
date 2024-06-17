@@ -89,7 +89,6 @@ const UpdateSchoolProfileModal = () => {
         router.refresh();
         onClose();
       } catch (error) {
-        console.log(error);
         toast.error("Thay đổi ảnh đại diện thất bại");
       } finally {
         setIsUploading(false);
@@ -153,7 +152,6 @@ const UpdateSchoolProfileModal = () => {
         router.refresh();
         onClose();
       } catch (error) {
-        console.log(error);
         toast.error("Thay đổi hình nền thất bại");
       } finally {
         setIsUploading(false);

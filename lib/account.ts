@@ -43,6 +43,11 @@ export const GetAccountByEmail = async (email: string) => {
         phoneNumber: true,
         student: {
           select: {
+            scholarship: {
+              include: {
+                scholarship: true,
+              },
+            },
             status: true,
             school: {
               select: {

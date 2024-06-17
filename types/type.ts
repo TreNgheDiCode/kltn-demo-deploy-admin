@@ -7,9 +7,12 @@ import {
   School,
   SchoolLocation,
   SchoolProgram,
+  SchoolScholarship,
+  SchoolScholarshipImage,
   Student,
   StudentSchoolLocation,
   StudentSchoolProgram,
+  StudentSchoolScholarship,
   StudentStatus,
 } from "@prisma/client";
 
@@ -24,6 +27,11 @@ export type SchoolExtend = School & {
   programs: { name: string }[];
   galleries: { name: string }[];
   students: { account: { name: string } }[];
+};
+
+export type SchoolScholarshipExtend = SchoolScholarship & {
+  images: SchoolScholarshipImage[];
+  owners: (StudentSchoolScholarship & { student: Student })[];
 };
 
 export type SchoolStudentExtend = {
