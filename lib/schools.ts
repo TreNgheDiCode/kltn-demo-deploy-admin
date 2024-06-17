@@ -18,6 +18,17 @@ export const GetSchoolsById = async (id: string) => {
       id,
     },
     include: {
+      scholarships: {
+        include: {
+          images: true,
+          owners: {
+            include: {
+              student: true,
+            },
+          },
+        },
+      },
+      news: true,
       locations: {
         select: {
           id: true,

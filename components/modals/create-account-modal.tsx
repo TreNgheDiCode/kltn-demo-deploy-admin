@@ -1,5 +1,7 @@
 "use client";
 
+import { register } from "@/actions/account";
+import { useAccountCertificateImage } from "@/hooks/use-account-certificate-image";
 import { useCities, useDistricts, useWards } from "@/hooks/use-country";
 import { useCreateAccount } from "@/hooks/use-create-account";
 import { useModalAction } from "@/hooks/use-modal-action";
@@ -40,11 +42,13 @@ import {
   Phone,
   Tag,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BiSolidCity } from "react-icons/bi";
-import { GiStreetLight } from "react-icons/gi";
 import { FaStreetView } from "react-icons/fa";
+import { GiStreetLight } from "react-icons/gi";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import {
@@ -52,10 +56,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { useAccountCertificateImage } from "@/hooks/use-account-certificate-image";
-import { register } from "@/actions/account";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 type AccountSchema = z.infer<typeof RegisterSchema>;
 
@@ -116,7 +116,6 @@ const CreateAccountModal = () => {
 
     await register(values)
       .then((res) => {
-        console.log(res);
         if (res.success) {
           toast.success(res.success);
           router.refresh();
