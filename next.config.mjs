@@ -16,6 +16,10 @@ const nextConfig = {
             key: "Access-Control-Allow-Methods",
             value: "GET,PUT,POST,DELETE,PATCH",
           },
+          {
+            key: "Cache-Control",
+            value: "no-store, max-age=0",
+          },
         ],
       },
     ];
