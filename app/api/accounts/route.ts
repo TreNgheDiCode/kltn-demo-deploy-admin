@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const accounts = await db.account.findMany({
