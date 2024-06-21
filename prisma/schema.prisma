@@ -169,6 +169,7 @@ model School {
   galleries    SchoolGallery[]
   scholarships SchoolScholarship[]
   news         News[]
+  contacts     Contact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -377,7 +378,7 @@ model Student {
 
   program     StudentSchoolProgram?
   location    StudentSchoolLocation?
-  scholarship StudentSchoolScholarship?
+  scholarship StudentSchoolScholarship[]
 
   notifications      NewsNotification[] @relation("notifications")
   ownedNotifications NewsNotification[] @relation("owns")
@@ -794,4 +795,20 @@ model StudentFollow {
   updatedAt DateTime @updatedAt
 
   @@unique([studentId, followerId])
+}
+
+model Contact {
+  id String @id @default(cuid())
+
+  name    String
+  title   String
+  phone   String?
+  email   String
+  message String
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
