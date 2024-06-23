@@ -2,6 +2,32 @@ import { db } from "@/lib/db";
 import { ContactSchema } from "@/types";
 import { NextResponse } from "next/server";
 
+export async function GET(req: Request) {
+  try {
+    const contacts = await db.contact.findMany({
+      include: {
+        school: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+            country: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(contacts, { status: 200 });
+  } catch (error) {
+    console.log("ERROR GET CONTACTS ACTION", error);
+
+    return NextResponse.json(
+      { error: "Lấy dữ liệu phản hồi thất bại" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
