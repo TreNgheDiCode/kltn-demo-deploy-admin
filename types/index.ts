@@ -1,5 +1,6 @@
 import {
   CertificateType,
+  ContactTitle,
   Country,
   DegreeType,
   Gender,
@@ -362,4 +363,33 @@ export const CreateScholarshipSchema = z.object({
   isPublished: z.boolean(),
   images: z.optional(z.array(z.string())),
   owners: z.optional(z.array(z.string())),
+});
+
+export const ContactSchema = z.object({
+  name: z.string().min(1, {
+    message: "Vui lòng nhập tên",
+  }),
+  email: z.string().email({
+    message: "Vui lòng nhập email",
+  }),
+  title: z.enum(
+    [
+      ContactTitle.BILLING,
+      ContactTitle.FEEDBACK,
+      ContactTitle.PROCEDURE,
+      ContactTitle.REFUND,
+      ContactTitle.SCHOLARSHIP,
+      ContactTitle.SYSTEM,
+    ],
+    {
+      message: "Vui lòng chọn tiêu đề",
+    }
+  ),
+  phone: z.string().min(1, {
+    message: "Vui lòng nhập số điện thoại",
+  }),
+  message: z.string().min(1, {
+    message: "Vui lòng nhập nội dung",
+  }),
+  schoolId: z.optional(z.string()),
 });

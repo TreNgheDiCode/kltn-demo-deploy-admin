@@ -797,14 +797,25 @@ model StudentFollow {
   @@unique([studentId, followerId])
 }
 
+enum ContactTitle {
+  FEEDBACK
+  SYSTEM
+  REFUND
+  BILLING
+  SUBSCRIPTION
+  SCHOLARSHIP
+  PROCEDURE
+}
+
 model Contact {
   id String @id @default(cuid())
 
   name    String
-  title   String
-  phone   String?
+  title   ContactTitle
+  phone   String
   email   String
   message String
+  isRead  Boolean      @default(false)
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)

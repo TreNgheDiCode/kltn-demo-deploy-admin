@@ -12,6 +12,7 @@ import * as Tabs from "../ui/tabs";
 import * as Popover from "../ui/popover";
 import * as Label from "../ui/label";
 import * as Input from "../ui/input";
+import { useEffect, useState } from "react";
 
 interface EditorProps {
   editable: boolean;
@@ -31,14 +32,29 @@ const Editor = ({ editable, initialContent, onChange }: EditorProps) => {
   };
 
   const editor = useCreateBlockNote({
-    initialContent: initialContent ? JSON.parse(initialContent) : undefined,
     uploadFile: handleUpload,
   });
+
+  useEffect(() => {
+    async function loadInitialBlocks() {
+      if (initialContent) {
+        const blocks = await editor.tryParseMarkdownToBlocks(initialContent);
+
+        editor.replaceBlocks(editor.document, blocks);
+      }
+    }
+
+    loadInitialBlocks();
+  }, [editor, initialContent]);
 
   return (
     <BlockNoteView
       editable={editable}
-      onChange={() => onChange?.(JSON.stringify(editor.document, null, 2))}
+      onChange={async () => {
+        const markdown = await editor.blocksToMarkdownLossy(editor.document);
+
+        onChange?.(markdown);
+      }}
       editor={editor}
       theme={resolvedTheme === "dark" ? "dark" : "light"}
       shadCNComponents={{
