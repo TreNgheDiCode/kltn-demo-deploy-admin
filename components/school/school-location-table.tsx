@@ -110,7 +110,11 @@ export const SchoolLocationTable = ({
         case "name":
           return (
             <User
-              avatarProps={{ radius: "lg", src: location.cover || "" }}
+              avatarProps={{
+                radius: "lg",
+                color: location.isMain ? "success" : "default",
+                src: location.cover || "",
+              }}
               name={location.name}
             />
           );

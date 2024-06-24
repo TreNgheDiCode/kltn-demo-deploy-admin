@@ -2,11 +2,22 @@ import { db } from "@/lib/db";
 import { CreateScholarshipSchema } from "@/types";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+  req: Request,
+  { params }: { params: { schoolId: string } }
+) {
   try {
+    if (!params.schoolId) {
+      return NextResponse.json(
+        { error: "Vui lòng truyền vào mã trường học" },
+        { status: 400 }
+      );
+    }
+
     const scholarships = await db.schoolScholarship.findMany({
       where: {
         isPublished: true,
+        schoolId: params.schoolId,
       },
       include: {
         images: true,

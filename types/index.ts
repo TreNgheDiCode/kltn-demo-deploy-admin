@@ -393,3 +393,33 @@ export const ContactSchema = z.object({
   }),
   schoolId: z.optional(z.string()),
 });
+
+export const SchoolLocationSchema = z.object({
+  name: z.string().min(1, {
+    message: "Vui lòng nhập tên",
+  }),
+  address: z.string().min(1, {
+    message: "Vui lòng nhập địa chỉ",
+  }),
+  cover: z.string().min(1, {
+    message: "Vui lòng chọn ảnh đại diện",
+  }),
+  isMain: z.boolean(),
+});
+
+export type SchoolLocationFormValues = z.infer<typeof SchoolLocationSchema>;
+
+export const SchoolProgramSchema = z.object({
+  name: z.string().min(1, {
+    message: "Vui lòng nhập tên",
+  }),
+  description: z.string().min(1, {
+    message: "Vui lòng nhập mô tả",
+  }),
+  cover: z.string().min(1, {
+    message: "Vui lòng chọn ảnh đại diện",
+  }),
+  isPublished: z.boolean(),
+});
+
+export type SchoolProgramFormValues = z.infer<typeof SchoolProgramSchema>;
