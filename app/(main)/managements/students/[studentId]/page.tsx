@@ -2,8 +2,8 @@ import { HeadingStudent } from "@/components/student/heading-student";
 import { StudentInformation } from "@/components/student/student-information";
 import { StudentNavigation } from "@/components/student/student-navigation";
 import { StudentTool } from "@/components/student/student-tool";
-import { GetStudentById } from "@/lib/student";
-import { StudentLib } from "@/types/type";
+import { GetStudentById, GetStudentContacts } from "@/lib/student";
+import { ContactLib, StudentLib } from "@/types/type";
 import { Card, CardBody } from "@nextui-org/react";
 
 const StudentIdPage = async ({
@@ -12,6 +12,10 @@ const StudentIdPage = async ({
   params: { studentId: string };
 }) => {
   const student: StudentLib = await GetStudentById(studentId);
+  const contacts: ContactLib[] = await GetStudentContacts(
+    student?.account?.email,
+    student?.account?.phoneNumber
+  );
 
   if (!student) {
     return (
@@ -31,7 +35,7 @@ const StudentIdPage = async ({
       {student.studentCode && (
         <Card>
           <CardBody>
-            <StudentNavigation student={student} />
+            <StudentNavigation student={student} contacts={contacts} />
           </CardBody>
         </Card>
       )}
