@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -169,6 +170,7 @@ model School {
   galleries    SchoolGallery[]
   scholarships SchoolScholarship[]
   news         News[]
+  contacts     Contact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -373,11 +375,16 @@ model Student {
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
+  // messeger 
+  messeages Message[]
+  chats Chat[] @relation("ChatParticipants")
+
+
   profile Profile?
 
   program     StudentSchoolProgram?
   location    StudentSchoolLocation?
-  scholarship StudentSchoolScholarship?
+  scholarship StudentSchoolScholarship[]
 
   notifications      NewsNotification[] @relation("notifications")
   ownedNotifications NewsNotification[] @relation("owns")
@@ -386,7 +393,28 @@ model Student {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
 }
+
+model Chat{
+  id String @id @default(cuid())
+  name String?
+  creatAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  messeges Message[]
+  students Student[] @relation("ChatParticipants")
+}
+ 
+ model Message {
+  id String  @id @default(cuid())
+  content String 
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  student Student @relation(fields: [studentCode], references: [id])
+  studentCode String
+  chat Chat @relation(fields: [chatId], references: [id])
+  chatId String
+ }
 
 model Event {
   id String @id @default(cuid())
@@ -794,4 +822,31 @@ model StudentFollow {
   updatedAt DateTime @updatedAt
 
   @@unique([studentId, followerId])
+}
+
+enum ContactTitle {
+  FEEDBACK
+  SYSTEM
+  REFUND
+  BILLING
+  SUBSCRIPTION
+  SCHOLARSHIP
+  PROCEDURE
+}
+
+model Contact {
+  id String @id @default(cuid())
+
+  name    String
+  title   ContactTitle
+  phone   String
+  email   String
+  message String
+  isRead  Boolean      @default(false)
+
+  schoolId String?
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
