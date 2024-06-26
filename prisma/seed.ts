@@ -6,11 +6,16 @@ async function main() {
     await db.school.createMany({
       data: [
         {
-          logo: "https://utfs.io/f/7fe89f50-7db2-4b9b-93fd-829532ba21ed-nm33wo.jpg",
+          logo: "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/cd3d286b-e57f-4165-a9fd-109d6126c012.jpg",
           background:
             "https://utfs.io/f/edca68a3-f850-41b2-801c-2351a0f65b08-zi32f6.png",
-          name: "HUFLIT AMERICA",
-          color: "#9fff5b",
+          name: "International School Canada",
+          short:
+            "The University of the Fraser Valley (UFV), established in 1974, is located in Abbotsford, British Columbia, Canada, with additional campuses in Chilliwack, Mission, Hope, and India. It offers over 100 training programs in various fields, including Arts, Humanities, Social Sciences, Education, Science, and Technology. The university has been ranked as one of Canada's top comprehensive universities by Maclean's magazine for 14 consecutive years and is recognized as one of the top 10 undergraduate research universities in Canada. UFV is committed to providing a supportive and inclusive learning environment, offering financial support opportunities and scholarships to students.",
+          description: "Test",
+          history: "Test",
+          color:
+            "linear-gradient(270deg, rgba(255,255,255,1) 80%, rgba(14,70,145,1) 100%)",
           isPublished: true,
           country: Country.CANADA,
         },
@@ -19,9 +24,14 @@ async function main() {
           background:
             "https://utfs.io/f/98263804-6bb4-4ed5-99d8-aa2be115cf76-csekpy.png",
           name: "Metropolitan International",
-          color: "#003234",
+          short:
+            "The University of the Fraser Valley (UFV), established in 1974, is located in Abbotsford, British Columbia, Canada, with additional campuses in Chilliwack, Mission, Hope, and India. It offers over 100 training programs in various fields, including Arts, Humanities, Social Sciences, Education, Science, and Technology. The university has been ranked as one of Canada's top comprehensive universities by Maclean's magazine for 14 consecutive years and is recognized as one of the top 10 undergraduate research universities in Canada. UFV is committed to providing a supportive and inclusive learning environment, offering financial support opportunities and scholarships to students.",
+          description: "Test",
+          history: "Test",
+          color:
+            "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
           isPublished: true,
-          country: Country.CANADA,
+          country: Country.KOREA,
         },
       ],
     });

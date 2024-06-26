@@ -108,7 +108,7 @@ export const SchoolDescription = ({
         </span>
       )}
       <Editor
-        onChange={(value) => onChange(value)}
+        onChange={onChange}
         editable={editable}
         initialContent={description ?? ""}
       />

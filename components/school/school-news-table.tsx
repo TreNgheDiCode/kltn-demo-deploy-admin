@@ -1,6 +1,7 @@
 "use client";
 
-import { SchoolScholarshipExtend } from "@/types/type";
+import { deleteNews } from "@/actions/news";
+import { useModalAction } from "@/hooks/use-modal-action";
 import {
   Button,
   Chip,
@@ -20,22 +21,31 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  User,
 } from "@nextui-org/react";
+import { News } from "@prisma/client";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale/vi";
 import {
   ChevronDownIcon,
   MoreVertical,
   PlusIcon,
   SearchIcon,
+  Sheet,
+  Trash,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale/vi";
-import { useCreateScholarship } from "@/hooks/use-create-scholarship";
+import { toast } from "sonner";
 
-interface SchoolScholarshipProps {
-  scholarships: SchoolScholarshipExtend[];
+interface SchoolNewsProps {
+  news: News[];
 }
+
+const typeColorMap: Record<string, ChipProps["color"]> = {
+  ANNOUNCEMENT: "default",
+  EVENT: "warning",
+  BLOG: "success",
+};
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   true: "success",
@@ -44,12 +54,19 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const columns = [
   { name: "Id", uid: "id", sortable: true },
-  { name: "Tên học bổng", uid: "name", sortable: true },
-  { name: "Mô tả", uid: "description", sortable: true },
-  { name: "Hình ảnh", uid: "cover", sortable: true },
-  { name: "Trạng thái", uid: "status", sortable: true },
+  { name: "Tiêu đề", uid: "title", sortable: true },
+  { name: "Loại tin tức", uid: "type", sortable: true },
+  { name: "Trạng thái", uid: "isPublished", sortable: true },
   { name: "Ngày tạo", uid: "createdAt", sortable: true },
+  { name: "Ngày cập nhật", uid: "updatedAt", sortable: true },
+  { name: "Ảnh đại diện", uid: "cover" },
   { name: "Hành động", uid: "actions" },
+];
+
+const typeOptions = [
+  { name: "THÔNG BÁO", uid: "ANNOUNCEMENT" },
+  { name: "SỰ KIỆN", uid: "EVENT" },
+  { name: "BÀI ĐĂNG", uid: "BLOG" },
 ];
 
 const statusOptions = [
@@ -57,18 +74,25 @@ const statusOptions = [
   { name: "TẠM ẨN", uid: "false" },
 ];
 
-const INITIAL_COLUMNS = ["name", "description", "status", "actions"];
+const INITIAL_COLUMNS = [
+  "title",
+  "type",
+  "isPublished",
+  "schoolName",
+  "createdAt",
+  "actions",
+];
 
-export const SchoolScholarshipTable = ({
-  scholarships,
-}: SchoolScholarshipProps) => {
-  const scholarship = useCreateScholarship();
+export const SchoolNewsTable = ({ news }: SchoolNewsProps) => {
+  const action = useModalAction();
+  const router = useRouter();
 
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_COLUMNS)
   );
+  const [typeFilter, setTypeFilter] = useState<Selection>("all");
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
@@ -86,24 +110,32 @@ export const SchoolScholarshipTable = ({
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredScholarships = [...scholarships];
+    let filteredNews = [...news];
 
     if (hasSearchFilter) {
-      filteredScholarships = filteredScholarships.filter((scholarship) =>
-        scholarship.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredNews = filteredNews.filter((news) =>
+        news.title.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    if (
+      typeFilter !== "all" &&
+      Array.from(typeFilter).length !== typeOptions.length
+    ) {
+      filteredNews = filteredNews.filter((news) =>
+        Array.from(typeFilter).includes(news.type)
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredScholarships = filteredScholarships.filter((scholarship) =>
-        Array.from(statusFilter).includes(scholarship.isPublished.toString())
+      filteredNews = filteredNews.filter((news) =>
+        Array.from(statusFilter).includes(news.isPublished.toString())
       );
     }
 
-    return filteredScholarships;
-  }, [scholarships, filterValue, statusFilter, hasSearchFilter]);
+    return filteredNews;
+  }, [news, filterValue, typeFilter, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -115,63 +147,89 @@ export const SchoolScholarshipTable = ({
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort(
-      (a: SchoolScholarshipExtend, b: SchoolScholarshipExtend) => {
-        const first = a[
-          sortDescriptor.column as keyof SchoolScholarshipExtend
-        ] as unknown as number;
-        const second = b[
-          sortDescriptor.column as keyof SchoolScholarshipExtend
-        ] as unknown as number;
-        const cmp = first < second ? -1 : first > second ? 1 : 0;
+    return [...items].sort((a: News, b: News) => {
+      const first = a[sortDescriptor.column as keyof News] as unknown as number;
+      const second = b[
+        sortDescriptor.column as keyof News
+      ] as unknown as number;
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-        return sortDescriptor.direction === "descending" ? -cmp : cmp;
-      }
-    );
+      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    });
   }, [sortDescriptor, items]);
 
+  const onDelete = useCallback(
+    async (id: string) => {
+      await deleteNews(id).then((res) => {
+        if (res.error) {
+          toast.error(res.error);
+        }
+
+        if (res.success) {
+          toast.success(res.success);
+          action.onClose();
+          router.refresh();
+        }
+      });
+    },
+    [action, router]
+  );
+
   const renderCell = useCallback(
-    (scholarship: SchoolScholarshipExtend, columnKey: Key) => {
+    (news: News, columnKey: Key) => {
       switch (columnKey) {
         case "id":
+          return <p className="font-bold text-tiny text-primary">{news.id}</p>;
+        case "title":
           return (
-            <p className="font-bold text-tiny text-primary">{scholarship.id}</p>
+            <p className="font-bold text-tiny text-primary">{news.title}</p>
           );
-        case "name":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {scholarship.name}
-            </p>
-          );
-        case "description":
-          return (
-            <p className="font-bold text-tiny capitalize text-primary">
-              {scholarship.name}
-            </p>
-          );
-        case "status":
+        case "type":
           return (
             <div className="flex items-center justify-center">
               <Chip
                 className="capitalize"
-                color={
-                  scholarship.isPublished
-                    ? statusColorMap.true
-                    : statusColorMap.false
-                }
+                color={typeColorMap[news.type]}
                 size="sm"
                 variant="flat"
               >
-                {scholarship.isPublished ? "Hiển thị" : "Tạm ẩn"}
+                {news.type}
+              </Chip>
+            </div>
+          );
+        case "isPublished":
+          return (
+            <div className="flex items-center justify-center">
+              <Chip
+                className="capitalize"
+                color={statusColorMap[news.isPublished.toString()]}
+                size="sm"
+                variant="flat"
+              >
+                {news.isPublished.toString().toUpperCase()}
               </Chip>
             </div>
           );
         case "createdAt":
           return (
-            <p className="font-bold text-tiny text-primary">
-              {format(new Date(scholarship.createdAt), "dd/MM/yyyy", {
+            <p className="font-bold text-tiny capitalize text-primary">
+              {format(news.createdAt, "dd MMMM, yyyy", {
                 locale: vi,
               })}
+            </p>
+          );
+        case "updatedAt":
+          return (
+            <p className="font-bold text-tiny capitalize text-primary">
+              {format(news.updatedAt, "dd MMMM, yyyy", {
+                locale: vi,
+              })}
+            </p>
+          );
+        case "cover":
+          return (
+            <p className="font-bold text-tiny capitalize text-primary">
+              {news.cover}
             </p>
           );
         case "actions":
@@ -185,9 +243,23 @@ export const SchoolScholarshipTable = ({
                 </DropdownTrigger>
                 <DropdownMenu>
                   <DropdownItem
-                    href={`/managements/scholarships/${scholarship.id}`}
+                    endContent={<Sheet className="size-4" />}
+                    href={`/managements/news/${news.id}`}
                   >
                     Xem thông tin chi tiết
+                  </DropdownItem>
+                  <DropdownItem
+                    endContent={<Trash className="size-4" />}
+                    color="danger"
+                    onPress={() =>
+                      action.onOpen(
+                        () => onDelete(news.id),
+                        "Bạn có chắc chắn muốn xóa tin tức này?",
+                        "Hành động đã thực hiện sẽ không thể hủy bỏ"
+                      )
+                    }
+                  >
+                    Xóa tin tức
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -197,7 +269,7 @@ export const SchoolScholarshipTable = ({
           return <div></div>;
       }
     },
-    []
+    [action, onDelete]
   );
 
   const onNextPage = useCallback(() => {
@@ -245,13 +317,37 @@ export const SchoolScholarshipTable = ({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Tìm kiếm theo tên..."
+            placeholder="Tìm kiếm theo tiêu đề..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button
+                  endContent={<ChevronDownIcon className="text-small" />}
+                  variant="flat"
+                >
+                  Loại tin tức
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={typeFilter}
+                selectionMode="multiple"
+                onSelectionChange={setTypeFilter}
+              >
+                {typeOptions.map((type) => (
+                  <DropdownItem key={type.uid} className="capitalize">
+                    {capitalize(type.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -300,14 +396,19 @@ export const SchoolScholarshipTable = ({
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
-              Thêm học bổng
+            <Button
+              as={Link}
+              href="/managements/news/create"
+              color="primary"
+              endContent={<PlusIcon />}
+            >
+              Thêm tin tức
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Tổng số: {scholarships.length} học bổng
+            Tổng số: {news.length} tin tức
           </span>
           <label className="flex items-center text-default-400 text-small">
             Số dòng mỗi trang:
@@ -325,12 +426,13 @@ export const SchoolScholarshipTable = ({
     );
   }, [
     filterValue,
-    statusFilter,
+    typeFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    scholarships.length,
+    news.length,
     onClear,
+    statusFilter,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -381,7 +483,7 @@ export const SchoolScholarshipTable = ({
 
   return (
     <Table
-      aria-label="School scholarships table with custom cells, pagination and sorting"
+      aria-label="News table with custom cells, pagination and sorting"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
@@ -407,7 +509,7 @@ export const SchoolScholarshipTable = ({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"Không tìm thấy học bổng"} items={sortedItems}>
+      <TableBody emptyContent={"Không tìm thấy tin tức"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

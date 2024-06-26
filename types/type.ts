@@ -1,5 +1,6 @@
 import {
   Account,
+  Contact,
   DegreeType,
   GradeType,
   News,
@@ -126,6 +127,14 @@ export type StudentLib =
 
 export type NewsLib = News & {
   school: {
+    name: string;
+  } | null;
+};
+
+export type ContactLib = Contact & {
+  school: {
+    logo: string;
+    color: string;
     name: string;
   } | null;
 };

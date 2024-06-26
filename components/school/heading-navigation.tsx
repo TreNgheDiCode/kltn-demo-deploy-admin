@@ -13,8 +13,10 @@ import { SchoolDescription } from "./school-description";
 import { SchoolHistory } from "./school-history";
 import { SchoolLocationTable } from "./school-location-table";
 import { SchoolProgramTable } from "./school-program-table";
-import { News } from "@prisma/client";
+import { Contact, News } from "@prisma/client";
 import { SchoolScholarshipTable } from "./school-scholarship-table";
+import { SchoolContactsTable } from "./school-contact-table";
+import { SchoolNewsTable } from "./school-news-table";
 
 interface HeadingNavgationProps {
   school: SchoolExtend;
@@ -23,6 +25,7 @@ interface HeadingNavgationProps {
   programs: SchoolProgramExtend[];
   news: News[];
   scholarships: SchoolScholarshipExtend[];
+  contacts: Contact[];
 }
 
 export const HeadingNavigation = ({
@@ -32,6 +35,7 @@ export const HeadingNavigation = ({
   programs,
   news,
   scholarships,
+  contacts,
 }: HeadingNavgationProps) => {
   return (
     <Card>
@@ -56,9 +60,14 @@ export const HeadingNavigation = ({
             <SchoolProgramTable programs={programs} />
           </Tab>
           <Tab key="gallery" title="Thư viện"></Tab>
-          <Tab key="new" title="Tin tức"></Tab>
+          <Tab key="new" title="Tin tức">
+            <SchoolNewsTable news={news} />
+          </Tab>
           <Tab key="scholarship" title="Học bổng">
             <SchoolScholarshipTable scholarships={scholarships} />
+          </Tab>
+          <Tab key="contact" title="Phản hồi">
+            <SchoolContactsTable contacts={contacts} />
           </Tab>
         </Tabs>
       </CardBody>
