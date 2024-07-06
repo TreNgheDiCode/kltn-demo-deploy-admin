@@ -27,7 +27,6 @@ export async function GET() {
 
     return NextResponse.json(students, { status: 200 });
   } catch (error) {
-    console.log("ERROR GET ALL STUDENTS", error);
     return NextResponse.json(
       { error: "Lỗi tìm tất cả học sinh" },
       { status: 500 }
