@@ -1,3 +1,4 @@
+import DeleteAccountEmail from "@/template/delete-account-email";
 import ResetPasswordEmail from "@/template/reset-password-email";
 import { VerificationEmail } from "@/template/verification-email";
 import WelcomeEmail from "@/template/welcome-email";
@@ -61,6 +62,35 @@ export const sendPasswordResetEmail = async (
     from: "gabayan170@gmail.com",
     to: email,
     subject: "Reset your password",
+    html: emailHtml,
+  };
+
+  await transporter.sendMail(options);
+};
+
+export const sendDeleteAccountEmail = async (
+  name: string,
+  email: string,
+  token: string
+) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "gabayan170@gmail.com",
+      pass: process.env.EMAIL_APP_PASSWORD,
+    },
+  });
+
+  const deleteLink = `${process.env.NEXT_PUBLIC_URL}/auth/delete-account?token=${token}`;
+
+  const emailHtml = render(
+    <DeleteAccountEmail name={name} resetLink={deleteLink} />
+  );
+
+  const options = {
+    from: "gabayan170@gmail.com",
+    to: email,
+    subject: "Delete your account",
     html: emailHtml,
   };
 

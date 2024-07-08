@@ -215,6 +215,15 @@ export const ResetSchema = z.object({
     }),
 });
 
+export const DeleteSchema = z.object({
+  email: z.string().min(1, {
+    message: "Email is required",
+  }),
+  password: z.optional(z.string().min(1, { message: "Password is required" })),
+});
+
+export type DeleteFormValues = z.infer<typeof DeleteSchema>;
+
 export const PostSchema = z.object({
   status: z.optional(
     z.enum([
@@ -394,32 +403,48 @@ export const ContactSchema = z.object({
   schoolId: z.optional(z.string()),
 });
 
-export const SchoolLocationSchema = z.object({
-  name: z.string().min(1, {
-    message: "Vui lòng nhập tên",
-  }),
-  address: z.string().min(1, {
-    message: "Vui lòng nhập địa chỉ",
-  }),
-  cover: z.string().min(1, {
-    message: "Vui lòng chọn ảnh đại diện",
-  }),
-  isMain: z.boolean(),
+export type ContactFormValues = z.infer<typeof ContactSchema>;
+
+export const AccountFormSchema = z
+  .object({
+    email: z.optional(
+      z
+        .string({
+          invalid_type_error: "Invalid email",
+        })
+        .email()
+    ),
+    password: z.optional(z.string()),
+    confirmPassword: z.optional(z.string()),
+    isTwoFactorEnabled: z.optional(z.boolean()),
+  })
+  .refine(
+    (data) => {
+      if (data.password !== undefined && data.confirmPassword === undefined) {
+        return false;
+      }
+
+      if (data.password === undefined && data.confirmPassword !== undefined) {
+        return false;
+      }
+
+      if (
+        data.password !== undefined &&
+        data.confirmPassword !== undefined &&
+        data.password !== data.confirmPassword
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    {
+      message: "Passwords mismatch",
+      path: ["confirmPassword"],
+    }
+  );
+
+export const CommentSchema = z.object({
+  content: z.optional(z.string()),
+  image: z.optional(z.string()),
 });
-
-export type SchoolLocationFormValues = z.infer<typeof SchoolLocationSchema>;
-
-export const SchoolProgramSchema = z.object({
-  name: z.string().min(1, {
-    message: "Vui lòng nhập tên",
-  }),
-  description: z.string().min(1, {
-    message: "Vui lòng nhập mô tả",
-  }),
-  cover: z.string().min(1, {
-    message: "Vui lòng chọn ảnh đại diện",
-  }),
-  isPublished: z.boolean(),
-});
-
-export type SchoolProgramFormValues = z.infer<typeof SchoolProgramSchema>;

@@ -98,3 +98,50 @@ export const generatePasswordResetToken = async (email: string) => {
 
   return passwordResetToken;
 };
+
+export const getDeleteAccountTokenByEmail = async (email: string) => {
+  try {
+    const deleteAccountToken = await db.deleteAccountToken.findFirst({
+      where: { email },
+    });
+
+    return deleteAccountToken;
+  } catch {
+    return null;
+  }
+};
+
+export const getDeleteAccountTokenByToken = async (token: string) => {
+  try {
+    const deleteAccountToken = await db.deleteAccountToken.findUnique({
+      where: { token },
+    });
+
+    return deleteAccountToken;
+  } catch {
+    return null;
+  }
+};
+
+export const generateDeleteAccountToken = async (email: string) => {
+  const token = v4();
+  const expires = new Date(new Date().getTime() + 3600 * 1000);
+
+  const existingToken = await getDeleteAccountTokenByEmail(email);
+
+  if (existingToken) {
+    await db.deleteAccountToken.delete({
+      where: { id: existingToken.id },
+    });
+  }
+
+  const deleteAccountToken = await db.deleteAccountToken.create({
+    data: {
+      email,
+      token,
+      expires,
+    },
+  });
+
+  return deleteAccountToken;
+};
