@@ -128,6 +128,17 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
+model DeleteAccountToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
+}
+
 model TwoFactorToken {
   id      String   @id @default(cuid())
   email   String
@@ -374,6 +385,10 @@ model Student {
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
+  // messeger 
+  messeages Message[]
+  chats     Chat[]    @relation("ChatParticipants")
+
   profile Profile?
 
   program     StudentSchoolProgram?
@@ -387,6 +402,26 @@ model Student {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Chat {
+  id       String    @id @default(cuid())
+  name     String?   @unique
+  creatAt  DateTime  @default(now())
+  updateAt DateTime  @updatedAt
+  messeges Message[]
+  students Student[] @relation("ChatParticipants")
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  student     Student  @relation(fields: [studentCode], references: [id])
+  studentCode String
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  chatId      String
 }
 
 model Event {
