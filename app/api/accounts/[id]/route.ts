@@ -47,8 +47,6 @@ export async function GET(
 
     return NextResponse.json(existingAccount, { status: 200 });
   } catch (error) {
-    console.log("GET ACCOUNT BY ID ERROR", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin tài khoản theo mã tài khoản" },
       { status: 500 }
@@ -156,8 +154,6 @@ export async function PATCH(
 
     return NextResponse.json(existingAccount, { status: 200 });
   } catch (error) {
-    console.log("ACCOUNT ACCEPTED ERROR", error);
-
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         { error: "Định dạng JSON không hợp lệ" },

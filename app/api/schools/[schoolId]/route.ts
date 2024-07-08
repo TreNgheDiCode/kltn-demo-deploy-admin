@@ -31,7 +31,6 @@ export async function GET(
 
     return NextResponse.json(school, { status: 200 });
   } catch (error) {
-    console.log("GET SCHOOL ID ERROR", error);
     return NextResponse.json(
       { error: "Lỗi lấy thông tin trường theo ID" },
       { status: 500 }

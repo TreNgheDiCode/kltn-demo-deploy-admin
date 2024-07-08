@@ -25,8 +25,6 @@ export async function GET() {
 
     return NextResponse.json(accounts, { status: 200 });
   } catch (error) {
-    console.log("GET ALL ACCOUNTS ERROR", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin tất cả tài khoản" },
       { status: 500 }
