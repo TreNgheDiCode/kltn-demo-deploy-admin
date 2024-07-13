@@ -22,12 +22,20 @@ export async function GET(
             address: true,
             name: true,
             image: true,
+            email: true,
+            idCardNumber: true,
+            gender: true,
           },
         },
         school: {
           select: {
             name: true,
             logo: true,
+            programs: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
         profile: {
