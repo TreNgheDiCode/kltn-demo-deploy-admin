@@ -93,6 +93,8 @@ export const NewsForm = ({
 
   const schools = useSchools();
 
+  console.log(schools);
+
   const form = useForm<NewsSchema>({
     resolver: zodResolver(NewsSchema),
     mode: "all",

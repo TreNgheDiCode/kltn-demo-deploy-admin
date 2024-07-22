@@ -22,8 +22,6 @@ export async function GET(
 
     return NextResponse.json(locations, { status: 200 });
   } catch (error) {
-    console.log("GET LOCATIONS ERROR", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin danh sách cơ sở" },
       { status: 500 }
@@ -76,8 +74,6 @@ export async function POST(
 
     return NextResponse.json(location, { status: 200 });
   } catch (error) {
-    console.log("CREATE LOCATION ERROR", error);
-
     return NextResponse.json({ error: "Lỗi tạo cơ sở mới" }, { status: 500 });
   }
 }

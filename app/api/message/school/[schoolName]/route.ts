@@ -16,6 +16,8 @@ export async function GET(
         studentCode: true,
         profile: {
           select: {
+            id:true,
+            posts:true,
             status: true,
           },
         },

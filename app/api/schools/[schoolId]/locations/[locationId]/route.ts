@@ -29,8 +29,6 @@ export async function GET(
 
     return NextResponse.json(location, { status: 200 });
   } catch (error) {
-    console.log("GET LOCATION BY ID ERROR", error);
-
     return NextResponse.json(
       { error: "Lỗi lấy thông tin cơ sở" },
       { status: 500 }
