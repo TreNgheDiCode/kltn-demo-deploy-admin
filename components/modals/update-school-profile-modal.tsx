@@ -44,7 +44,7 @@ const UpdateSchoolProfileModal = () => {
   const [name, setName] = useState(data.name);
   const [short, setShort] = useState(data.short);
   const [logo, setLogo] = useState<LogoFile | undefined>({ file: data.logo });
-  const [background, setBackground] = useState<LogoFile | undefined>({
+  const [background, setBackground] = useState<BackgroundFile | undefined>({
     file: data.logo,
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -88,8 +88,10 @@ const UpdateSchoolProfileModal = () => {
 
         router.refresh();
         onClose();
-      } catch (error) {
-        toast.error("Thay đổi ảnh đại diện thất bại");
+      } catch (error: any) {
+        toast.error(error.toString());
+        setLogo({ file: data.logo });
+        setIsUploading(false);
       } finally {
         setIsUploading(false);
       }

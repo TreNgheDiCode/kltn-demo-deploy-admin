@@ -1,24 +1,18 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher(["/login", "/api(.*)"]);
+const isPublicRoutes = createRouteMatcher(["/login", "/api(.*)"]);
 
-export default clerkMiddleware(
-  (auth, req) => {
-    if (!auth().userId && !isPublicRoute(req)) {
+export default clerkMiddleware((auth, req) => {
+  const { protect, userId, redirectToSignIn } = auth();
+  const role = auth().sessionClaims?.metadata.role;
+  if (userId) {
+    if (role !== "ADMIN") {
       return auth().redirectToSignIn();
     }
+  }
 
-    if (auth().userId && auth().sessionClaims?.metadata.role !== "ADMIN") {
-      return auth().redirectToSignIn();
-    }
-
-    if (auth().userId && isPublicRoute(req)) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-  },
-  { debug: true }
-);
+  if (!isPublicRoutes(req)) protect();
+});
 
 export const config = {
   // Protects all routes, including api/trpc.

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { ActionModal } from "../modals/action-modal";
-import { CreateSchoolModal } from "../modals/create-school-modal";
-
 import { CertificateImageModal } from "../modals/create-account-form/upload-account-certificate-image-modal";
 import { DeclineStudentModal } from "../modals/decline-student-modal";
 import dynamic from "next/dynamic";
@@ -36,7 +34,6 @@ export const ModalProvider = () => {
     <>
       <UpdateSchoolProfileModal />
       <ActionModal />
-      <CreateSchoolModal />
       <CreateAccountModal />
       <UpdateAccountModal />
       <CertificateImageModal />
