@@ -8,6 +8,7 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/nextjs";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const lusitana = Lusitana({ weight: ["400"], subsets: ["latin"] });
 
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>{children}</body>
+        <body>
+          <EdgeStoreProvider>{children}</EdgeStoreProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
