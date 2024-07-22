@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
   useDisclosure,
 } from "@nextui-org/react";
-import { Check, PlusCircle } from "lucide-react";
+import { Check } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Command,
@@ -19,9 +19,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from "../ui/command";
-import { useCreateSchool } from "@/hooks/use-create-school";
+import { CreateTrigger } from "./create-trigger";
 
 interface SchoolSelectProps {
   schools: SchoolLib[];
@@ -45,8 +44,6 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
   };
 
   const { isOpen, onOpen: onTrigger, onClose } = useDisclosure();
-
-  const { onOpen } = useCreateSchool();
 
   return (
     <Popover isOpen={isOpen} onOpenChange={onClose}>
@@ -74,12 +71,12 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="">
         <Command>
           <CommandInput placeholder="Tìm kiếm trường học..." />
-          <CommandList>
-            <CommandEmpty>Không tìm thấy trường học</CommandEmpty>
-            <CommandGroup>
+          <CommandEmpty>Không tìm thấy trường học</CommandEmpty>
+          <CommandGroup>
+            <CommandList>
               {schools.map((school) => (
                 <CommandItem
                   value={school.id}
@@ -95,7 +92,7 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
                     src={school?.logo}
                     className="size-6 flex-1"
                   />
-                  {school.name}
+                  <span className="line-clamp-1">{school.name}</span>
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
@@ -106,22 +103,9 @@ export const SchoolsSelect = ({ schools }: SchoolSelectProps) => {
                   />
                 </CommandItem>
               ))}
-            </CommandGroup>
-          </CommandList>
-          <CommandSeparator />
-          <CommandList>
-            <CommandGroup>
-              <CommandItem
-                onSelect={() => {
-                  onOpen();
-                  onClose();
-                }}
-              >
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Thêm trường học mới
-              </CommandItem>
-            </CommandGroup>
-          </CommandList>
+            </CommandList>
+          </CommandGroup>
+          <CreateTrigger />
         </Command>
       </PopoverContent>
     </Popover>

@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 interface PickerExampleProps {
   id?: string;
   color: string;
-  onClose: () => void;
+  onClose?: () => void;
   isCreate?: boolean;
   onSelect?: (value: string) => void;
 }
@@ -41,7 +41,7 @@ export function PickerExample({
         id={id}
         isCreate={isCreate}
         onSelect={onSelect}
-        onClose={onClose}
+        onClose={() => onClose?.()}
         background={background}
         setBackground={setBackground}
       />
@@ -62,7 +62,7 @@ export function GradientPicker({
   background: string;
   setBackground: (background: string) => void;
   className?: string;
-  onClose: () => void;
+  onClose?: () => void;
   isCreate?: boolean;
   onSelect?: (value: string) => void;
 }) {
@@ -81,7 +81,7 @@ export function GradientPicker({
       });
     }
 
-    onClose();
+    onClose?.();
     router.refresh();
   };
 
