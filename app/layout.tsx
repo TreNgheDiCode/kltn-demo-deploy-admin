@@ -9,6 +9,8 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/provider/theme-provider";
 
 const lusitana = Lusitana({ weight: ["400"], subsets: ["latin"] });
 
@@ -26,7 +28,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body>
-          <EdgeStoreProvider>{children}</EdgeStoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <EdgeStoreProvider>{children}</EdgeStoreProvider>
+          </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

@@ -1,5 +1,6 @@
 "use client";
 import {
+  ChatBotPlus,
   Sidebar,
   SidebarBody,
   SidebarItem,
@@ -18,7 +19,7 @@ import {
   AccordionTrigger,
 } from "./ui/accordion";
 
-export function DashboardSidebar() {
+export function ChatBotSidebar() {
   const [open, setOpen] = useState(false);
   const items = navItems;
 
@@ -27,41 +28,7 @@ export function DashboardSidebar() {
       <SidebarBody className="justify-between gap-10">
         <div className="flex flex-col flex-1">
           {open ? <Logo /> : <LogoIcon />}
-          <Accordion type="single" collapsible className="w-full font-medium">
-            {items.map((item, idx) => {
-              if (
-                item.label === "Bảng điều khiển" ||
-                item.label === "Hỗ trợ" ||
-                item.label === "Chat Bot"
-              ) {
-                return (
-                  <div key={idx}>
-                    <SidebarLink link={item} className="hover:underline py-4" />
-                  </div>
-                );
-              }
-              return (
-                <AccordionItem
-                  key={idx}
-                  value={item.label}
-                  className="border-none"
-                >
-                  <AccordionTrigger>
-                    <SidebarItem link={item} />
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {item.children?.map((child, idx) => (
-                      <SidebarLink
-                        key={idx}
-                        link={child}
-                        className="hover:underline"
-                      />
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
+          <ChatBotPlus />
         </div>
       </SidebarBody>
     </Sidebar>
@@ -82,7 +49,7 @@ export const Logo = () => {
       />
       <Image
         src="/logo_icon_dark.png"
-        className="hidden bg-transparent mr-0 dark:mr-2 dark:block"
+        className="hidden dark:mr-2 mr-0 bg-transparent dark:block"
         alt="logo"
         width={43}
         height={43}
@@ -90,7 +57,7 @@ export const Logo = () => {
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-semibold whitespace-pre dark:text-main-foreground"
+        className="font-semibold whitespace-pre"
       >
         Canada Medical and Education
       </motion.span>
@@ -105,14 +72,14 @@ export const LogoIcon = () => {
     >
       <Image
         src="/logo_icon_light.png"
-        className="bg-transparent mr-2 dark:mr-0 dark:hidden"
+        className="bg-transparent dark:hidden"
         alt="logo"
         width={50}
         height={50}
       />
       <Image
         src="/logo_icon_dark.png"
-        className="hidden bg-transparent mr-0 dark:mr-2 dark:block"
+        className="hidden bg-transparent dark:block"
         alt="logo"
         width={50}
         height={50}

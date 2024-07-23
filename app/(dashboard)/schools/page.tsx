@@ -17,7 +17,7 @@ const SchoolsPage = async ({ searchParams }: Props) => {
     );
   }
 
-  return <div>{schools?.data.length}</div>;
+  return <div></div>;
 };
 
 export default SchoolsPage;

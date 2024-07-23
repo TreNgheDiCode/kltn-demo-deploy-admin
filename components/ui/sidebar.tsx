@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import Link, { LinkProps } from "next/link";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { IconCirclePlus2, IconMenu2, IconX } from "@tabler/icons-react";
 
 interface Links {
   label: string;
@@ -221,6 +221,39 @@ export const SidebarItem = ({
       >
         {link.label}
       </motion.span>
+    </div>
+  );
+};
+
+export const ChatBotPlus = () => {
+  const { open, animate } = useSidebar();
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-start gap-2  group/sidebar py-2"
+      )}
+    >
+      <motion.div
+        animate={{
+          display: animate ? (open ? "none" : "inline-block") : "inline-block",
+          opacity: animate ? (open ? 0 : 1) : 0,
+        }}
+      >
+        <IconCirclePlus2 />
+      </motion.div>
+
+      <motion.button
+        animate={{
+          display: animate ? (open ? "inline-block" : "none") : "inline-block",
+          opacity: animate ? (open ? 1 : 0) : 1,
+        }}
+        className="relative w-full overflow-hidden rounded-full focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:scale-105 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+      >
+        <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+        <motion.span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-300 dark:bg-neutral-500 dark:text-main-foreground px-3 py-1 text-sm font-medium text-main backdrop-blur-3xl">
+          Thêm hội thoại mới
+        </motion.span>
+      </motion.button>
     </div>
   );
 };
