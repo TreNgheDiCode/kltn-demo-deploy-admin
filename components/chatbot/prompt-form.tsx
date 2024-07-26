@@ -12,7 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
 import { AI } from "@/action/chatbot";
 import { IconArrowElbowLeft, IconPlus } from "@tabler/icons-react";

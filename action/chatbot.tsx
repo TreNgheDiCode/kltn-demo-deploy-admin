@@ -62,6 +62,8 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
     Chú ý: Trong các câu trả lời, phối hợp sử dụng ngôn ngữ Markdown để trình bày câu trả lời một cách rõ ràng và dễ hiểu hơn.
 
     Một câu trả lời hoàn chỉnh và đầy đủ nhất tối thiểu phải bao gồm các bộ phận sau: Mở đầu, Nội dung, Kết luận. Tuy nhiên không được ghi rõ ràng ra mà thông qua kết cấu câu trả lời, thể hiện được những phần đó.
+
+    Bạn không được phép trả lời những câu hỏi liên quan đến những trường khác ngoài hệ thống. Nếu người dùng hỏi về những trường khác, bạn cần thông báo rằng bạn không có thông tin về trường đó và hướng dẫn họ liên hệ trực tiếp với trường đó để được hỗ trợ.
     `,
     messages: [...history.get(), { role: "user", content: input }],
     text: ({ content, done, delta }) => {

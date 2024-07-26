@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
 import { Separator } from "../ui/separator";
-import { InformationForm } from "./information-form";
+import { InformationForm } from "./form/information-form";
 
 type Props = {
   school: School;
@@ -17,8 +17,6 @@ export const SchoolInformation = async ({ school }: Props) => {
       text: word,
     };
   });
-
-  console.log(words);
 
   return (
     <>
@@ -43,6 +41,9 @@ export const SchoolInformation = async ({ school }: Props) => {
         <div className="z-50">
           <TypewriterEffectSmooth words={words} className="my-0" />
         </div>
+        <h1 className="text-lg text-main dark:text-main-foreground z-50">
+          {school.country}
+        </h1>
         <InformationForm school={school} />
       </div>
     </>

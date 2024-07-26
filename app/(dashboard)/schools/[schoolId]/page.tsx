@@ -1,10 +1,8 @@
-import Loading from "@/components/loading";
 import { Navbar } from "@/components/navbar";
 import { SchoolInformation } from "@/components/schools/school-information";
-import { Tabs } from "@/components/ui/tabs";
+import { SchoolTabs } from "@/components/schools/school-tabs";
 import { GetSchoolInformation } from "@/data/schools";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
 type Props = {
   params: {
@@ -66,9 +64,18 @@ const SchoolIdPage = async ({ params }: Props) => {
 
   return (
     <>
-      <Navbar title={`Cập nhật trường học`} description={school.name} />
-      <div className="pt-20 size-full [perspective:1000px] relative b flex flex-col mx-auto items-start justify-star">
-        <Tabs tabs={tabs} />
+      <Navbar title={`Thông tin trường học`} description={school.name} />
+      {!school.isPublished && (
+        <div className="w-full h-16 bg-yellow-200 text-black flex items-center justify-center mt-20 mb-8">
+          <p className="text-center">
+            Trường học hiện đang ở ché độ{" "}
+            <strong className="text-rose-500">TẠM ẨN</strong>. Vui lòng đổi chế
+            độ để hiển thị trường.
+          </p>
+        </div>
+      )}
+      <div className="size-full [perspective:1000px] relative b flex flex-col mx-auto items-start justify-star">
+        <SchoolTabs tabs={tabs} />
       </div>
     </>
   );

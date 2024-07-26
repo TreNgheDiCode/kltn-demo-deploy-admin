@@ -31,7 +31,7 @@ export function DashboardSidebar() {
             {items.map((item, idx) => {
               if (
                 item.label === "Bảng điều khiển" ||
-                item.label === "Hỗ trợ" ||
+                item.label === "Hỗ trợ người dùng" ||
                 item.label === "Trợ lý ảo"
               ) {
                 return (

@@ -14,16 +14,9 @@ type Props = {
 };
 
 const SchoolsSelectWrapper = ({ schools }: Props) => {
-  if (!schools || schools.length === 0) {
-    // TODO: Add new school here
-    return null;
-  }
-
   const router = useRouter();
 
-  const [active, setActive] = useState<
-    (typeof schools)[number] | boolean | null
-  >(null);
+  const [active, setActive] = useState<SchoolCard | boolean | null>(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -45,6 +38,11 @@ const SchoolsSelectWrapper = ({ schools }: Props) => {
   }, [active]);
 
   useOutsideClick(ref, () => setActive(null));
+
+  if (!schools || schools.length === 0) {
+    // TODO: Add new school here
+    return null;
+  }
 
   const onVisitClick = (schoolId: string) => {
     if (!schoolId) return;

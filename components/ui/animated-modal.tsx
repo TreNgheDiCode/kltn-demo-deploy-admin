@@ -79,7 +79,6 @@ export const ModalBody = ({
 
   const modalRef = useRef(null);
   const { setOpen } = useModal();
-  useOutsideClick(modalRef, () => setOpen(false));
 
   return (
     <AnimatePresence>
@@ -155,17 +154,48 @@ export const ModalContent = ({
 export const ModalFooter = ({
   children,
   className,
+  cancelLabel,
+  confirmLabel,
+  onConfirm,
+  disabled,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
+  cancelLabel?: string;
+  confirmLabel?: string;
+  onConfirm?: () => void;
+  disabled?: boolean;
 }) => {
+  const { setOpen } = useModal();
   return (
     <div
       className={cn(
-        "flex justify-end p-4 bg-gray-100 dark:bg-neutral-900",
+        "flex justify-center p-4 bg-gray-100 dark:bg-neutral-900",
         className
       )}
     >
+      <div className="flex items-center justify-center gap-4">
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(false);
+          }}
+          className="text-gray-400 dark:text-neutral-500 text-sm px-2 py-1 rounded-md border border-transparent dark:border-neutral-800 w-28"
+        >
+          {cancelLabel || "Hủy"}
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            onConfirm && onConfirm();
+            setOpen(false);
+          }}
+          className="bg-main text-white dark:bg-main-component dark:text-main-foreground text-sm px-2 py-1 rounded-md border border-main dark:border-main-foreground w-28 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {confirmLabel || "Xác nhận"}
+        </button>
+      </div>
       {children}
     </div>
   );

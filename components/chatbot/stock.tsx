@@ -18,8 +18,8 @@ export async function Stock({
       <div>{symbol}</div>
 
       <div>
-        {data.timeline.map((data) => (
-          <div>
+        {data.timeline.map((data, idx) => (
+          <div key={idx}>
             <div>{data.date}</div>
             <div>{data.value}</div>
           </div>
