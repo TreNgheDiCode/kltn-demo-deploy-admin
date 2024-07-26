@@ -13,10 +13,12 @@ import {
 
 export type NavItemProps = {
   label: string;
+  root?: string;
   href?: string;
   icon: React.ReactNode | React.JSX.Element;
   children?: {
     label: string;
+    root?: string;
     href: string;
     icon: React.ReactNode | React.JSX.Element;
   }[];
@@ -25,6 +27,7 @@ export type NavItemProps = {
 export const navItems: NavItemProps[] = [
   {
     label: "Bảng điều khiển",
+    root: "/",
     href: "/",
     icon: (
       <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
@@ -32,6 +35,7 @@ export const navItems: NavItemProps[] = [
   },
   {
     label: "Quản lý tài khoản",
+    root: "/accounts",
     icon: (
       <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
@@ -53,7 +57,8 @@ export const navItems: NavItemProps[] = [
     ],
   },
   {
-    label: "Trường học",
+    label: "Quản lý trường học",
+    root: "/schools",
     icon: (
       <IconSchool className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
@@ -75,7 +80,8 @@ export const navItems: NavItemProps[] = [
     ],
   },
   {
-    label: "Tin tức",
+    label: "Quản lý tin tức",
+    root: "/news",
     icon: (
       <IconNews className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
@@ -97,14 +103,15 @@ export const navItems: NavItemProps[] = [
     ],
   },
   {
-    label: "Hỗ trợ",
-    href: "/support",
+    label: "Hỗ trợ người dùng",
+    root: "/supports",
+    href: "/supports",
     icon: (
       <IconInfoOctagon className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
   },
   {
-    label: "Chat Bot",
+    label: "Trợ lý ảo",
     href: "/chatbot",
     icon: (
       <IconBrandOpenai className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />

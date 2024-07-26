@@ -32,7 +32,7 @@ export function DashboardSidebar() {
               if (
                 item.label === "Bảng điều khiển" ||
                 item.label === "Hỗ trợ" ||
-                item.label === "Chat Bot"
+                item.label === "Trợ lý ảo"
               ) {
                 return (
                   <div key={idx}>

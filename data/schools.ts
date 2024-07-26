@@ -76,3 +76,58 @@ export const GetSchools = async (page?: number, pageSize?: number) => {
     return null;
   }
 };
+
+export type SchoolCard = {
+  id: string;
+  name: string;
+  logo: string;
+  background: string;
+  country: string;
+  short: string | null;
+  isPublished: boolean;
+};
+
+export const GetSchoolsCard = async () => {
+  try {
+    const schools: SchoolCard[] = await db.school.findMany({
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+        background: true,
+        country: true,
+        short: true,
+        isPublished: true,
+      },
+      orderBy: {
+        country: "asc",
+      },
+      cacheStrategy: {
+        swr: 300,
+        ttl: 3600,
+      },
+    });
+
+    return schools;
+  } catch (error) {
+    console.log("GET SCHOOLS CARD DATA ERROR", error);
+
+    return null;
+  }
+};
+
+export const GetSchoolInformation = async (schoolId: string) => {
+  try {
+    const school = await db.school.findUnique({
+      where: {
+        id: schoolId,
+      },
+    });
+
+    return school;
+  } catch (error) {
+    console.log("GET SCHOOL INFORMATION DATA ERROR", error);
+
+    return null;
+  }
+};

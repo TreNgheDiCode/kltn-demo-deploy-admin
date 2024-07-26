@@ -1,9 +1,26 @@
 "use client";
 
+import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
+
 export default function Loading() {
+  const words = [
+    {
+      text: "Đang",
+    },
+    {
+      text: "Tải",
+    },
+    {
+      text: "Dữ",
+    },
+    {
+      text: "Liệu",
+    },
+  ];
   return (
-    <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-main dark:border-white"></div>
+    <div className="flex flex-col items-center justify-center size-full">
+      <div className="relative size-10"></div>
+      <TypewriterEffectSmooth words={words}></TypewriterEffectSmooth>
     </div>
   );
 }
