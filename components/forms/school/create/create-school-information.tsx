@@ -21,6 +21,13 @@ import { SchoolColorPicker } from "../color-picker";
 import { useEdgeStore } from "@/lib/edgestore";
 import { toast } from "sonner";
 import { LogoDropzone } from "../logo-dropzone";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -240,6 +247,34 @@ export const CreateSchoolInformation = ({
                   onSelect={field.onChange}
                   defaultValue={field.value || "#000000"}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-main dark:text-main-foreground">
+                Quốc gia
+              </FormLabel>
+              <FormControl>
+                <Select
+                  disabled={control._formState.isSubmitting}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn quốc gia" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AUSTRALIA">Australia</SelectItem>
+                    <SelectItem value="CANADA">Canada</SelectItem>
+                    <SelectItem value="KOREA">Korea</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

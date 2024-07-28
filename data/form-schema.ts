@@ -59,7 +59,7 @@ export const SchoolProgramSchema = z.object({
   cover: z.string({
     required_error: "Ảnh bìa không được để trống",
   }),
-  images: z.array(z.string()),
+  images: z.optional(z.array(z.string())),
 });
 
 export const SchoolGallerySchema = z.object({
@@ -67,7 +67,7 @@ export const SchoolGallerySchema = z.object({
     message: "Tên bộ sưu tập phải có ít nhất 3 ký tự",
   }),
   description: z.optional(z.string()),
-  images: z.array(z.string()),
+  images: z.optional(z.array(z.string())),
 });
 
 export const SchoolScholarshipSchema = z.object({
@@ -78,7 +78,7 @@ export const SchoolScholarshipSchema = z.object({
     message: "Mô tả học bổng phải có ít nhất 3 ký tự",
   }),
   cover: z.optional(z.string()),
-  images: z.array(z.string()),
+  images: z.optional(z.array(z.string())),
 });
 
 // Create School Form
@@ -99,6 +99,10 @@ export const CreateSchoolSchema = z.object({
   short: z.optional(z.string()),
   color: z.string({
     required_error: "Màu trường không được để trống",
+  }),
+  country: z.enum([Country.AUSTRALIA, Country.CANADA, Country.KOREA], {
+    required_error: "Quốc gia không được để trống",
+    invalid_type_error: "Quốc gia không hợp lệ",
   }),
   locations: z.array(SchoolLocationSchema).min(1, {
     message: "Phải có ít nhất một cơ sở",

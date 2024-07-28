@@ -37,7 +37,6 @@ import {
 import { Input } from "../../../ui/input";
 import { Textarea } from "../../../ui/textarea";
 import { SchoolColorPicker } from "../color-picker";
-import { LogoFile } from "../logo-dropzone";
 import { UpdateSchoolInformation } from "@/action/school";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -51,7 +50,7 @@ export const InformationForm = ({ school }: Props) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [logo, setLogo] = useState<LogoFile>({ file: school.logo });
+  const [logo, setLogo] = useState<SingleFileDropzone>({ file: school.logo });
   const [background, setBackground] = useState<SingleFileDropzone>({
     file: school.background,
   });

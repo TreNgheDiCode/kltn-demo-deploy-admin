@@ -388,7 +388,9 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
       })}
       <div className="flex justify-center items-center mt-4">
         <button
-          disabled={control._formState.isSubmitting}
+          disabled={
+            control._formState.isSubmitting || uploadingCover || uploadingImages
+          }
           type="button"
           onClick={() => {
             append({

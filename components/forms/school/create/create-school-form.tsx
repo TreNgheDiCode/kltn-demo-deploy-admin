@@ -17,6 +17,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { CreateSchoolInformation } from "./create-school-information";
 import { CreateSchoolLocation } from "./create-school-location";
+import { CreateSchoolProgram } from "./create-school-program";
+import { CreateSchoolGallery } from "./create-school-gallery";
+import { CreateSchoolScholarship } from "./create-school-scholarship";
 
 export const CreateSchoolForm = () => {
   const [loading, setLoading] = useState(false);
@@ -28,6 +31,9 @@ export const CreateSchoolForm = () => {
   const form = useForm<CreateSchoolFormValues>({
     resolver: zodResolver(CreateSchoolSchema),
     mode: "onBlur",
+    defaultValues: {
+      color: "#7D1F1F",
+    },
   });
 
   const {
@@ -37,21 +43,24 @@ export const CreateSchoolForm = () => {
     setValue,
   } = form;
 
-  console.log("FIELDS", errors);
+  const onSubmit = (values?: CreateSchoolFormValues) => {
+    if (values) {
+      const validatedFields = CreateSchoolSchema.safeParse(values);
 
-  const onSubmit = () => {
-    const validatedFields = CreateSchoolSchema.safeParse(data);
-
-    if (!validatedFields.success) {
-      toast.success("Vui lòng kiểm tra lại thông tin");
+      if (validatedFields.success) {
+        // Call API to create school
+        const data = validatedFields.data;
+        console.log("VALUES", data);
+        toast.success("Trường học đã được tạo thành công");
+      } else {
+        console.log("ERRORS", validatedFields.error.errors);
+        toast.error("Đã xảy ra lỗi khi tạo trường học");
+      }
     }
-
-    console.log(data);
   };
 
   const processForm: SubmitHandler<CreateSchoolFormValues> = (data) => {
     setData(data);
-    onSubmit();
   };
 
   type FieldName = keyof CreateSchoolFormValues;
@@ -60,7 +69,7 @@ export const CreateSchoolForm = () => {
     {
       id: "Bước 1",
       name: "Thông tin trường học",
-      fields: ["logo", "background", "name", "short", "color"],
+      fields: ["logo", "background", "name", "short", "color", "country"],
     },
     {
       id: "Bước 2",
@@ -161,21 +170,31 @@ export const CreateSchoolForm = () => {
             />
           )}
           {currentStep === 1 && (
-            <FormField
+            <CreateSchoolLocation
               control={control}
-              name="locations"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CreateSchoolLocation
-                      control={control}
-                      errors={errors}
-                      setValue={setValue}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              errors={errors}
+              setValue={setValue}
+            />
+          )}
+          {currentStep === 2 && (
+            <CreateSchoolProgram
+              control={control}
+              errors={errors}
+              setValue={setValue}
+            />
+          )}
+          {currentStep === 3 && (
+            <CreateSchoolGallery
+              control={control}
+              errors={errors}
+              setValue={setValue}
+            />
+          )}
+          {currentStep === 4 && (
+            <CreateSchoolScholarship
+              control={control}
+              errors={errors}
+              setValue={setValue}
             />
           )}
         </form>
@@ -192,7 +211,7 @@ export const CreateSchoolForm = () => {
         </button>
         {currentStep === steps.length - 1 && (
           <Button
-            onClick={() => processForm(data!)}
+            onClick={() => onSubmit(data)}
             disabled={loading}
             className="bg-main"
           >
