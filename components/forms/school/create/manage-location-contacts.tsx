@@ -38,7 +38,10 @@ export const ManageLocationContacts = ({
   return (
     <>
       {fields.map((field, index) => (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div
+          key={field.id}
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4"
+        >
           <FormField
             control={control}
             name={`locations.${locationIndex}.contacts.${index}.email`}
