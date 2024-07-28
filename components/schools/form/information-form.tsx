@@ -49,6 +49,7 @@ type Props = {
 
 export const InformationForm = ({ school }: Props) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [logo, setLogo] = useState<LogoFile>({ file: school.logo });
   const [background, setBackground] = useState<BackgroundFile>({
@@ -72,17 +73,21 @@ export const InformationForm = ({ school }: Props) => {
   } = form;
 
   const onSubmit = async (values: SchoolInformationFormValues) => {
-    await UpdateSchoolInformation(school.id, values).then((res) => {
-      if (typeof res.error === "string") {
-        toast.error(res.error);
-      }
+    setLoading(true);
+    await UpdateSchoolInformation(school.id, values)
+      .then((res) => {
+        if (typeof res.error === "string") {
+          toast.error(res.error);
+        }
 
-      if (res.success) {
-        toast.success(res.success);
-        reset();
-        router.refresh();
-      }
-    });
+        if (res.success) {
+          toast.success(res.success);
+          reset();
+          router.refresh();
+          window.location.reload();
+        }
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -92,22 +97,14 @@ export const InformationForm = ({ school }: Props) => {
           Xem thông tin
         </div>
       </ModalTrigger>
-      <ModalBody className="max-h-[30rem] overflow-y-scroll">
+      <ModalBody>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalContent>
+            <ModalContent className="max-h-[30rem] overflow-y-scroll">
               <h4 className="text-lg md:text-2xl text-main dark:text-main-foreground font-bold text-center mb-8">
                 Thông tin trường học
               </h4>
-              <span className="text-center italic text-main text-xs dark:text-main-foreground">
-                Vui lòng{" "}
-                <a onClick={() => setIsUpdating((value) => !value)}>
-                  <strong className="underline cursor-pointer text-red-500">
-                    nhấn vào đây
-                  </strong>
-                </a>{" "}
-                để {isUpdating ? "tắt" : "bật"} chế độ chỉnh sửa
-              </span>
+
               <FormField
                 control={control}
                 name="name"
@@ -285,12 +282,28 @@ export const InformationForm = ({ school }: Props) => {
               />
             </ModalContent>
             <ModalFooter
-              disabled={!isUpdating}
-              cancelLabel="Hủy"
-              confirmLabel="Cập nhật"
+              disabled={loading}
+              confirmContent={
+                <button
+                  disabled={!isUpdating || loading}
+                  className="bg-main text-white dark:bg-main-component dark:text-main-foreground text-sm px-2 py-1 rounded-md border border-main dark:border-main-foreground w-28 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cập nhật
+                </button>
+              }
               onConfirm={handleSubmit(onSubmit)}
               className="gap-1 justify-center flex-col items-center"
-            ></ModalFooter>
+            >
+              <span className="text-center italic text-main text-xs dark:text-main-foreground">
+                Vui lòng{" "}
+                <a onClick={() => setIsUpdating((value) => !value)}>
+                  <strong className="underline cursor-pointer text-red-500">
+                    nhấn vào đây
+                  </strong>
+                </a>{" "}
+                để {isUpdating ? "tắt" : "bật"} chế độ chỉnh sửa
+              </span>
+            </ModalFooter>
           </form>
         </Form>
       </ModalBody>

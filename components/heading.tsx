@@ -14,8 +14,6 @@ export const Heading = ({ title, description }: Props) => {
 
   const currentItem = item.find((item) => item.root === pathname);
 
-  console.log(pathname);
-
   return (
     <div className="w-full space-y-1">
       <h1 className="text-xl font-bold text-main dark:text-white">

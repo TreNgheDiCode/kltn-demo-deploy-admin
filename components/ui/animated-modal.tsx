@@ -154,15 +154,13 @@ export const ModalContent = ({
 export const ModalFooter = ({
   children,
   className,
-  cancelLabel,
-  confirmLabel,
+  confirmContent,
   onConfirm,
   disabled,
 }: {
   children?: ReactNode;
   className?: string;
-  cancelLabel?: string;
-  confirmLabel?: string;
+  confirmContent?: ReactNode | React.JSX.Element;
   onConfirm?: () => void;
   disabled?: boolean;
 }) => {
@@ -170,31 +168,20 @@ export const ModalFooter = ({
   return (
     <div
       className={cn(
-        "flex justify-center p-4 bg-gray-100 dark:bg-neutral-900",
+        "flex flex-col justify-center p-4 bg-gray-100 dark:bg-neutral-900",
         className
       )}
     >
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center">
         <button
+          onClick={() => setOpen(false)}
+          disabled={disabled}
           type="button"
-          onClick={() => {
-            setOpen(false);
-          }}
           className="text-gray-400 dark:text-neutral-500 text-sm px-2 py-1 rounded-md border border-transparent dark:border-neutral-800 w-28"
         >
-          {cancelLabel || "Hủy"}
+          Đóng
         </button>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => {
-            onConfirm && onConfirm();
-            setOpen(false);
-          }}
-          className="bg-main text-white dark:bg-main-component dark:text-main-foreground text-sm px-2 py-1 rounded-md border border-main dark:border-main-foreground w-28 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {confirmLabel || "Xác nhận"}
-        </button>
+        {confirmContent}
       </div>
       {children}
     </div>
