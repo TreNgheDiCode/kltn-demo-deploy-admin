@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/navbar";
+import { SchoolNavbar } from "@/components/schools/school-navbar";
 import { SchoolsBackground } from "@/components/schools/schools-background";
 import { GetSchoolsCard } from "@/data/schools";
 
@@ -7,7 +7,7 @@ const SchoolsPage = async () => {
 
   return (
     <>
-      <Navbar />
+      <SchoolNavbar />
       <div className="pt-20">
         <SchoolsBackground schools={schools} />
       </div>

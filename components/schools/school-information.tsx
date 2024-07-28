@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
 import { Separator } from "../ui/separator";
-import { InformationForm } from "./form/information-form";
+import { InformationForm } from "../forms/school/update/information-form";
 
 type Props = {
   school: School;

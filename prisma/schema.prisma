@@ -258,7 +258,7 @@ model SchoolGalleryImage {
 model SchoolLocation {
   id String @id @default(cuid())
 
-  cover   String?
+  cover   String
   name    String  @unique
   address String  @unique
   isMain  Boolean @default(false)

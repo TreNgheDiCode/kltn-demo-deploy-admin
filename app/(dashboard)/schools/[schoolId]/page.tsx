@@ -1,8 +1,26 @@
 import { Navbar } from "@/components/navbar";
 import { SchoolInformation } from "@/components/schools/school-information";
 import { SchoolTabs } from "@/components/schools/school-tabs";
-import { GetSchoolInformation } from "@/data/schools";
+import { GetSchoolInformation, GetSchools } from "@/data/schools";
 import { redirect } from "next/navigation";
+
+export const metadata = {
+  title: "Thông tin trường học | CANADA MEDICAL AND EDUCATION",
+};
+
+export async function generateStaticParams() {
+  const data = await GetSchools();
+
+  if (!data || !data.data) {
+    redirect("/schools");
+  }
+
+  const schools = data.data;
+
+  return schools.map((school) => ({
+    schoolId: school.id,
+  }));
+}
 
 type Props = {
   params: {

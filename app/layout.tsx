@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
-import { Inter, Lusitana } from "next/font/google";
-import "./globals.css";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs";
-import { EdgeStoreProvider } from "@/lib/edgestore";
-import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/provider/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { EdgeStoreProvider } from "@/lib/edgestore";
+import { viVN } from "@clerk/localizations";
+import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Lusitana } from "next/font/google";
+import "./globals.css";
 
 const lusitana = Lusitana({ weight: ["400"], subsets: ["latin"] });
 
@@ -25,7 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      localization={viVN}
+      appearance={{
+        elements: {
+          footer: "hidden",
+        },
+      }}
+    >
       <html lang="en">
         <body>
           <ThemeProvider

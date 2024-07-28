@@ -24,7 +24,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalTrigger,
-} from "../../ui/animated-modal";
+} from "../../../ui/animated-modal";
 import {
   Form,
   FormControl,
@@ -33,15 +33,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
-import { Input } from "../../ui/input";
-import { Textarea } from "../../ui/textarea";
-import { BackgroundFile } from "./background-dropzone";
-import { SchoolColorPicker } from "./color-picker";
-import { LogoFile } from "./logo-dropzone";
+} from "../../../ui/form";
+import { Input } from "../../../ui/input";
+import { Textarea } from "../../../ui/textarea";
+import { SchoolColorPicker } from "../color-picker";
+import { LogoFile } from "../logo-dropzone";
 import { UpdateSchoolInformation } from "@/action/school";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { SingleFileDropzone } from "@/types/generic";
 
 type Props = {
   school: School;
@@ -52,7 +52,7 @@ export const InformationForm = ({ school }: Props) => {
   const [loading, setLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [logo, setLogo] = useState<LogoFile>({ file: school.logo });
-  const [background, setBackground] = useState<BackgroundFile>({
+  const [background, setBackground] = useState<SingleFileDropzone>({
     file: school.background,
   });
 

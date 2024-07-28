@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.38",
+    "@clerk/localizations": "^2.5.2",
     "@clerk/nextjs": "^5.2.4",
     "@edgestore/react": "^0.2.1",
     "@edgestore/server": "^0.2.1",
@@ -26,6 +27,7 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@tabler/icons-react": "^3.11.0",
     "@types/react-syntax-highlighter": "^15.5.13",
@@ -41,6 +43,7 @@
     "openai": "^4.53.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.52.1",
     "react-markdown": "^8.0.7",
     "react-syntax-highlighter": "^15.5.0",
