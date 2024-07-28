@@ -26,17 +26,25 @@ import {
   Control,
   FieldErrors,
   useFieldArray,
+  UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
 import { toast } from "sonner";
 import { MultiImageDropzone } from "../multi-image-dropzone";
+import { ManageSchoolGalleryImages } from "./manage-school-gallery-images";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
   errors: FieldErrors<CreateSchoolFormValues>;
   setValue: UseFormSetValue<CreateSchoolFormValues>;
+  getValues: UseFormGetValues<CreateSchoolFormValues>;
 };
-export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
+export const CreateSchoolGallery = ({
+  control,
+  errors,
+  setValue,
+  getValues,
+}: Props) => {
   const { append, remove, fields } = useFieldArray({
     control,
     name: `galleries`,
@@ -46,52 +54,6 @@ export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
   const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingImages, setUploadingImages] = useState(false);
 
-  const onSelectedImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `galleries.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
-
   const onChangeImages = async (
     index: number,
     value?: SingleFileDropzone[]
@@ -100,30 +62,34 @@ export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
       setImages(value);
       setUploadingImages(true);
       try {
-        const urls = await Promise.all(
+        await Promise.all(
           value.map((file) => {
             if (!file.file) return;
 
             edgestore.publicFiles
               .upload({
                 file: file.file as File,
+                onProgressChange: (progress) => {
+                  uploadImageProgress(progress);
+                },
               })
               .then((res) => {
                 if (res.url) {
-                  return res.url;
+                  setValue(`galleries.${index}.images`, [
+                    ...(getValues(`galleries.${index}.images`) || []),
+                    res.url,
+                  ]);
                 }
                 if (!res.url) {
                   toast.error("Có lỗi xảy ra khi tải ảnh lên");
 
                   return undefined;
                 }
+              })
+              .finally(() => {
+                setUploadingImages(false);
               });
           })
-        );
-
-        setValue(
-          `galleries.${index}.images`,
-          urls.filter((url) => url !== undefined)
         );
       } catch (error) {
         console.error(error);
@@ -132,11 +98,27 @@ export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
         setUploadingImages(false);
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
       }
     }
   };
+
+  const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
+    setImages((prev) =>
+      prev?.map((file) => {
+        if (file.file) {
+          return {
+            ...file,
+            progress,
+          };
+        }
+
+        return file;
+      })
+    );
+  };
+
+  const buttonClass =
+    "bg-main dark:bg-main-component text-white dark:text-main-foreground";
 
   return (
     <>
@@ -205,45 +187,12 @@ export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
                     </FormItem>
                   )}
                 />
-                <FormField
+                <ManageSchoolGalleryImages
                   control={control}
-                  name={`galleries.${index}.images`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-main dark:text-main-foreground">
-                        Hình ảnh bộ sưu tập (tùy chọn)
-                      </FormLabel>
-                      <FormControl>
-                        <MultiImageDropzone
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          onChange={(files) => {
-                            onChangeImages(index, files);
-                          }}
-                          onFilesAdded={(files) =>
-                            onSelectedImages(index, files)
-                          }
-                          value={images}
-                        />
-                      </FormControl>
-                      {field.value && (
-                        <Button
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          size="sm"
-                          onClick={() => {
-                            field.onChange([]);
-                            setImages([]);
-                          }}
-                        >
-                          Xóa tất cả hình ảnh
-                        </Button>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  setValue={setValue}
+                  getValues={getValues}
+                  galleryIndex={index}
+                  btnClass={buttonClass}
                 />
               </div>
             </AccordionContent>
@@ -260,7 +209,7 @@ export const CreateSchoolGallery = ({ control, errors, setValue }: Props) => {
               description: "",
             });
           }}
-          className="px-4 py-2 rounded-md border border-main font-bold bg-white text-main text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
+          className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
           Thêm bộ sưu tập khác
         </button>

@@ -10,17 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CreateSchoolFormValues } from "@/data/form-schema";
-import { SingleFileDropzone } from "@/types/generic";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Control, FieldErrors, UseFormSetValue } from "react-hook-form";
-import { BackgroundDropzone } from "../background-dropzone";
-import { SchoolColorPicker } from "../color-picker";
-import { useEdgeStore } from "@/lib/edgestore";
-import { toast } from "sonner";
-import { LogoDropzone } from "../logo-dropzone";
 import {
   Select,
   SelectContent,
@@ -28,6 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { CreateSchoolFormValues } from "@/data/form-schema";
+import { useEdgeStore } from "@/lib/edgestore";
+import { SingleFileDropzone } from "@/types/generic";
+import Image from "next/image";
+import { useState } from "react";
+import { Control, FieldErrors, UseFormSetValue } from "react-hook-form";
+import { toast } from "sonner";
+import { BackgroundDropzone } from "../background-dropzone";
+import { SchoolColorPicker } from "../color-picker";
+import { LogoDropzone } from "../logo-dropzone";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
@@ -67,8 +67,7 @@ export const CreateSchoolInformation = ({
 
               setLogo(undefined);
             }
-          })
-          .finally(() => setUploadingLogo(false));
+          });
       } catch (error) {
         console.error(error);
 
@@ -76,6 +75,8 @@ export const CreateSchoolInformation = ({
         setUploadingLogo(false);
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
+      } finally {
+        setUploadingLogo(false);
       }
     }
   };
@@ -99,8 +100,7 @@ export const CreateSchoolInformation = ({
 
               setBackground(undefined);
             }
-          })
-          .finally(() => setUploadingBackground(false));
+          });
       } catch (error) {
         console.error(error);
 
@@ -108,9 +108,14 @@ export const CreateSchoolInformation = ({
         setUploadingBackground(false);
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
+      } finally {
+        setUploadingBackground(false);
       }
     }
   };
+
+  const buttonClass =
+    "bg-main text-white dark:bg-main-component dark:text-main-foreground";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,7 +137,7 @@ export const CreateSchoolInformation = ({
                   disabled={
                     control._formState.isSubmitting || uploadingBackground
                   }
-                  value={background}
+                  value={{ file: field.value } || background}
                   onChange={(file) => {
                     if (file) {
                       onSelectedBackground({ file });
@@ -151,6 +156,7 @@ export const CreateSchoolInformation = ({
                   field.onChange(undefined);
                   setBackground(undefined);
                 }}
+                className={buttonClass}
               >
                 Xóa ảnh bìa
               </Button>
@@ -190,6 +196,7 @@ export const CreateSchoolInformation = ({
                         field.onChange(undefined);
                         setLogo(undefined);
                       }}
+                      className={buttonClass}
                     >
                       Xóa ảnh đại diện
                     </Button>
@@ -199,7 +206,7 @@ export const CreateSchoolInformation = ({
                 <FormControl>
                   <LogoDropzone
                     disabled={control._formState.isSubmitting || uploadingLogo}
-                    value={logo}
+                    value={{ file: field.value } || logo}
                     onChange={(file) => {
                       if (file) {
                         onSelectedLogo({ file });

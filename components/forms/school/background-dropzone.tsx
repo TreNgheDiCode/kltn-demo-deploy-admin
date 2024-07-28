@@ -23,7 +23,7 @@ type InputProps = {
   height?: number;
   className?: string;
   value?: SingleFileDropzone;
-  onChange: (file?: File) => void | Promise<void>;
+  onChange?: (file?: File) => void | Promise<void>;
   disabled?: boolean;
   dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
 };
@@ -77,7 +77,7 @@ const BackgroundDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       onDrop: (acceptedFiles) => {
         const file = acceptedFiles[0];
         if (file) {
-          void onChange(file);
+          void onChange?.(file);
         }
       },
       ...dropzoneOptions,

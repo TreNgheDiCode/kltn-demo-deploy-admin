@@ -1,15 +1,16 @@
-import { School } from "@prisma/client";
+"use client";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import { CreateSchoolFormValues } from "@/data/form-schema";
 import Image from "next/image";
-import { InformationForm } from "../forms/school/update/information-form";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Separator } from "../ui/separator";
-import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
+import { PreviewInformation } from "./preview-information";
 
 type Props = {
-  school: School;
+  school: CreateSchoolFormValues;
 };
-
-export const SchoolInformation = async ({ school }: Props) => {
+export const PreviewSchoolInformation = ({ school }: Props) => {
   const schoolWordsName = school.name.split(" ");
   const words = schoolWordsName.map((word) => {
     return {
@@ -43,7 +44,7 @@ export const SchoolInformation = async ({ school }: Props) => {
         <h1 className="text-lg text-main dark:text-main-foreground z-50">
           {school.country}
         </h1>
-        <InformationForm school={school} />
+        <PreviewInformation school={school} />
       </div>
     </>
   );

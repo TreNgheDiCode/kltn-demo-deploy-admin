@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { CreateSchoolFormValues, CreateSchoolSchema } from "@/data/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -15,11 +9,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { CreateSchoolGallery } from "./create-school-gallery";
 import { CreateSchoolInformation } from "./create-school-information";
 import { CreateSchoolLocation } from "./create-school-location";
 import { CreateSchoolProgram } from "./create-school-program";
-import { CreateSchoolGallery } from "./create-school-gallery";
 import { CreateSchoolScholarship } from "./create-school-scholarship";
+import { CreateSchoolPreview } from "./create-school-preview";
+import { Country } from "@prisma/client";
 
 export const CreateSchoolForm = () => {
   const [loading, setLoading] = useState(false);
@@ -28,12 +24,37 @@ export const CreateSchoolForm = () => {
   const [data, setData] = useState<CreateSchoolFormValues>();
   const router = useRouter();
 
+  const tempValues = {
+    color: "#7D1F1F",
+    background:
+      "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
+    logo: "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
+    name: "Test",
+    short: "Test",
+    country: Country.AUSTRALIA,
+    locations: [
+      {
+        address: "Test",
+        cover:
+          "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
+        name: "Test",
+        isMain: true,
+      },
+    ],
+    programs: [
+      {
+        name: "Test",
+        cover:
+          "https://files.edgestore.dev/ej1zo8o303l788n0/publicFiles/_public/1464a3ec-67e0-4564-bc27-f4a25d0f0966.jpeg",
+        description: "Test",
+      },
+    ],
+  };
+
   const form = useForm<CreateSchoolFormValues>({
     resolver: zodResolver(CreateSchoolSchema),
     mode: "onBlur",
-    defaultValues: {
-      color: "#7D1F1F",
-    },
+    defaultValues: tempValues,
   });
 
   const {
@@ -41,6 +62,7 @@ export const CreateSchoolForm = () => {
     formState: { errors },
     control,
     setValue,
+    getValues,
   } = form;
 
   const onSubmit = (values?: CreateSchoolFormValues) => {
@@ -128,8 +150,8 @@ export const CreateSchoolForm = () => {
         {steps.map((step, index) => (
           <li key={step.name} className="md:flex-1">
             {currentStep > index ? (
-              <div className="group flex w-full flex-col border-l-4 border-main dark:border-main-foreground py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
-                <span className="text-sm font-medium text-main dark:text-main-foreground transition-colors ">
+              <div className="group flex w-full flex-col border-l-4 border-main dark:border-main-component py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
+                <span className="text-sm font-medium text-main dark:text-main-component transition-colors ">
                   {step.id}
                 </span>
                 <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -144,24 +166,26 @@ export const CreateSchoolForm = () => {
                 <span className="text-sm font-medium text-main dark:text-main-foreground">
                   {step.id}
                 </span>
-                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <span className="text-sm font-medium text-main dark:text-main-foreground">
                   {step.name}
                 </span>
               </div>
             ) : (
-              <div className="group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
+              <div className="group flex h-full w-full flex-col border-l-4 border-main/20 dark:border-main-component py-2 pl-4 transition-colors md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4">
                 <span className="text-sm font-medium text-gray-500 transition-colors">
                   {step.id}
                 </span>
-                <span className="text-sm font-medium">{step.name}</span>
+                <span className="text-sm font-medium text-neutral-700 dark:text-main-component">
+                  {step.name}
+                </span>
               </div>
             )}
           </li>
         ))}
       </ul>
-      <hr className="h-1 bg-main dark:bg-main-foreground my-4 rounded-full" />
+      <hr className="h-1 bg-main dark:bg-main-component my-4 rounded-full" />
       <Form {...form}>
-        <form onSubmit={handleSubmit(processForm)}>
+        <form onSubmit={handleSubmit(processForm)} className="size-full">
           {currentStep === 0 && (
             <CreateSchoolInformation
               control={control}
@@ -174,6 +198,7 @@ export const CreateSchoolForm = () => {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValue={getValues}
             />
           )}
           {currentStep === 2 && (
@@ -181,6 +206,7 @@ export const CreateSchoolForm = () => {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValues={getValues}
             />
           )}
           {currentStep === 3 && (
@@ -188,6 +214,7 @@ export const CreateSchoolForm = () => {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValues={getValues}
             />
           )}
           {currentStep === 4 && (
@@ -195,39 +222,41 @@ export const CreateSchoolForm = () => {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValues={getValues}
             />
           )}
+          {currentStep === 5 && <CreateSchoolPreview data={data} />}
+          <div className="flex w-full items-center justify-around mt-4">
+            <button
+              type="button"
+              onClick={prev}
+              disabled={currentStep === 0}
+              className="rounded bg-white dark:bg-main-component px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
+            >
+              <ChevronLeft />
+              Quay về
+            </button>
+            {currentStep === steps.length - 1 && (
+              <Button
+                onClick={() => onSubmit(data)}
+                disabled={loading}
+                className="border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground"
+              >
+                Thêm trường học
+              </Button>
+            )}
+            <button
+              type="button"
+              onClick={next}
+              disabled={currentStep === steps.length - 1 || loading}
+              className="rounded bg-white dark:bg-main-component px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset  ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
+            >
+              Tiếp theo
+              <ChevronRight />
+            </button>
+          </div>
         </form>
       </Form>
-      <div className="flex w-full items-center justify-around mt-4">
-        <button
-          type="button"
-          onClick={prev}
-          disabled={currentStep === 0}
-          className="rounded bg-white px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
-        >
-          <ChevronLeft />
-          Quay về
-        </button>
-        {currentStep === steps.length - 1 && (
-          <Button
-            onClick={() => onSubmit(data)}
-            disabled={loading}
-            className="bg-main"
-          >
-            Thêm trường học
-          </Button>
-        )}
-        <button
-          type="button"
-          onClick={next}
-          disabled={currentStep === steps.length - 1 || loading}
-          className="rounded bg-white px-2 py-1 text-sm font-semibold text-main/90 dark:text-main-foreground/90 shadow-sm ring-1 ring-inset  ring-main/30 dark:ring-main-foreground/30 hover:bg-main/5 dark:hover:bg-main-foreground/5 disabled:cursor-not-allowed disabled:opacity-50 flex items-center gap-x-2"
-        >
-          Tiếp theo
-          <ChevronRight />
-        </button>
-      </div>
     </div>
   );
 };

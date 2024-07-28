@@ -26,6 +26,7 @@ import {
   Control,
   FieldErrors,
   useFieldArray,
+  UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
 import { toast } from "sonner";
@@ -36,11 +37,13 @@ type Props = {
   control: Control<CreateSchoolFormValues>;
   errors: FieldErrors<CreateSchoolFormValues>;
   setValue: UseFormSetValue<CreateSchoolFormValues>;
+  getValues: UseFormGetValues<CreateSchoolFormValues>;
 };
 export const CreateSchoolScholarship = ({
   control,
   errors,
   setValue,
+  getValues,
 }: Props) => {
   const { append, remove, fields } = useFieldArray({
     control,
@@ -52,52 +55,6 @@ export const CreateSchoolScholarship = ({
   const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
-
-  const onSelectedImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `scholarships.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
 
   const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
     if (value?.file && value.file instanceof File) {
@@ -146,23 +103,27 @@ export const CreateSchoolScholarship = ({
             edgestore.publicFiles
               .upload({
                 file: file.file as File,
+                onProgressChange: (progress) => {
+                  uploadImageProgress(progress);
+                },
               })
               .then((res) => {
                 if (res.url) {
-                  return res.url;
+                  setValue(`scholarships.${index}.images`, [
+                    ...(getValues(`scholarships.${index}.images`) || []),
+                    res.url,
+                  ]);
                 }
                 if (!res.url) {
                   toast.error("Có lỗi xảy ra khi tải ảnh lên");
 
                   return undefined;
                 }
+              })
+              .finally(() => {
+                setUploadingImages(false);
               });
           })
-        );
-
-        setValue(
-          `scholarships.${index}.images`,
-          urls.filter((url) => url !== undefined)
         );
       } catch (error) {
         console.error(error);
@@ -171,11 +132,27 @@ export const CreateSchoolScholarship = ({
         setUploadingImages(false);
 
         toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
       }
     }
   };
+
+  const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
+    setImages((prev) =>
+      prev?.map((file) => {
+        if (file.file) {
+          return {
+            ...file,
+            progress,
+          };
+        }
+
+        return file;
+      })
+    );
+  };
+
+  const buttonClass =
+    "bg-main dark:bg-main-component text-white dark:text-main-foreground";
 
   return (
     <>
@@ -245,6 +222,7 @@ export const CreateSchoolScholarship = ({
                               field.onChange(undefined);
                               setCover(undefined);
                             }}
+                            className={buttonClass}
                           >
                             Xóa ảnh đại diện
                           </Button>
@@ -310,9 +288,6 @@ export const CreateSchoolScholarship = ({
                           onChange={(files) => {
                             onChangeImages(index, files);
                           }}
-                          onFilesAdded={(files) =>
-                            onSelectedImages(index, files)
-                          }
                           value={images}
                         />
                       </FormControl>
@@ -326,6 +301,7 @@ export const CreateSchoolScholarship = ({
                             field.onChange([]);
                             setImages([]);
                           }}
+                          className={buttonClass}
                         >
                           Xóa tất cả hình ảnh
                         </Button>
@@ -350,7 +326,7 @@ export const CreateSchoolScholarship = ({
               description: "",
             });
           }}
-          className="px-4 py-2 rounded-md border border-main font-bold bg-white text-main text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
+          className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
           Thêm học bổng khác
         </button>

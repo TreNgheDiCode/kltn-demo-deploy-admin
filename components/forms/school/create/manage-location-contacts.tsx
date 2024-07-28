@@ -106,8 +106,8 @@ export const ManageLocationContacts = ({
           />
           <Button
             variant={"destructive"}
-            size={"sm"}
             onClick={() => remove(index)}
+            className="mt-auto"
           >
             Xóa
           </Button>
@@ -120,7 +120,7 @@ export const ManageLocationContacts = ({
           onClick={() => {
             append({});
           }}
-          className="px-4 py-2 rounded-md border border-main font-bold bg-white text-main text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
+          className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
           Thêm liên hệ khác
         </button>

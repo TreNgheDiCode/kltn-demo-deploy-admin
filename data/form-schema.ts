@@ -77,7 +77,9 @@ export const SchoolScholarshipSchema = z.object({
   description: z.string().min(3, {
     message: "Mô tả học bổng phải có ít nhất 3 ký tự",
   }),
-  cover: z.optional(z.string()),
+  cover: z.string({
+    required_error: "Ảnh đại diện không được để trống",
+  }),
   images: z.optional(z.array(z.string())),
 });
 

@@ -26,18 +26,25 @@ import {
   Control,
   FieldErrors,
   useFieldArray,
+  UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
 import { toast } from "sonner";
 import { LogoDropzone } from "../logo-dropzone";
-import { MultiImageDropzone } from "../multi-image-dropzone";
+import { ManageSchoolProgramImages } from "./manage-school-program-images";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
   errors: FieldErrors<CreateSchoolFormValues>;
   setValue: UseFormSetValue<CreateSchoolFormValues>;
+  getValues: UseFormGetValues<CreateSchoolFormValues>;
 };
-export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
+export const CreateSchoolProgram = ({
+  control,
+  errors,
+  setValue,
+  getValues,
+}: Props) => {
   const { append, remove, fields } = useFieldArray({
     control,
     name: `programs`,
@@ -45,55 +52,7 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
 
   const { edgestore } = useEdgeStore();
   const [cover, setCover] = useState<SingleFileDropzone>();
-  const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
-
-  const onSelectedImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `programs.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
 
   const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
     if (value?.file && value.file instanceof File) {
@@ -127,51 +86,8 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
     }
   };
 
-  const onChangeImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `programs.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
+  const buttonClass =
+    "bg-main dark:bg-main-component text-white dark:text-main-foreground";
 
   return (
     <>
@@ -222,7 +138,7 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
                                 control._formState.isSubmitting ||
                                 uploadingCover
                               }
-                              value={cover}
+                              value={{ file: field.value } || cover}
                               onChange={(file) => {
                                 if (file) {
                                   onSelectedCover(index, { file });
@@ -241,6 +157,7 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
                               field.onChange(undefined);
                               setCover(undefined);
                             }}
+                            className={buttonClass}
                           >
                             Xóa ảnh đại diện
                           </Button>
@@ -290,45 +207,12 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
                     )}
                   />
                 </div>
-                <FormField
+                <ManageSchoolProgramImages
+                  programIndex={index}
                   control={control}
-                  name={`programs.${index}.images`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-main dark:text-main-foreground">
-                        Hình ảnh ngành đào tạo (tùy chọn)
-                      </FormLabel>
-                      <FormControl>
-                        <MultiImageDropzone
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          onChange={(files) => {
-                            onChangeImages(index, files);
-                          }}
-                          onFilesAdded={(files) =>
-                            onSelectedImages(index, files)
-                          }
-                          value={images}
-                        />
-                      </FormControl>
-                      {field.value && (
-                        <Button
-                          disabled={
-                            control._formState.isSubmitting || uploadingImages
-                          }
-                          size="sm"
-                          onClick={() => {
-                            field.onChange([]);
-                            setImages([]);
-                          }}
-                        >
-                          Xóa tất cả hình ảnh
-                        </Button>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  setValue={setValue}
+                  getValues={getValues}
+                  btnClass={buttonClass}
                 />
               </div>
             </AccordionContent>
@@ -346,7 +230,7 @@ export const CreateSchoolProgram = ({ control, errors, setValue }: Props) => {
               description: "",
             });
           }}
-          className="px-4 py-2 rounded-md border border-main font-bold bg-white text-main text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
+          className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
           Thêm ngành đào tạo khác
         </button>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
   disabled?: boolean;
-  onSelect: (value: string) => void;
+  onSelect?: (value: string) => void;
   defaultValue?: string;
 };
 export const SchoolColorPicker = ({
@@ -31,7 +31,7 @@ export const SchoolColorPicker = ({
         className="col-span-2 h-8"
         onChange={(e) => {
           setBackground(e.currentTarget.value);
-          onSelect(e.currentTarget.value);
+          onSelect?.(e.currentTarget.value);
         }}
       />
     </div>

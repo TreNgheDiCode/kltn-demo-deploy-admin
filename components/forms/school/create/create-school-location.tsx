@@ -15,6 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { CreateSchoolFormValues } from "@/data/form-schema";
 import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
@@ -25,22 +27,27 @@ import {
   Control,
   FieldErrors,
   useFieldArray,
+  UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
 import { toast } from "sonner";
 import { BackgroundDropzone } from "../background-dropzone";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { MultiImageDropzone } from "../multi-image-dropzone";
 import { ManageLocationContacts } from "./manage-location-contacts";
+import { ManageSchoolLocationImages } from "./manage-school-location-images";
 
 type Props = {
   control: Control<CreateSchoolFormValues>;
   errors: FieldErrors<CreateSchoolFormValues>;
   setValue: UseFormSetValue<CreateSchoolFormValues>;
+  getValue: UseFormGetValues<CreateSchoolFormValues>;
 };
 
-export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
+export const CreateSchoolLocation = ({
+  control,
+  errors,
+  setValue,
+  getValue,
+}: Props) => {
   const { append, remove, fields } = useFieldArray({
     control,
     name: `locations`,
@@ -48,9 +55,10 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
 
   const { edgestore } = useEdgeStore();
   const [cover, setCover] = useState<SingleFileDropzone>();
-  const [images, setImages] = useState<SingleFileDropzone[]>();
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
+
+  const buttonClass =
+    "bg-main dark:bg-main-component text-white dark:text-main-foreground";
 
   const onSelectedCover = async (index: number, value?: SingleFileDropzone) => {
     if (value?.file && value.file instanceof File) {
@@ -72,7 +80,9 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
               setCover(undefined);
             }
           })
-          .finally(() => setUploadingCover(false));
+          .finally(() => {
+            setUploadingCover(false);
+          });
       } catch (error) {
         console.error(error);
 
@@ -84,116 +94,10 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
     }
   };
 
-  const onSelectedImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `locations.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
-
-  const onChangeImages = async (
-    index: number,
-    value?: SingleFileDropzone[]
-  ) => {
-    if (value) {
-      setImages(value);
-      setUploadingImages(true);
-      try {
-        const urls = await Promise.all(
-          value.map((file) => {
-            if (!file.file) return;
-
-            edgestore.publicFiles
-              .upload({
-                file: file.file as File,
-              })
-              .then((res) => {
-                if (res.url) {
-                  return res.url;
-                }
-                if (!res.url) {
-                  toast.error("Có lỗi xảy ra khi tải ảnh lên");
-
-                  return undefined;
-                }
-              });
-          })
-        );
-
-        setValue(
-          `locations.${index}.images`,
-          urls.filter((url) => url !== undefined)
-        );
-      } catch (error) {
-        console.error(error);
-
-        setImages(undefined);
-        setUploadingImages(false);
-
-        toast.error("Có lỗi xảy ra khi tải ảnh lên");
-      } finally {
-        setUploadingImages(false);
-      }
-    }
-  };
-
-  // const uploadImageProgress = (progress: SingleFileDropzone["progress"]) => {
-  //   setImages((prev) =>
-  //     prev?.map((file) => {
-  //       if (file.file) {
-  //         return {
-  //           ...file,
-  //           progress,
-  //         };
-  //       }
-
-  //       return file;
-  //     })
-  //   );
-  // };
-
   return (
     <>
       {fields.map((field, index) => {
+        console.log(getValue(`locations.${index}.images`));
         return (
           <Accordion
             key={field.id}
@@ -243,7 +147,7 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
                                 control._formState.isSubmitting ||
                                 uploadingCover
                               }
-                              value={cover}
+                              value={{ file: field.value } || cover}
                               onChange={(file) => {
                                 if (file) {
                                   onSelectedCover(index, { file });
@@ -262,6 +166,7 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
                               field.onChange(undefined);
                               setCover(undefined);
                             }}
+                            className={buttonClass}
                           >
                             Xóa ảnh bìa
                           </Button>
@@ -332,45 +237,12 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
                       )}
                     />
                   </div>
-                  <FormField
+                  <ManageSchoolLocationImages
+                    locationIndex={index}
                     control={control}
-                    name={`locations.${index}.images`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-main dark:text-main-foreground">
-                          Hình ảnh cơ sở (tùy chọn)
-                        </FormLabel>
-                        <FormControl>
-                          <MultiImageDropzone
-                            disabled={
-                              control._formState.isSubmitting || uploadingImages
-                            }
-                            onChange={(files) => {
-                              onChangeImages(index, files);
-                            }}
-                            onFilesAdded={(files) =>
-                              onSelectedImages(index, files)
-                            }
-                            value={images}
-                          />
-                        </FormControl>
-                        {field.value && (
-                          <Button
-                            disabled={
-                              control._formState.isSubmitting || uploadingImages
-                            }
-                            size="sm"
-                            onClick={() => {
-                              field.onChange([]);
-                              setImages([]);
-                            }}
-                          >
-                            Xóa tất cả hình ảnh
-                          </Button>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    setValue={setValue}
+                    getValues={getValue}
+                    btnClass={buttonClass}
                   />
                   <div className="col-span-1 md:col-span-2">
                     <ManageLocationContacts
@@ -388,9 +260,7 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
       })}
       <div className="flex justify-center items-center mt-4">
         <button
-          disabled={
-            control._formState.isSubmitting || uploadingCover || uploadingImages
-          }
+          disabled={control._formState.isSubmitting || uploadingCover}
           type="button"
           onClick={() => {
             append({
@@ -400,7 +270,7 @@ export const CreateSchoolLocation = ({ control, errors, setValue }: Props) => {
               isMain: false,
             });
           }}
-          className="px-4 py-2 rounded-md border border-main font-bold bg-white text-main text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
+          className="px-4 py-2 rounded-md border border-main dark:border-main-component font-bold bg-main dark:bg-main-component text-white dark:text-main-foreground text-sm hover:shadow-[4px_4px_0px_0px_rgba(125, 31, 31)] transition duration-200"
         >
           Thêm cơ sở khác
         </button>
