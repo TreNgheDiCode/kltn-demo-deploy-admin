@@ -5,9 +5,9 @@ import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Lusitana, Montserrat } from "next/font/google";
 
-const font = Montserrat({ subsets: ["latin"] });
+const font = Lusitana({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Dashboard Admin | Canadian",
