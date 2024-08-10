@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 // ENUMS
@@ -117,6 +118,29 @@ model VerificationToken {
   @@unique([email, token])
 }
 
+model NotificationToken {
+  id     String @id @default(cuid())
+  userId String @unique
+  token  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NotificationPush {
+  id         String  @id @default(cuid())
+  title      String
+  body       String
+  type       String
+  senderName String
+  isRead     Boolean @default(false)
+
+  receiverId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PasswordResetToken {
   id      String   @id @default(cuid())
   email   String
@@ -180,7 +204,7 @@ model School {
   galleries    SchoolGallery[]
   scholarships SchoolScholarship[]
   news         News[]
-  contacts     Contact[]
+  feedbacks    Feedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -190,7 +214,7 @@ model SchoolScholarship {
   id          String  @id @default(cuid())
   name        String
   description String
-  cover       String?
+  cover       String
   isPublished Boolean @default(false)
 
   schoolId String
@@ -230,9 +254,10 @@ model StudentSchoolScholarship {
 }
 
 model SchoolGallery {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
-  description String?
+  description String
+  cover       String
 
   images SchoolGalleryImage[]
 
@@ -242,7 +267,7 @@ model SchoolGallery {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([name])
+  @@index([schoolId, name])
 }
 
 model SchoolGalleryImage {
@@ -257,10 +282,11 @@ model SchoolGalleryImage {
 model SchoolLocation {
   id String @id @default(cuid())
 
-  cover   String?
-  name    String  @unique
-  address String  @unique
-  isMain  Boolean @default(false)
+  cover       String
+  name        String
+  description String?
+  address     String  @unique
+  isMain      Boolean @default(false)
 
   images   SchoolLocationImage[]
   contacts SchoolLocationContact[]
@@ -271,6 +297,8 @@ model SchoolLocation {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
 }
 
 model SchoolLocationImage {
@@ -302,7 +330,7 @@ model SchoolProgram {
   id          String  @id @default(cuid())
   name        String
   description String
-  cover       String?
+  cover       String
   isPublished Boolean @default(false)
 
   schoolId String
@@ -522,47 +550,6 @@ model ProfileFriend {
   updatedAt DateTime @updatedAt
 }
 
-// model Conversation {
-//   id String @id @default(cuid())
-
-//   name          String?
-//   cover String?
-//   isGroup       Boolean? @default(false)
-
-// // Owner
-//   ownerId String
-//   owner   Profile   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-
-//   messages    Message[]
-
-//   createdAt     DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
-
-// model Message {
-//   id String @id @default(cuid())
-
-//   body  String?
-//   image String?
-
-//   seenIds String
-//   seen    Profile @relation("Seen", fields: [seenIds], references: [id])
-
-//   conversationId String      
-//   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
-//   senderId String
-//   sender   Profile   @relation(fields: [senderId], references: [id], onDelete: Cascade)
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
-
-// model MessageSeen {
-//   id String @id @default(cuid())
-
-// }
-
 model Area {
   id String @id @default(cuid())
 
@@ -780,7 +767,7 @@ model News {
   id String @id @default(cuid())
 
   title       String
-  content     String?
+  content     String
   type        NewsType
   cover       String
   isPublished Boolean  @default(true)
@@ -832,7 +819,7 @@ model StudentFollow {
   @@unique([studentId, followerId])
 }
 
-enum ContactTitle {
+enum FeedbackType {
   FEEDBACK
   SYSTEM
   REFUND
@@ -840,20 +827,50 @@ enum ContactTitle {
   SUBSCRIPTION
   SCHOLARSHIP
   PROCEDURE
+  GENERAL
+  UNKNOWN
+  QUESTION
 }
 
-model Contact {
+model Feedback {
   id String @id @default(cuid())
 
-  name    String
-  title   ContactTitle
-  phone   String
-  email   String
-  message String
-  isRead  Boolean      @default(false)
+  name       String
+  title      String
+  type       FeedbackType
+  phone      String?
+  email      String
+  message    String
+  image      String?
+  url        String?
+  isRead     Boolean      @default(false)
+  isSpam     Boolean      @default(false)
+  isResolved Boolean      @default(false)
 
   schoolId String?
   school   School? @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  replies FeedbackReply[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FeedbackReplyRole {
+  ADMIN
+  USER
+}
+
+model FeedbackReply {
+  id String @id @default(cuid())
+
+  message    String
+  senderName String
+  logo       String?
+  role       FeedbackReplyRole
+
+  feedbackId String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
