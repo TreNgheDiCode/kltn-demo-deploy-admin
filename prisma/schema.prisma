@@ -288,9 +288,9 @@ model SchoolLocation {
   address     String  @unique
   isMain      Boolean @default(false)
 
-  images    SchoolLocationImage[]
-  feedbacks SchoolLocationFeedback[]
-  students  StudentSchoolLocation[]
+  images   SchoolLocationImage[]
+  contacts SchoolLocationContact[]
+  students StudentSchoolLocation[]
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -310,7 +310,7 @@ model SchoolLocationImage {
   location   SchoolLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
-model SchoolLocationFeedback {
+model SchoolLocationContact {
   id String @id @default(cuid())
 
   phone String?
