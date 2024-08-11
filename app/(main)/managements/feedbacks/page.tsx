@@ -1,9 +1,9 @@
-import { ContactsTable } from "@/components/contacts/contacts-table";
-import { GetContactLib } from "@/lib/contact";
+import { FeedbacksTable } from "@/components/feedbacks/feedbacks-table";
+import { GetFeedbackLib } from "@/lib/feedback";
 import { Card, CardHeader } from "@nextui-org/react";
 
-const ManangementContactsPage = async () => {
-  const contacts = await GetContactLib();
+const ManangementFeedbacksPage = async () => {
+  const feedbacks = await GetFeedbackLib();
 
   return (
     <div className="space-y-4">
@@ -16,9 +16,9 @@ const ManangementContactsPage = async () => {
           </div>
         </CardHeader>
       </Card>
-      <ContactsTable contacts={contacts} />
+      <FeedbacksTable feedbacks={feedbacks} />
     </div>
   );
 };
 
-export default ManangementContactsPage;
+export default ManangementFeedbacksPage;

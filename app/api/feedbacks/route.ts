@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
-import { ContactSchema } from "@/types";
+import { FeedbackSchema } from "@/types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    const contacts = await db.contact.findMany({
+    const feedbacks = await db.feedback.findMany({
       include: {
         school: {
           select: {
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(contacts, { status: 200 });
+    return NextResponse.json(feedbacks, { status: 200 });
   } catch (error) {
     console.log("ERROR GET CONTACTS ACTION", error);
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const validatedFields = ContactSchema.safeParse(body);
+    const validatedFields = FeedbackSchema.safeParse(body);
 
     if (!validatedFields.success) {
       return NextResponse.json(
@@ -58,13 +58,14 @@ export async function POST(req: Request) {
       }
     }
 
-    const contact = await db.contact.create({
+    const feedback = await db.feedback.create({
       data: {
         ...data,
+        type: "FEEDBACK",
       },
     });
 
-    return NextResponse.json(contact, { status: 200 });
+    return NextResponse.json(feedback, { status: 200 });
   } catch (error) {
     console.log("ERROR CREATE CONTACT ACTION", error);
 

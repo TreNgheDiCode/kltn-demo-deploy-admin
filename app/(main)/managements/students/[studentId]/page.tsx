@@ -2,8 +2,8 @@ import { HeadingStudent } from "@/components/student/heading-student";
 import { StudentInformation } from "@/components/student/student-information";
 import { StudentNavigation } from "@/components/student/student-navigation";
 import { StudentTool } from "@/components/student/student-tool";
-import { GetStudentById, GetStudentContacts } from "@/lib/student";
-import { ContactLib, StudentLib } from "@/types/type";
+import { GetStudentById, GetStudentFeedbacks } from "@/lib/student";
+import { FeedbackLib, StudentLib } from "@/types/type";
 import { Card, CardBody } from "@nextui-org/react";
 
 const StudentIdPage = async ({
@@ -12,7 +12,7 @@ const StudentIdPage = async ({
   params: { studentId: string };
 }) => {
   const student: StudentLib = await GetStudentById(studentId);
-  const contacts: ContactLib[] = await GetStudentContacts(
+  const feedbacks: FeedbackLib[] = await GetStudentFeedbacks(
     student?.account?.email,
     student?.account?.phoneNumber
   );
@@ -35,7 +35,7 @@ const StudentIdPage = async ({
       {student.studentCode && (
         <Card>
           <CardBody>
-            <StudentNavigation student={student} contacts={contacts} />
+            <StudentNavigation student={student} feedbacks={feedbacks} />
           </CardBody>
         </Card>
       )}

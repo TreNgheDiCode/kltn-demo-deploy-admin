@@ -26,7 +26,7 @@ const SchoolPage = async ({
             programs={selectSchool.programs || []}
             news={selectSchool.news || []}
             scholarships={selectSchool.scholarships || []}
-            contacts={selectSchool.contacts || []}
+            feedbacks={selectSchool.feedbacks || []}
           />
         </div>
       ) : (

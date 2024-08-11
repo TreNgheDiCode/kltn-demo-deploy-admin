@@ -1,8 +1,8 @@
 import {
   CertificateType,
-  ContactTitle,
   Country,
   DegreeType,
+  FeedbackType,
   Gender,
   GradeType,
   NewsType,
@@ -374,7 +374,7 @@ export const CreateScholarshipSchema = z.object({
   owners: z.optional(z.array(z.string())),
 });
 
-export const ContactSchema = z.object({
+export const FeedbackSchema = z.object({
   name: z.string().min(1, {
     message: "Vui lòng nhập tên",
   }),
@@ -383,12 +383,12 @@ export const ContactSchema = z.object({
   }),
   title: z.enum(
     [
-      ContactTitle.BILLING,
-      ContactTitle.FEEDBACK,
-      ContactTitle.PROCEDURE,
-      ContactTitle.REFUND,
-      ContactTitle.SCHOLARSHIP,
-      ContactTitle.SYSTEM,
+      FeedbackType.BILLING,
+      FeedbackType.FEEDBACK,
+      FeedbackType.PROCEDURE,
+      FeedbackType.REFUND,
+      FeedbackType.SCHOLARSHIP,
+      FeedbackType.SYSTEM,
     ],
     {
       message: "Vui lòng chọn tiêu đề",
@@ -403,7 +403,7 @@ export const ContactSchema = z.object({
   schoolId: z.optional(z.string()),
 });
 
-export type ContactFormValues = z.infer<typeof ContactSchema>;
+export type FeedbackFormValues = z.infer<typeof FeedbackSchema>;
 
 export const AccountFormSchema = z
   .object({

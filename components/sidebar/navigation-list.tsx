@@ -55,14 +55,14 @@ export const NavigationList = ({ isCollapsed }: NavigationListProps) => {
           href="/managements/news"
         ></Tab>
         <Tab
-          key={"managements/contacts"}
+          key={"managements/feedbacks"}
           title={
             <div className="flex items-center gap-2">
               <Info className="h-4 w-4" />
               {!isCollapsed && "Phản hồi"}
             </div>
           }
-          href="/managements/contacts"
+          href="/managements/feedbacks"
         />
       </Tabs>
     </ScrollShadow>

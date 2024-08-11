@@ -29,7 +29,7 @@ export const GetSchoolsById = async (id: string) => {
         },
       },
       news: true,
-      contacts: true,
+      feedbacks: true,
       locations: {
         select: {
           id: true,

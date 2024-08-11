@@ -2,7 +2,7 @@
 
 import { deleteNews } from "@/actions/news";
 import { useModalAction } from "@/hooks/use-modal-action";
-import { ContactLib } from "@/types/type";
+import { FeedbackLib } from "@/types/type";
 import {
   Button,
   Chip,
@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { ContactTitle } from "@prisma/client";
+import { FeedbackType } from "@prisma/client";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale/vi";
 import {
@@ -38,11 +38,11 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-interface ContactsProps {
-  contacts: ContactLib[];
+interface FeedbacksProps {
+  feedbacks: FeedbackLib[];
 }
 
-const titleColorMap: Record<ContactTitle, ChipProps["color"]> = {
+const titleColorMap: Record<FeedbackType, ChipProps["color"]> = {
   FEEDBACK: "default",
   SYSTEM: "warning",
   REFUND: "danger",
@@ -50,6 +50,9 @@ const titleColorMap: Record<ContactTitle, ChipProps["color"]> = {
   SUBSCRIPTION: "secondary",
   SCHOLARSHIP: "success",
   PROCEDURE: "secondary",
+  GENERAL: "default",
+  QUESTION: "default",
+  UNKNOWN: "default",
 };
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -95,7 +98,7 @@ const INITIAL_COLUMNS = [
   "actions",
 ];
 
-export const ContactsTable = ({ contacts }: ContactsProps) => {
+export const FeedbacksTable = ({ feedbacks }: FeedbacksProps) => {
   const action = useModalAction();
   const router = useRouter();
 
@@ -126,23 +129,23 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredContacts = [...contacts];
+    let filteredFeedbacks = [...feedbacks];
 
     if (hasSearchNameFilter) {
-      filteredContacts = filteredContacts.filter((contact) =>
-        contact.name.toLowerCase().includes(filterNameValue.toLowerCase())
+      filteredFeedbacks = filteredFeedbacks.filter((feedback) =>
+        feedback.name.toLowerCase().includes(filterNameValue.toLowerCase())
       );
     }
 
     if (hasSearchEmailFilter) {
-      filteredContacts = filteredContacts.filter((contact) =>
-        contact.email.toLowerCase().includes(filterEmailValue.toLowerCase())
+      filteredFeedbacks = filteredFeedbacks.filter((feedback) =>
+        feedback.email.toLowerCase().includes(filterEmailValue.toLowerCase())
       );
     }
 
     if (hasSearchPhoneFilter) {
-      filteredContacts = filteredContacts.filter((contact) =>
-        contact.phone.toLowerCase().includes(filterPhoneValue.toLowerCase())
+      filteredFeedbacks = filteredFeedbacks.filter((feedback) =>
+        feedback.phone?.toLowerCase().includes(filterPhoneValue.toLowerCase())
       );
     }
 
@@ -150,8 +153,8 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
       titleFilter !== "all" &&
       Array.from(titleFilter).length !== titleOptions.length
     ) {
-      filteredContacts = filteredContacts.filter((contact) =>
-        Array.from(titleFilter).includes(contact.title)
+      filteredFeedbacks = filteredFeedbacks.filter((feedback) =>
+        Array.from(titleFilter).includes(feedback.title)
       );
     }
 
@@ -159,14 +162,14 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredContacts = filteredContacts.filter((contact) =>
-        Array.from(statusFilter).includes(contact.isRead.toString())
+      filteredFeedbacks = filteredFeedbacks.filter((feedback) =>
+        Array.from(statusFilter).includes(feedback.isRead.toString())
       );
     }
 
-    return filteredContacts;
+    return filteredFeedbacks;
   }, [
-    contacts,
+    feedbacks,
     filterEmailValue,
     filterNameValue,
     filterPhoneValue,
@@ -177,7 +180,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
     hasSearchPhoneFilter,
   ]);
 
-  console.log(contacts);
+  console.log(feedbacks);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -189,12 +192,12 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: ContactLib, b: ContactLib) => {
+    return [...items].sort((a: FeedbackLib, b: FeedbackLib) => {
       const first = a[
-        sortDescriptor.column as keyof ContactLib
+        sortDescriptor.column as keyof FeedbackLib
       ] as unknown as number;
       const second = b[
-        sortDescriptor.column as keyof ContactLib
+        sortDescriptor.column as keyof FeedbackLib
       ] as unknown as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
@@ -220,47 +223,47 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
   );
 
   const renderCell = useCallback(
-    (contact: ContactLib, columnKey: Key) => {
+    (feedback: FeedbackLib, columnKey: Key) => {
       switch (columnKey) {
         case "id":
           return (
-            <p className="font-bold text-tiny text-primary">{contact.id}</p>
+            <p className="font-bold text-tiny text-primary">{feedback.id}</p>
           );
         case "title":
           return (
             <div className="flex items-center justify-center">
               <Chip
                 className="capitalize"
-                color={titleColorMap[contact.title]}
+                color={titleColorMap[feedback.type]}
                 size="sm"
                 variant="flat"
               >
-                {titleOptions.find((type) => type.uid === contact.title)?.name}
+                {titleOptions.find((type) => type.uid === feedback.title)?.name}
               </Chip>
             </div>
           );
         case "name":
           return (
-            <p className="font-bold text-tiny text-primary">{contact.name}</p>
+            <p className="font-bold text-tiny text-primary">{feedback.name}</p>
           );
         case "email":
           return (
-            <p className="font-bold text-tiny text-primary">{contact.email}</p>
+            <p className="font-bold text-tiny text-primary">{feedback.email}</p>
           );
         case "phone":
           return (
-            <p className="font-bold text-tiny text-primary">{contact.phone}</p>
+            <p className="font-bold text-tiny text-primary">{feedback.phone}</p>
           );
         case "message":
           return (
             <p className="font-bold text-tiny text-primary">
-              {contact.message}
+              {feedback.message}
             </p>
           );
         case "school":
           return (
             <p className="font-bold text-tiny text-primary">
-              {contact.school?.name || "Không có thông tin"}
+              {feedback.school?.name || "Không có thông tin"}
             </p>
           );
         case "isRead":
@@ -268,18 +271,18 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
             <div className="flex items-center justify-center">
               <Chip
                 className="capitalize"
-                color={statusColorMap[contact.isRead.toString()]}
+                color={statusColorMap[feedback.isRead.toString()]}
                 size="sm"
                 variant="flat"
               >
-                {contact.isRead.toString().toUpperCase()}
+                {feedback.isRead.toString().toUpperCase()}
               </Chip>
             </div>
           );
         case "createdAt":
           return (
             <p className="font-bold text-tiny capitalize text-primary">
-              {format(contact.createdAt, "dd MMMM, yyyy", {
+              {format(feedback.createdAt, "dd MMMM, yyyy", {
                 locale: vi,
               })}
             </p>
@@ -296,7 +299,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
                 <DropdownMenu>
                   <DropdownItem
                     endContent={<Sheet className="size-4" />}
-                    href={`/managements/contacts/${contact.id}`}
+                    href={`/managements/feedbacks/${feedback.id}`}
                   >
                     Xem thông tin chi tiết
                   </DropdownItem>
@@ -305,7 +308,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
                     color="danger"
                     onPress={() =>
                       action.onOpen(
-                        () => onDelete(contact.id),
+                        () => onDelete(feedback.id),
                         "Bạn có chắc chắn muốn xóa phản hồi này?",
                         "Hành động đã thực hiện sẽ không thể hủy bỏ"
                       )
@@ -498,7 +501,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Tổng số: {contacts.length} tin tức
+            Tổng số: {feedbacks.length} tin tức
           </span>
           <label className="flex items-center text-default-400 text-small">
             Số dòng mỗi trang:
@@ -525,7 +528,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
     onSearchEmailChange,
     onSearchPhoneChange,
     onRowsPerPageChange,
-    contacts.length,
+    feedbacks.length,
     onClearName,
     onClearEmail,
     onClearPhone,
@@ -579,7 +582,7 @@ export const ContactsTable = ({ contacts }: ContactsProps) => {
 
   return (
     <Table
-      aria-label="Contacts table with custom cells, pagination and sorting"
+      aria-label="Feedbacks table with custom cells, pagination and sorting"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"

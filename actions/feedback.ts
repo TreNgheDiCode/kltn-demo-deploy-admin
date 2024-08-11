@@ -1,12 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { ContactSchema } from "@/types";
+import { FeedbackSchema } from "@/types";
 import { z } from "zod";
 
-export const createContact = async (values: z.infer<typeof ContactSchema>) => {
+export const createFeedback = async (
+  values: z.infer<typeof FeedbackSchema>
+) => {
   try {
-    const validatedFields = ContactSchema.safeParse(values);
+    const validatedFields = FeedbackSchema.safeParse(values);
 
     if (!validatedFields.success) {
       return { error: "Trường dữ liệu không hợp lệ" };
