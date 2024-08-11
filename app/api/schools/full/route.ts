@@ -18,7 +18,7 @@ export async function GET() {
         },
         locations: {
           include: {
-            contacts: true,
+            feedbacks: true,
             images: true,
           },
         },
