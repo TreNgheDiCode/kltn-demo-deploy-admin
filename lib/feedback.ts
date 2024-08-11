@@ -1,7 +1,7 @@
 import { db } from "./db";
 
-export const GetContactLib = async () => {
-  const contacts = await db.contact.findMany({
+export const GetFeedbackLib = async () => {
+  const feedbacks = await db.feedback.findMany({
     include: {
       school: {
         select: {
@@ -13,5 +13,5 @@ export const GetContactLib = async () => {
     },
   });
 
-  return contacts;
+  return feedbacks;
 };

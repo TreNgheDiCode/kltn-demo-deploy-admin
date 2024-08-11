@@ -3,19 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { contactId: string } }
+  { params }: { params: { feedbackId: string } }
 ) {
   try {
-    if (!params.contactId) {
+    if (!params.feedbackId) {
       return NextResponse.json(
         { error: "Vui lòng truyền vào mã phản hồi" },
         { status: 404 }
       );
     }
 
-    const contact = await db.contact.findUnique({
+    const feedback = await db.feedback.findUnique({
       where: {
-        id: params.contactId,
+        id: params.feedbackId,
       },
       include: {
         school: {
@@ -29,7 +29,7 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(contact, { status: 200 });
+    return NextResponse.json(feedback, { status: 200 });
   } catch (error) {
     console.log("ERROR GET CONTACT ACTION", error);
 

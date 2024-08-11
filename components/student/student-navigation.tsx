@@ -1,17 +1,17 @@
 "use client";
 
-import { ContactLib, StudentLib } from "@/types/type";
+import { FeedbackLib, StudentLib } from "@/types/type";
 import { Tab, Tabs } from "@nextui-org/react";
-import { ContactsTable } from "../contacts/contacts-table";
+import { FeedbacksTable } from "../feedbacks/feedbacks-table";
 
 interface StudentNavigationProps {
   student: StudentLib;
-  contacts: ContactLib[];
+  feedbacks: FeedbackLib[];
 }
 
 export const StudentNavigation = ({
   student,
-  contacts,
+  feedbacks,
 }: Readonly<StudentNavigationProps>) => {
   return (
     <Tabs
@@ -21,8 +21,8 @@ export const StudentNavigation = ({
     >
       <Tab key="scores" title="Điểm số"></Tab>
       <Tab key="posts" title="Bài đăng"></Tab>
-      <Tab key="contacts" title="Liên hệ & Hỗ trợ">
-        <ContactsTable contacts={contacts} />
+      <Tab key="feedbacks" title="Liên hệ & Hỗ trợ">
+        <FeedbacksTable feedbacks={feedbacks} />
       </Tab>
     </Tabs>
   );

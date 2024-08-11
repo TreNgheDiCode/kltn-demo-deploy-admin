@@ -110,7 +110,7 @@ Table SchoolLocation {
   address String [unique, not null]
   isMain Boolean [not null, default: false]
   images SchoolLocationImage [not null]
-  contacts SchoolLocationContact [not null]
+  feedbacks SchoolLocationFeedback [not null]
   students StudentSchoolLocation [not null]
   schoolId String [not null]
   school School [not null]
@@ -125,7 +125,7 @@ Table SchoolLocationImage {
   location SchoolLocation [not null]
 }
 
-Table SchoolLocationContact {
+Table SchoolLocationFeedback {
   id String [pk]
   phone String
   hours String
@@ -536,7 +536,7 @@ Ref: SchoolLocation.schoolId > School.id [delete: Cascade]
 
 Ref: SchoolLocationImage.locationId > SchoolLocation.id [delete: Cascade]
 
-Ref: SchoolLocationContact.locationId > SchoolLocation.id [delete: Cascade]
+Ref: SchoolLocationFeedback.locationId > SchoolLocation.id [delete: Cascade]
 
 Ref: SchoolProgram.schoolId > School.id
 

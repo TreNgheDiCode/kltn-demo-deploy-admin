@@ -25,8 +25,8 @@ export const GetStudentById = async (id: string) => {
   return student;
 };
 
-export const GetStudentContacts = async (email?: string, phone?: string) => {
-  const contacts = await db.contact.findMany({
+export const GetStudentFeedbacks = async (email?: string, phone?: string) => {
+  const feedbacks = await db.feedback.findMany({
     where: {
       AND: [
         {
@@ -48,5 +48,5 @@ export const GetStudentContacts = async (email?: string, phone?: string) => {
     },
   });
 
-  return contacts;
+  return feedbacks;
 };

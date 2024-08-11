@@ -1,7 +1,7 @@
 import {
   Account,
-  Contact,
   DegreeType,
+  Feedback,
   GradeType,
   News,
   Profile,
@@ -131,7 +131,7 @@ export type NewsLib = News & {
   } | null;
 };
 
-export type ContactLib = Contact & {
+export type FeedbackLib = Feedback & {
   school: {
     logo: string;
     color: string;
