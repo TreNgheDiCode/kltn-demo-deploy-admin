@@ -270,9 +270,7 @@ const UpdateAccountModal = () => {
                               <DateInput
                                 isDisabled={isLoading}
                                 startContent={<Calendar className="size-4" />}
-                                minValue={parseDate("1970-01-01")}
                                 defaultValue={parseDate("2006-01-01")}
-                                maxValue={parseDate("2006-12-31")}
                                 label="Ngày sinh"
                                 labelPlacement="outside"
                                 variant="bordered"
