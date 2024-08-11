@@ -8,7 +8,6 @@ import { useUpdateAccount } from "@/hooks/use-update-account";
 import { UpdateStudent } from "@/types";
 import { City, District, Ward } from "@/types/type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { parseDate } from "@internationalized/date";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -270,7 +269,6 @@ const UpdateAccountModal = () => {
                               <DateInput
                                 isDisabled={isLoading}
                                 startContent={<Calendar className="size-4" />}
-                                defaultValue={parseDate("2006-01-01")}
                                 label="Ngày sinh"
                                 labelPlacement="outside"
                                 variant="bordered"

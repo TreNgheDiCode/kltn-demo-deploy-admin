@@ -9,7 +9,7 @@ import { useSchools } from "@/hooks/use-schools";
 import { RegisterSchema } from "@/types";
 import { City, District, Ward } from "@/types/type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { parseDate } from "@internationalized/date";
+import {} from "@internationalized/date";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -323,7 +323,6 @@ const CreateAccountModal = () => {
                               <DateInput
                                 isDisabled={isLoading}
                                 startContent={<Calendar className="size-4" />}
-                                defaultValue={parseDate("2006-01-01")}
                                 label="Ngày sinh"
                                 labelPlacement="outside"
                                 variant="bordered"
