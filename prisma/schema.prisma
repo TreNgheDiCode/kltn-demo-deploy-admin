@@ -101,6 +101,8 @@ model Account {
   // User Profile
   student Student?
 
+  chatSupports ChatSession[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -874,4 +876,45 @@ model FeedbackReply {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum ChatSessionRole {
+  ADMIN
+  USER
+
+  @@map("ChatSupportRole")
+}
+
+model ChatSession {
+  id String @id @default(cuid())
+
+  clientId String
+  name     String?
+  email    String?
+  phone    String?
+
+  userId String?
+  user   Account? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages ChatSessionMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ChatSupport")
+}
+
+model ChatSessionMessage {
+  id String @id @default(cuid())
+
+  message String
+  role    ChatSessionRole
+
+  chatSessionId String
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ChatSupportMessage")
 }

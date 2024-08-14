@@ -10,12 +10,6 @@ export async function GET() {
         isPublished: true,
       },
       include: {
-        news: true,
-        galleries: {
-          include: {
-            images: true,
-          },
-        },
         locations: {
           include: {
             contacts: true,
@@ -47,6 +41,11 @@ export async function GET() {
             },
           },
         },
+        galleries: {
+          include: {
+            images: true,
+          },
+        },
         scholarships: {
           include: {
             images: true,
@@ -55,9 +54,9 @@ export async function GET() {
                 student: true,
               },
             },
-            school: true,
           },
         },
+        news: true,
       },
     });
 
