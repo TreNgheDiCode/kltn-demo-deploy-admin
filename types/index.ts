@@ -478,3 +478,23 @@ export const SchoolProgramSchema = z.object({
 });
 
 export type SchoolProgramFormValues = z.infer<typeof SchoolProgramSchema>;
+
+export const RegisScholarshipSchema = z.object({
+  studentId: z.string().min(1, {
+    message: "Không tìm thấy mã học sinh",
+  }),
+  additional: z.optional(z.string()),
+});
+
+export type RegisScholarshipFormValues = z.infer<typeof RegisScholarshipSchema>;
+
+export const StudentRequirementReplySchema = z.object({
+  message: z.string().min(1, {
+    message: "Vui lòng nhập nội dung phản hồi",
+  }),
+  images: z.optional(z.array(z.string())),
+});
+
+export type StudentRequirementReplyFormValues = z.infer<
+  typeof StudentRequirementReplySchema
+>;
