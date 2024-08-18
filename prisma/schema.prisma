@@ -240,8 +240,17 @@ model SchoolScholarshipImage {
   scholarship   SchoolScholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
 }
 
+enum StudentSchoolScholarshipStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model StudentSchoolScholarship {
   id String @id @default(cuid())
+
+  status      StudentSchoolScholarshipStatus @default(PENDING)
+  description String?
 
   studentId String  @unique
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -365,10 +374,40 @@ model StudentSchoolProgram {
   programId String
   program   SchoolProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
 
+  scores StudentSchoolProgramScore[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([studentId, programId])
+}
+
+model StudentSchoolProgramScore {
+  id String @id @default(cuid())
+
+  title    String
+  semester String
+  year     String
+  subjects StudentSchoolProgramScoreSubject[]
+
+  programId String
+  program   StudentSchoolProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentSchoolProgramScoreSubject {
+  id String @id @default(cuid())
+
+  name  String
+  score Float
+
+  scoreId      String
+  programScore StudentSchoolProgramScore @relation(fields: [scoreId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model StudentSchoolLocation {
@@ -421,15 +460,93 @@ model Student {
 
   profile Profile?
 
-  program     StudentSchoolProgram?
-  location    StudentSchoolLocation?
-  scholarship StudentSchoolScholarship[]
+  program      StudentSchoolProgram?
+  location     StudentSchoolLocation?
+  scholarship  StudentSchoolScholarship[]
+  tuitions     StudentTuition[]
+  requirements StudentRequirement[]
 
   notifications      NewsNotification[] @relation("notifications")
   ownedNotifications NewsNotification[] @relation("owns")
   follows            StudentFollow[]    @relation("follows")
   followers          StudentFollow[]    @relation("followers")
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StudentTuitionStatus {
+  PENDING
+  PAID
+  OVERDUE
+  REFUNDED
+}
+
+enum StudentRequirementStatus {
+  PENDING
+  REPLIED
+  RESOLVED
+}
+
+model StudentRequirement {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+  images      StudentRequirementImage[]
+  replies     StudentRequirementReply[]
+  status      StudentRequirementStatus  @default(PENDING)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentRequirementReply {
+  id String @id @default(cuid())
+
+  message    String
+  senderName String
+  images     StudentRequirementReplyImage[]
+
+  requirementId String
+  requirement   StudentRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentRequirementReplyImage {
+  id String @id @default(cuid())
+
+  url String
+
+  replyId String
+  reply   StudentRequirementReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+}
+
+model StudentRequirementImage {
+  id String @id @default(cuid())
+
+  url String
+
+  requirementId String
+  requirement   StudentRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+}
+
+model StudentTuition {
+  id String @id @default(cuid())
+
+  amount      Float
+  description String?
+  status      StudentTuitionStatus @default(PENDING)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  dueAt     DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

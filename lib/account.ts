@@ -43,9 +43,28 @@ export const GetAccountByEmail = async (email: string) => {
         phoneNumber: true,
         student: {
           select: {
+            id: true,
+            studentCode: true,
             scholarship: {
-              include: {
-                scholarship: true,
+              select: {
+                status: true,
+                description: true,
+                scholarship: {
+                  select: {
+                    name: true,
+                    cover: true,
+                    images: true,
+                    description: true,
+                  },
+                },
+              },
+            },
+            tuitions: {
+              select: {
+                status: true,
+                amount: true,
+                description: true,
+                dueAt: true,
               },
             },
             status: true,
@@ -56,11 +75,40 @@ export const GetAccountByEmail = async (email: string) => {
                 background: true,
               },
             },
+            requirements: {
+              select: {
+                id: true,
+                title: true,
+                images: true,
+                replies: {
+                  select: {
+                    message: true,
+                    senderName: true,
+                    createdAt: true,
+                  },
+                },
+                status: true,
+                description: true,
+              },
+            },
             program: {
               select: {
                 program: {
                   select: {
                     name: true,
+                  },
+                },
+                scores: {
+                  select: {
+                    title: true,
+                    semester: true,
+                    year: true,
+                    subjects: {
+                      select: {
+                        name: true,
+                        score: true,
+                      },
+                    },
                   },
                 },
               },
