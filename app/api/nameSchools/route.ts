@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
-import { string } from "zod";
 
 export const revalidate = 0;
 
@@ -10,12 +9,9 @@ export async function GET() {
       where: {
         isPublished: true,
       },
-      include: {
-        programs: {
-          select: {
-            name: true,
-          },
-        },
+      select: {
+        id: true,
+        name: true,
       },
     });
 
