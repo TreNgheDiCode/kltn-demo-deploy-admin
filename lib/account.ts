@@ -70,6 +70,7 @@ export const GetAccountByEmail = async (email: string) => {
             status: true,
             school: {
               select: {
+                id: true,
                 name: true,
                 logo: true,
                 background: true,
