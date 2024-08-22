@@ -122,7 +122,6 @@ export const GetAccountByEmail = async (email: string) => {
 
     return user;
   } catch (error) {
-    console.log("GET USER ERROR", error);
     return null;
   }
 };
