@@ -23,6 +23,7 @@ export type SchoolLib = {
   logo: string;
 };
 
+
 export type SchoolExtend = School & {
   locations: { name: string; address: string }[];
   programs: { name: string }[];
@@ -34,6 +35,7 @@ export type SchoolScholarshipExtend = SchoolScholarship & {
   images: SchoolScholarshipImage[];
   owners: (StudentSchoolScholarship & { student: Student })[];
 };
+
 
 export type SchoolStudentExtend = {
   id: string;
