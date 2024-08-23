@@ -1,10 +1,7 @@
 import { db } from "@/lib/db";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { generateStudentCode, generateVerificationToken } from "@/lib/tokens";
-import { error } from "console";
-import { stat } from "fs";
 import { NextResponse } from "next/server";
-import { json } from "stream/consumers";
 
 export async function GET(
   req: Request,

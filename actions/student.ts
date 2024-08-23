@@ -21,8 +21,6 @@ export const updateStudent = async (
   try {
     const validatedFields = UpdateStudent.safeParse(values);
 
-    console.log(values);
-
     if (!validatedFields.success) {
       return { error: "Trường dữ liệu không hợp lệ" };
     }

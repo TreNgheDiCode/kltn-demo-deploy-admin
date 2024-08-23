@@ -35,7 +35,7 @@ export const StudentTool = ({ student }: Readonly<StudentToolProps>) => {
   const onPasswordReset = async () => {
     if (!student || !student.account) return;
 
-    setIsLoading(true);
+    setIsLoading(true);   
 
     await sendPasswordReset(student.account.email, student.account.name)
       .then((res) => {
